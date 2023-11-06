@@ -1,6 +1,4 @@
-"use client";
-
-import { GameCard } from "@/app/ui/video-games/game-card";
+import { GameCalendar } from "@/app/ui/video-games/game-card";
 import { Button } from "@/components/ui/button";
 import { FetchTest } from "@/app/lib/data";
 // import CardWrapper from "@/app/ui/dashboard/cards";
@@ -15,15 +13,11 @@ import { Suspense } from "react";
 // } from "@/app/ui/skeletons";
 
 export default async function Page() {
-  async function handleFetch() {
-    await FetchTest();
-  }
+  const gamesList = await FetchTest();
 
   return (
     <main className="flex gap-1 flex-wrap">
-      <Button onClick={handleFetch}>TEST FETCH!!!</Button>
-      <GameCard />
-      <GameCard />
+      <GameCalendar games={gamesList} />
     </main>
     // <main>
     //   <h1 className={`${lusitana.className} mb-4 text-xl md:text-2xl`}>

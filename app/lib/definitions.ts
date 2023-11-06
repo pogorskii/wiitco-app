@@ -1,3 +1,20 @@
+export type GamesList = {
+  expected_release_day: number | null;
+  id: number;
+  image: Object;
+  name: string;
+  oirginal_release_date: number | null;
+  platforms: [];
+};
+
+export type FormatedGameData = {
+  id: number;
+  title: string;
+  releaseDay: number;
+  imageUrl: string;
+  platforms: [string];
+};
+
 // // This file contains type definitions for your data.
 // // It describes the shape of the data, and what data type each property should accept.
 // // For simplicity of teaching, we're manually defining these types.
