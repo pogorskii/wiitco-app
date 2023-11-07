@@ -8,11 +8,11 @@ import {
 } from "react-bootstrap-icons";
 
 const badgeVariants = cva(
-  "inline-flex gap-1 items-center rounded-full border px-1.5 py-0.5 text-xs font-semibold transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
+  "inline-flex gap-1 items-center rounded-full px-1.5 py-0.5 text-xs font-normal transition duration-300 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
   {
     variants: {
       variant: {
-        PS5: "border border-slate-200 bg-slate-50 text-slate-950 hover:bg-slate-200",
+        PS5: "border border-slate-200 dark:border-none bg-slate-50 text-slate-950 hover:bg-slate-200",
         PS4: "bg-[#006FCD] text-white hover:bg-[#1043B3]",
         XSX: "bg-[#107C11] text-white hover:bg-[#073808]",
         XONE: "bg-[#7EB900] text-white hover:bg-[#4a6d00]",

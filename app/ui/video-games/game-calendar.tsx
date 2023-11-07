@@ -1,7 +1,6 @@
 import { GameRelease, GameReleasesPerDay } from "@/app/lib/definitions";
-import { GameCard } from "./game-card";
+import { GamesDay } from "./game-day";
 import { DayHeader } from "./day-header";
-import Masonry from "react-responsive-masonry";
 
 export function GameCalendar({
   games,
@@ -12,59 +11,66 @@ export function GameCalendar({
 
   const daysEntries = Array.from(games.entries());
 
-  const gamesList = daysEntries.map((dayEntry) => {
-    return (
-      <div className="grid grid-cols-4 gap-5">
-        <DayHeader day={dayEntry[0]} />
-        <div className="col-span-3">
-          <div className="grid grid-cols-3 gap-4">
-            <div>
-              {dayEntry[1].map((game, i) => {
-                if (i % 3 === 0)
-                  return (
-                    <GameCard
-                      id={game.id}
-                      title={game.title}
-                      imageUrl={game.imageUrl}
-                      platforms={game.platforms}
-                    />
-                  );
-              })}
-            </div>
-            <div>
-              {dayEntry[1].map((game, i) => {
-                if (i % 2 === 1)
-                  return (
-                    <GameCard
-                      id={game.id}
-                      title={game.title}
-                      imageUrl={game.imageUrl}
-                      platforms={game.platforms}
-                    />
-                  );
-              })}
-            </div>
-            <div>
-              {dayEntry[1].map((game, i) => {
-                if (i % 3 === 2) {
-                  return (
-                    <GameCard
-                      id={game.id}
-                      title={game.title}
-                      imageUrl={game.imageUrl}
-                      platforms={game.platforms}
-                    />
-                  );
-                }
-              })}
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  });
+  // const gamesList = daysEntries.map((dayEntry) => {
+  //   return (
+  //     <div className="grid grid-cols-4 gap-5">
+  //       <DayHeader day={dayEntry[0]} />
+  //       <div className="col-span-3">
+  //         <div className="grid grid-cols-3 gap-4">
+  //           <div>
+  //             {dayEntry[1].map((game, i) => {
+  //               if (i % 3 === 0)
+  //                 return (
+  //                   <GameCard
+  //                     id={game.id}
+  //                     title={game.title}
+  //                     imageUrl={game.imageUrl}
+  //                     platforms={game.platforms}
+  //                   />
+  //                 );
+  //             })}
+  //           </div>
+  //           <div>
+  //             {dayEntry[1].map((game, i) => {
+  //               if (i % 2 === 1)
+  //                 return (
+  //                   <GameCard
+  //                     id={game.id}
+  //                     title={game.title}
+  //                     imageUrl={game.imageUrl}
+  //                     platforms={game.platforms}
+  //                   />
+  //                 );
+  //             })}
+  //           </div>
+  //           <div>
+  //             {dayEntry[1].map((game, i) => {
+  //               if (i % 3 === 2) {
+  //                 return (
+  //                   <GameCard
+  //                     id={game.id}
+  //                     title={game.title}
+  //                     imageUrl={game.imageUrl}
+  //                     platforms={game.platforms}
+  //                   />
+  //                 );
+  //               }
+  //             })}
+  //           </div>
+  //         </div>
+  //       </div>
+  //     </div>
+  //   );
+  // });
 
-  return <>{gamesList}</>;
+  return (
+    <>
+      {daysEntries.map((dayEntry) => {
+        const [day, games] = dayEntry;
+        return <GamesDay day={day} games={games} />;
+      })}
+    </>
+  );
 }
 
 // export function GameCalendar({ games }: { games: FormatedGameData[] }) {

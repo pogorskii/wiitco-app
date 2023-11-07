@@ -1,7 +1,10 @@
 import type { Metadata } from "next";
 import { GeistSans, GeistMono } from "geist/font";
+import { Inter } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/app/ui/theme-provider";
+
+const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "WIITCO",
@@ -15,7 +18,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${GeistSans.className} `}>
+      <body className={`${inter.className} `}>
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
