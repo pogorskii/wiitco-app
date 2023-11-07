@@ -1,4 +1,4 @@
-import { GameCalendar } from "@/app/ui/video-games/game-card";
+import { GameCalendar } from "@/app/ui/video-games/game-calendar";
 import { Button } from "@/components/ui/button";
 import { FetchTest } from "@/app/lib/data";
 // import CardWrapper from "@/app/ui/dashboard/cards";
@@ -6,6 +6,7 @@ import { FetchTest } from "@/app/lib/data";
 // import LatestInvoices from "@/app/ui/dashboard/latest-invoices";
 // import { lusitana } from "@/app/ui/fonts";
 import { Suspense } from "react";
+import { GameReleasesPerDay } from "@/app/lib/definitions";
 // import {
 //   LatestInvoicesSkeleton,
 //   RevenueChartSkeleton,
@@ -13,11 +14,11 @@ import { Suspense } from "react";
 // } from "@/app/ui/skeletons";
 
 export default async function Page() {
-  const gamesList = await FetchTest();
+  const gameReleasesPerDay = await FetchTest();
 
   return (
-    <main className="flex gap-1 flex-wrap">
-      <GameCalendar games={gamesList} />
+    <main className="flex flex-col gap-6">
+      <GameCalendar games={gameReleasesPerDay} />
     </main>
     // <main>
     //   <h1 className={`${lusitana.className} mb-4 text-xl md:text-2xl`}>

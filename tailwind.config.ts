@@ -8,13 +8,19 @@ const config: Config = {
   ],
   theme: {
     extend: {
-      backgroundImage: {
-        hero: `url('/test-bg.webp'),
-          linear-gradient(114.86deg, #2D0936 14.71%, #170312 78.23%)
-        `,
+      keyframes: {
+        animatedgradient: {
+          "0%": { backgroundPosition: "0% 50%" },
+          "50%": { backgroundPosition: "100% 50%" },
+          "100%": { backgroundPosition: "0% 50%" },
+        },
+        animation: {
+          gradient: "animatedgradient 6s ease infinite alternate",
+        },
       },
     },
+    plugins: [],
   },
-  plugins: [],
 };
+
 export default config;

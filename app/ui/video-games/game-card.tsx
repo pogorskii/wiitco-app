@@ -1,5 +1,4 @@
-import { FormatedGameData } from "@/app/lib/definitions";
-import { Badge } from "@/components/ui/badge";
+import Image from "next/image";
 import {
   NSwitchBadge,
   PCBadge,
@@ -9,66 +8,52 @@ import {
   XSeriesBadge,
 } from "./platforms-badges";
 
-export function GameCalendar({ games }: { games: FormatedGameData[] }) {
+export function GameCard({
+  id,
+  title,
+  imageUrl,
+  platforms,
+}: {
+  id: number;
+  title: string;
+  imageUrl: string;
+  platforms: string[];
+}) {
   return (
-    <>
-      {games.map((game) => (
-        <div
-          key={game.id}
-          style={{
-            backgroundImage: `linear-gradient(to bottom, transparent 35%, black 100%), url(${game.imageUrl})`,
-          }}
-          className="min-h-[250px] min-w-[424px] max-w-[424px] bg-center bg-cover ease-in duration-200 p-4 flex flex-col justify-between"
-        >
-          <Badge variant="date" className="self-start">
-            {game.releaseDay === 50 ? "TBC" : game.releaseDay}
-          </Badge>
-          <div>
-            <h2 className="mb-2 text-white scroll-m-20 text-2xl font-semibold tracking-tight">
-              {game.title}
-            </h2>
-            <div className="flex self-start gap-2">
-              {game.platforms.map((platform) => {
-                if (platform === "PC") return <PCBadge />;
-                if (platform === "XONE") return <XOneBadge />;
-                if (platform === "XSX") return <XSeriesBadge />;
-                if (platform === "PS4") return <PS4Badge />;
-                if (platform === "PS5") return <PS5Badge />;
-                if (platform === "NSW") return <NSwitchBadge />;
-              })}
-            </div>
-          </div>
+    <div
+      key={id}
+      className="mb-5 border border-slate-400 flex flex-col self-start overflow-hidden h-auto max-w-full rounded-lg"
+    >
+      <div>
+        <Image
+          src={imageUrl}
+          alt={title}
+          width={600}
+          height={900}
+          style={{ objectFit: "cover" }}
+        />
+      </div>
+      <div className="p-4 pb-6">
+        <h3 className="mb-3 scroll-m-20 text-2xl font-semibold tracking-tight">
+          {title}
+        </h3>
+        <div className="flex flex-wrap self-start gap-2">
+          {platforms.map((platform) => {
+            if (platform === "PC")
+              return <PCBadge key={platform} variant={platform} />;
+            if (platform === "XONE")
+              return <XOneBadge key={platform} variant={platform} />;
+            if (platform === "XSX")
+              return <XSeriesBadge key={platform} variant={platform} />;
+            if (platform === "PS4")
+              return <PS4Badge key={platform} variant={platform} />;
+            if (platform === "PS5")
+              return <PS5Badge key={platform} variant={platform} />;
+            if (platform === "NSW")
+              return <NSwitchBadge key={platform} variant={platform} />;
+          })}
         </div>
-      ))}
-    </>
+      </div>
+    </div>
   );
 }
-
-// export function GameCard() {
-//   return (
-//     <div
-//       style={{
-//         backgroundImage:
-//           "linear-gradient(to bottom, transparent 45%, black 100%), url(test-bg.webp)",
-//       }}
-//       className="min-h-[250px] max-w-[424px] bg-center bg-[length:100%] hover:bg-[length:110%] ease-in duration-200 p-4 flex flex-col justify-between"
-//     >
-//       <Badge variant="date" className="self-start">
-//         25
-//       </Badge>
-//       <div>
-//         <h2 className="mb-2 text-white scroll-m-20 text-2xl font-semibold tracking-tight">
-//           The Last of Us: Part II Super Mega Remake
-//         </h2>
-//         <div className="flex self-start gap-2">
-//           <PS5Badge />
-//           <PS4Badge />
-//           <XSeriesBadge />
-//           <XOneBadge />
-//           <NSwitchBadge />
-//           <PCBadge />
-//         </div>
-//       </div>
-//     </div>
-//   );
-// }

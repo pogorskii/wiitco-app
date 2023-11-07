@@ -4,16 +4,37 @@ export type GamesList = {
   image: Object;
   name: string;
   oirginal_release_date: number | null;
-  platforms: [];
+  platforms: string[];
 };
 
-export type FormatedGameData = {
+export type GameRelease = {
   id: number;
   title: string;
   releaseDay: number;
   imageUrl: string;
-  platforms: [string];
+  platforms: string[];
 };
+
+export type GameReleasesPerDay<releaseDay extends number> = Map<
+  releaseDay,
+  GameRelease[]
+>;
+
+// export type GameReleasesPerDay = {
+//   [releaseDay: string]: GameRelease[];
+// };
+
+// export type GameReleasesPerDay = {
+//   day: [
+//     {
+//       id: number,
+//       title: string,
+//       releaseDay: number,
+//       imageUrl: string,
+//       platforms: [string]
+//     }
+//   ]
+// };
 
 // // This file contains type definitions for your data.
 // // It describes the shape of the data, and what data type each property should accept.
