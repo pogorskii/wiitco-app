@@ -18,6 +18,7 @@ export function GamesDay({
       <div className="col-span-3">
         {games.length === 1 ? (
           <GameCardHorizontal
+            key={games[0].id}
             id={games[0].id}
             title={games[0].title}
             imageUrl={games[0].imageUrl}
@@ -26,14 +27,13 @@ export function GamesDay({
         ) : games.length === 2 ? (
           games.map((game) => {
             return (
-              <div className="mb-5">
-                <GameCardHorizontal
-                  id={game.id}
-                  title={game.title}
-                  imageUrl={game.imageUrl}
-                  platforms={game.platforms}
-                />
-              </div>
+              <GameCardHorizontal
+                key={game.id}
+                id={game.id}
+                title={game.title}
+                imageUrl={game.imageUrl}
+                platforms={game.platforms}
+              />
             );
           })
         ) : (
@@ -47,6 +47,7 @@ export function GamesDay({
             {games.map((game) => {
               return (
                 <GameCardVertical
+                  key={game.id}
                   id={game.id}
                   title={game.title}
                   imageUrl={game.imageUrl}
@@ -60,61 +61,3 @@ export function GamesDay({
     </div>
   );
 }
-
-// export function GamesDay({
-//   day,
-//   games,
-// }: {
-//   day: number;
-//   games: GameRelease[];
-// }) {
-//   return (
-//     <div className="grid grid-cols-4 gap-5">
-//       <DayHeader day={day} />
-//       <div className="col-span-3">
-//         <div className="grid grid-cols-3 gap-4">
-//           <div>
-//             {games.map((game, i) => {
-//               if (i % 3 === 0)
-//                 return (
-//                   <GameCard
-//                     id={game.id}
-//                     title={game.title}
-//                     imageUrl={game.imageUrl}
-//                     platforms={game.platforms}
-//                   />
-//                 );
-//             })}
-//           </div>
-//           <div>
-//             {games.map((game, i) => {
-//               if (i % 2 === 1)
-//                 return (
-//                   <GameCard
-//                     id={game.id}
-//                     title={game.title}
-//                     imageUrl={game.imageUrl}
-//                     platforms={game.platforms}
-//                   />
-//                 );
-//             })}
-//           </div>
-//           <div>
-//             {games.map((game, i) => {
-//               if (i % 3 === 2) {
-//                 return (
-//                   <GameCard
-//                     id={game.id}
-//                     title={game.title}
-//                     imageUrl={game.imageUrl}
-//                     platforms={game.platforms}
-//                   />
-//                 );
-//               }
-//             })}
-//           </div>
-//         </div>
-//       </div>
-//     </div>
-//   );
-// }

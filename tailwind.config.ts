@@ -14,9 +14,6 @@ const config: Config = {
           "50%": { backgroundPosition: "100% 50%" },
           "100%": { backgroundPosition: "0% 50%" },
         },
-        animation: {
-          gradient: "animatedgradient 6s ease infinite alternate",
-        },
       },
     },
     plugins: [],

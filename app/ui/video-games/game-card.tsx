@@ -54,7 +54,7 @@ export function GameCardHorizontal({
   return (
     <div
       key={id}
-      className="relative shadow border border-gray-200 dark:border-gray-800 grid grid-cols-2 overflow-hidden h-auto max-h-[250px] max-w-full rounded-lg"
+      className="mb-5 relative shadow border border-gray-200 dark:border-gray-800 grid grid-cols-2 overflow-hidden h-auto max-h-[250px] max-w-full rounded-lg"
     >
       {/* bg-[radial-gradient(ellipse_at_bottom_right,_var(--tw-gradient-stops))] from-sky-400 to-indigo-900 */}
       <div className="relative col-span-1 flex flex-col justify-start p-5 pt-0 pb-6">

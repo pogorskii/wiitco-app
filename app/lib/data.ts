@@ -66,15 +66,6 @@ export async function FetchTest(): Promise<
       }
     }
 
-    console.log(gameReleasesPerDay);
-
-    // const gameReleasesPerDay: GameReleasesPerDay = {};
-    // sortedData.forEach((game: GameRelease) => {
-    //   if (!gameReleasesPerDay.hasOwnProperty(game.releaseDay))
-    //     gameReleasesPerDay[game.releaseDay] = [];
-    //   gameReleasesPerDay[game.releaseDay].push(game);
-    // });
-
     return gameReleasesPerDay;
   } catch (error) {
     console.error("Database Error: ", error);
