@@ -20,6 +20,34 @@ export type GameReleasesPerDay<releaseDay extends number> = Map<
   GameRelease[]
 >;
 
+export type GameReleaseRaw = {
+  expected_release_day: null | number;
+  id: number;
+  image: {
+    icon_url: string;
+    medium_url: string;
+    screen_url: string;
+    screen_large_url: string;
+    small_url: string;
+    super_url: string;
+    thumb_url: string;
+    tiny_url: string;
+    original_url: string;
+    image_tags: string;
+  };
+  name: string;
+  original_release_date: string;
+  platforms: GamePlatformRaw[];
+};
+
+export type GamePlatformRaw = {
+  api_detail_url: string;
+  id: number;
+  name: string;
+  site_detail_url: string;
+  abbreviation: string;
+};
+
 // export type GameReleasesPerDay = {
 //   [releaseDay: string]: GameRelease[];
 // };

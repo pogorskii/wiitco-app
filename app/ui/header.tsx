@@ -2,7 +2,6 @@ import WIITCOLogo from "@/app/ui/wiitco-logo";
 import NavLinks from "@/app/ui/nav-links";
 import { LogInButton } from "./buttons";
 import { ThemeToggle } from "./theme-toggle";
-import { Button } from "@/components/ui/button";
 
 export default function SideNav() {
   return (

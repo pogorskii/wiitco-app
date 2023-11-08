@@ -1,11 +1,29 @@
 "use server";
 
-import { GameRelease, GameReleasesPerDay } from "./definitions";
+import { GameRelease, GameReleasesPerDay, GameReleaseRaw } from "./definitions";
 
 const API_KEY = process.env.API_KEY;
 const API_SECRET = process.env.TWITCH_API_SECRET;
 const CLIENT_ID = process.env.TWITCH_CLIENT_ID;
 const TWITCH_TOKEN = process.env.TWITCH_TOKEN;
+
+export async function fetchGamesReleaseDates(
+  year: string,
+  month: string
+): Promise<GameReleaseRaw[] | undefined> {
+  try {
+    const data = await fetch(
+      `https://www.giantbomb.com/api/games/?api_key=${API_KEY}&format=json&field_list=name,expected_release_day,original_release_date,id,platforms,image&filter=expected_release_year:${year},expected_release_month:${month}`
+    );
+    if (!data) throw new Error(`Couldn't fetch data from API.`);
+
+    const response = await data.json();
+
+    return response.results;
+  } catch (error) {
+    console.error("Database Error: ", error);
+  }
+}
 
 export async function FetchTest(): Promise<
   GameReleasesPerDay<number> | undefined

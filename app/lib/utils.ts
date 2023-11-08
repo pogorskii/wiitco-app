@@ -1,69 +1,107 @@
-// import { Revenue } from './definitions';
+import { GameReleaseRaw, GameRelease, GameReleasesPerDay } from "./definitions";
 
-// export const formatCurrency = (amount: number) => {
-//   return (amount / 100).toLocaleString('en-US', {
-//     style: 'currency',
-//     currency: 'USD',
-//   });
-// };
+export const getPrevMonthURL = (
+  currentURL: string,
+  year: string,
+  month: string
+): string => {
+  const categoryPath = currentURL.slice(0, currentURL.search(/\d/));
+  const prevYear = (Number(year) - 1).toString();
+  const prevMonth = (Number(month) - 1).toString();
+  const prevPagePath =
+    month === "1"
+      ? `${categoryPath}${prevYear}/12`
+      : `${categoryPath}${year}/${prevMonth}`;
 
-// export const formatDateToLocal = (
-//   dateStr: string,
-//   locale: string = 'en-US',
-// ) => {
-//   const date = new Date(dateStr);
-//   const options: Intl.DateTimeFormatOptions = {
-//     day: 'numeric',
-//     month: 'short',
-//     year: 'numeric',
-//   };
-//   const formatter = new Intl.DateTimeFormat(locale, options);
-//   return formatter.format(date);
-// };
+  return prevPagePath;
+};
 
-// export const generateYAxis = (revenue: Revenue[]) => {
-//   // Calculate what labels we need to display on the y-axis
-//   // based on highest record and in 1000s
-//   const yAxisLabels = [];
-//   const highestRecord = Math.max(...revenue.map((month) => month.revenue));
-//   const topLabel = Math.ceil(highestRecord / 1000) * 1000;
+export const getNextMonthURL = (
+  currentURL: string,
+  year: string,
+  month: string
+): string => {
+  const categoryPath = currentURL.slice(0, currentURL.search(/\d/));
+  const nextYear = (Number(year) + 1).toString();
+  const nextMonth = (Number(month) + 1).toString();
+  const nextPagePath =
+    month === "12"
+      ? `${categoryPath}${nextYear}/1`
+      : `${categoryPath}${year}/${nextMonth}`;
 
-//   for (let i = topLabel; i >= 0; i -= 1000) {
-//     yAxisLabels.push(`$${i / 1000}K`);
-//   }
+  return nextPagePath;
+};
 
-//   return { yAxisLabels, topLabel };
-// };
+export const getShortDayMonthName = (
+  day: number,
+  monthNumber: number,
+  locale: string = "en-US"
+): string => {
+  const date = new Date();
+  date.setDate(day);
+  date.setMonth(monthNumber - 1);
 
-// export const generatePagination = (currentPage: number, totalPages: number) => {
-//   // If the total number of pages is 7 or less,
-//   // display all pages without any ellipsis.
-//   if (totalPages <= 7) {
-//     return Array.from({ length: totalPages }, (_, i) => i + 1);
-//   }
+  return date.toLocaleString(locale, {
+    day: "numeric",
+    month: "short",
+  });
+};
 
-//   // If the current page is among the first 3 pages,
-//   // show the first 3, an ellipsis, and the last 2 pages.
-//   if (currentPage <= 3) {
-//     return [1, 2, 3, '...', totalPages - 1, totalPages];
-//   }
+export const getMonthYearName = (
+  monthNumber: string,
+  yearNumber: string,
+  locale: string = "en-US"
+): string => {
+  const date = new Date();
+  date.setFullYear(Number(yearNumber), Number(monthNumber) - 1);
 
-//   // If the current page is among the last 3 pages,
-//   // show the first 2, an ellipsis, and the last 3 pages.
-//   if (currentPage >= totalPages - 2) {
-//     return [1, 2, '...', totalPages - 2, totalPages - 1, totalPages];
-//   }
+  return date.toLocaleString(locale, {
+    month: "long",
+    year: "numeric",
+  });
+};
 
-//   // If the current page is somewhere in the middle,
-//   // show the first page, an ellipsis, the current page and its neighbors,
-//   // another ellipsis, and the last page.
-//   return [
-//     1,
-//     '...',
-//     currentPage - 1,
-//     currentPage,
-//     currentPage + 1,
-//     '...',
-//     totalPages,
-//   ];
-// };
+export const formatGameRelesesDates = (
+  data: GameReleaseRaw[]
+): GameReleasesPerDay<number> => {
+  const formattedData = data.map((game) => {
+    return {
+      id: game.id,
+      title: game.name,
+      releaseDay:
+        game.expected_release_day === null
+          ? game.original_release_date === null
+            ? 50
+            : Number(
+                game.original_release_date?.slice(
+                  game.original_release_date.length - 2
+                )
+              )
+          : game.expected_release_day,
+      imageUrl: game.image.super_url,
+      platforms: game.platforms?.map((platform) => platform.abbreviation),
+    };
+  });
+
+  const sortedGameReleases: GameRelease[] = formattedData.sort(
+    (a: { releaseDay: number }, b: { releaseDay: number }) =>
+      a.releaseDay - b.releaseDay
+  );
+
+  const gameReleasesPerDay: GameReleasesPerDay<number> = new Map();
+
+  for (const game of sortedGameReleases) {
+    const releaseDay = game.releaseDay;
+
+    if (!gameReleasesPerDay.has(releaseDay))
+      gameReleasesPerDay.set(releaseDay, []);
+
+    const gamesArray = gameReleasesPerDay.get(releaseDay);
+    if (gamesArray !== undefined) {
+      gamesArray.push(game);
+      gameReleasesPerDay.set(releaseDay, gamesArray);
+    }
+  }
+
+  return gameReleasesPerDay;
+};
