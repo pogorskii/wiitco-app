@@ -23,7 +23,7 @@
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.0.0",
     "dayjs": "^1.11.10",
-    "geist": "^1.0.0",
+    "geist": "^1.1.0",
     "heroicons": "^2.0.18",
     "lucide-react": "^0.292.0",
     "next": "14.0.1",
