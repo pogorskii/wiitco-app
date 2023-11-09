@@ -16,7 +16,10 @@ export function GamesDay({
   const displayDate = getShortDayMonthName(day, Number(month));
 
   return (
-    <section id={day.toString()} className="relative grid grid-cols-4 gap-5">
+    <section
+      id={`day-${day.toString()}`}
+      className="relative grid grid-cols-4 gap-5"
+    >
       <DayHeader day={day} displayDate={displayDate} />
       <div className="col-span-3">
         {games.length === 1 ? (
