@@ -5,11 +5,13 @@ export function GameCardVertical({
   id,
   title,
   imageUrl,
+  blurUrl,
   platforms,
 }: {
   id: number;
   title: string;
   imageUrl: string;
+  blurUrl: string;
   platforms: string[];
 }) {
   return (
@@ -25,6 +27,8 @@ export function GameCardVertical({
           width={600}
           height={900}
           style={{ objectFit: "cover" }}
+          placeholder="blur"
+          blurDataURL={blurUrl}
         />
       </div>
       <div className="relative p-5 pt-0 pb-6">
@@ -44,11 +48,13 @@ export function GameCardHorizontal({
   id,
   title,
   imageUrl,
+  blurUrl,
   platforms,
 }: {
   id: number;
   title: string;
   imageUrl: string;
+  blurUrl: string;
   platforms: string[];
 }) {
   return (
@@ -56,7 +62,6 @@ export function GameCardHorizontal({
       key={id}
       className="mb-5 relative shadow border border-gray-200 dark:border-gray-800 grid grid-cols-2 overflow-hidden h-auto max-h-[250px] max-w-full rounded-lg"
     >
-      {/* bg-[radial-gradient(ellipse_at_bottom_right,_var(--tw-gradient-stops))] from-sky-400 to-indigo-900 */}
       <div className="relative col-span-1 flex flex-col justify-start p-5 pt-0 pb-6">
         <div className="absolute z-0 inset-x-0 m-auto h-full max-w-lg bg-gradient-to-r from-rose-50/50 to-teal-50/50 dark:bg-[radial-gradient(ellipse_at_bottom_right,_var(--tw-gradient-stops))] dark:from-sky-500 dark:to-indigo-900"></div>
         <h3 className="relative pt-5 mb-3 text-xl font-bold text-gray-900 dark:text-white">
@@ -74,6 +79,8 @@ export function GameCardHorizontal({
           width={500}
           height={900}
           style={{ objectFit: "contain" }}
+          placeholder="blur"
+          blurDataURL={blurUrl}
         />
       </div>
     </div>

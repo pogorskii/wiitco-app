@@ -12,6 +12,7 @@ export type GameRelease = {
   title: string;
   releaseDay: number;
   imageUrl: string;
+  blurUrl: string;
   platforms: string[];
 };
 

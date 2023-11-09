@@ -20,6 +20,7 @@ export function GameMasonry({ games }: { games: GameRelease[] }) {
             id={game.id}
             title={game.title}
             imageUrl={game.imageUrl}
+            blurUrl={game.blurUrl}
             platforms={game.platforms}
           />
         );

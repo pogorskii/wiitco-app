@@ -78,7 +78,8 @@ export const formatGameRelesesDates = (
                 )
               )
           : game.expected_release_day,
-      imageUrl: game.image.super_url,
+      imageUrl: game.image.small_url,
+      blurUrl: game.image.tiny_url,
       platforms: game.platforms?.map((platform) => platform.abbreviation),
     };
   });

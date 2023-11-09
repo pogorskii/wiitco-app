@@ -26,13 +26,15 @@ export default async function Page({
   const gameReleasesPerDay = formatGameRelesesDates(gameReleasesPerDayRaw);
   const daysEntries = Array.from(gameReleasesPerDay.entries());
 
+  const gamesCalendar = daysEntries.map((dayEntry) => {
+    const [day, games] = dayEntry;
+    return <GamesDay key={day} day={day} month={month} games={games} />;
+  });
+
   return (
     <main className="flex flex-col gap-6">
       <SectionNav year={year} month={month} />
-      {daysEntries.map((dayEntry) => {
-        const [day, games] = dayEntry;
-        return <GamesDay key={day} day={day} month={month} games={games} />;
-      })}
+      {gamesCalendar}
     </main>
   );
 }
