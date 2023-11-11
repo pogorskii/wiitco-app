@@ -20,17 +20,17 @@ export function GamePlatforms({ platforms }: { platforms: string[] }) {
           return <PCBadge key={platform} variant={platform} />;
         if (platform === "XONE")
           return <XOneBadge key={platform} variant={platform} />;
-        if (platform === "XSX")
+        if (platform === "Series X")
           return <XSeriesBadge key={platform} variant={platform} />;
         if (platform === "PS4")
           return <PS4Badge key={platform} variant={platform} />;
         if (platform === "PS5")
           return <PS5Badge key={platform} variant={platform} />;
-        if (platform === "NSW")
+        if (platform === "Switch")
           return <NSwitchBadge key={platform} variant={platform} />;
-        if (platform === "LIN")
+        if (platform === "Linux")
           return <LINBadge key={platform} variant={platform} />;
-        if (platform === "MAC")
+        if (platform === "Mac")
           return <MACBadge key={platform} variant={platform} />;
         if (platform === "IPHN")
           return <IPHNBadge key={platform} variant={platform} />;
@@ -38,6 +38,8 @@ export function GamePlatforms({ platforms }: { platforms: string[] }) {
           return <IPADBadge key={platform} variant={platform} />;
         if (platform === "ANDR")
           return <ANDRBadge key={platform} variant={platform} />;
+
+        // TODO: Meta Quest 2, Steam VR, NES, PSVR2
       })}
     </div>
   );
