@@ -2,7 +2,7 @@
 
 import { DayHeader } from "./day-header";
 import { GameCardHorizontal, GameCardVertical } from "./game-card";
-import { GameRelease } from "@/app/lib/definitions";
+import { FormattedGameRelease } from "@/app/lib/definitions";
 import { getShortDayMonthName } from "@/app/lib/utils";
 import { ReactNode } from "react";
 
@@ -15,7 +15,7 @@ export async function GamesDay({
   day: number;
   month: string;
   year: string;
-  games: any;
+  games;
 }) {
   const displayDate = getShortDayMonthName(day, month, year);
 

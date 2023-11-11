@@ -73,6 +73,8 @@ export async function fetchGamesByMonth(
 
     if (!responses) throw new Error(`Couldn't fetch data from API.`);
 
+    console.log(responses.flat());
+
     return responses.flat();
   } catch (error) {
     console.error("IGDB API Error: ", error);

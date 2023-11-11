@@ -1,5 +1,4 @@
 // Hashtable variables
-
 export type DayNumber = number;
 export type GameId = number;
 
@@ -37,9 +36,6 @@ export type GameReleaseRaw = GameReleaseBase & {
 export type GameReleaseRawWithPlatformArray = GameReleaseBase & {
   platform: Platform[];
 };
-
-export type OnlyKeysOfGameReleaseRawWithPlatformArray =
-  keyof GameReleaseRawWithPlatformArray & keyof GameReleaseBase;
 
 // Formatted Montthly Game Releases
 export type FormattedGameRelease = {

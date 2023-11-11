@@ -12,7 +12,7 @@ export function GameCardVertical({
   title: string;
   imageUrl: string;
   blurUrl: string;
-  platforms: string[];
+  platforms: number[];
 }) {
   return (
     <div
@@ -55,7 +55,7 @@ export function GameCardHorizontal({
   title: string;
   imageUrl: string;
   blurUrl: string;
-  platforms: string[];
+  platforms: number[];
 }) {
   return (
     <div

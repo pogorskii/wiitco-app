@@ -4,7 +4,6 @@ import {
   FormattedGameRelease,
   DayNumber,
   GameId,
-  OnlyKeysOfGameReleaseRawWithPlatformArray,
 } from "./definitions";
 
 // Get Day Number from Human Date string
@@ -56,22 +55,13 @@ export const mergeGameReleasesByGameId = (
       hashTable.get(gameId) || ({} as GameReleaseRawWithPlatformArray);
 
     for (const property in gameObject) {
-      const TSStopHatingMePLEASE =
-        property as keyof GameReleaseRawWithPlatformArray;
-
-      if (
-        TSStopHatingMePLEASE ===
-        ("platform" as keyof GameReleaseRawWithPlatformArray)
-      ) {
-        if (!Array.isArray(mergedGameObject[TSStopHatingMePLEASE])) {
-          mergedGameObject[TSStopHatingMePLEASE] = [];
+      if (property === "platform") {
+        if (!Array.isArray(mergedGameObject.platform)) {
+          mergedGameObject.platform = [];
         }
-        mergedGameObject[TSStopHatingMePLEASE].push(
-          gameObject[TSStopHatingMePLEASE]
-        );
+        mergedGameObject.platform.push(gameObject.platform);
       } else {
-        mergedGameObject[TSStopHatingMePLEASE] =
-          gameObject[TSStopHatingMePLEASE];
+        (mergedGameObject as any)[property] = (gameObject as any)[property];
       }
     }
 
@@ -81,27 +71,13 @@ export const mergeGameReleasesByGameId = (
   return hashTable;
 };
 
-/**
- * High-order function that takes raw Game Releases data from API and formats it into a hastable
- * @param rawData
- * @returns
- */
-export const formatGameReleasesToMap = (gameReleasesRaw: GameReleaseRaw[]) => {
-  // 1. Group all Game Releases by Release Day
-  const mappedByDay = groupGameReleasesByDay(gameReleasesRaw);
-
-  // 2. Merge Game Releases of the same Game on different Platforms
-  const mappedByDayByGameId = new Map<
+// 3.
+export const formatGameReleases = (
+  inputGameReleasesMap: Map<
     number,
     Map<number, GameReleaseRawWithPlatformArray>
-  >();
-
-  for (const [dayNumber, gameReleases] of Array.from(mappedByDay.entries())) {
-    const mergedGameReleases = mergeGameReleasesByGameId(gameReleases);
-    mappedByDayByGameId.set(dayNumber, mergedGameReleases);
-  }
-
-  // 3. Format each GameRelease into usable data
+  >
+): Map<DayNumber, Map<GameId, FormattedGameRelease>> => {
   const dateCategoryEnum: any = {
     0: "YYYYMMMMDD",
     1: "YYYYMMMM",
@@ -141,9 +117,12 @@ export const formatGameReleasesToMap = (gameReleasesRaw: GameReleaseRaw[]) => {
     9: "Korea",
     10: "Brazil",
   };
-  const formattedGamesMap = new Map();
+  const formattedGameReleasesMap = new Map<
+    DayNumber,
+    Map<GameId, FormattedGameRelease>
+  >();
 
-  for (const [date, games] of Array.from(mappedByDayByGameId.entries())) {
+  for (const [date, games] of Array.from(inputGameReleasesMap.entries())) {
     const formattedGamesReleases = new Map<number, FormattedGameRelease>();
 
     for (const [gameId, gameData] of Array.from(games.entries())) {
@@ -178,137 +157,49 @@ export const formatGameReleasesToMap = (gameReleasesRaw: GameReleaseRaw[]) => {
       formattedGamesReleases.set(gameId, formattedGameRelease);
     }
 
-    formattedGamesMap.set(date, formattedGamesReleases);
+    formattedGameReleasesMap.set(date, formattedGamesReleases);
   }
 
+  return formattedGameReleasesMap;
+};
+
+/**
+ * High-order function that takes raw Game Releases data from API and formats it into a hastable
+ * @param rawData
+ * @returns
+ */
+export const formatGameReleasesToMap = (gameReleasesRaw: GameReleaseRaw[]) => {
+  // 1. Group all Game Releases by Release Day
+  const mappedByDay: Map<DayNumber, GameReleaseRaw[]> =
+    groupGameReleasesByDay(gameReleasesRaw);
+
+  // 2. Merge Game Releases of the same Game on different Platforms
+  const mappedByDayByGameId = new Map<
+    DayNumber,
+    Map<GameId, GameReleaseRawWithPlatformArray>
+  >();
+
+  for (const [dayNumber, gameReleases] of Array.from(mappedByDay.entries())) {
+    const mergedGameReleases = mergeGameReleasesByGameId(gameReleases);
+    mappedByDayByGameId.set(dayNumber, mergedGameReleases);
+  }
+
+  // 3. Format each GameRelease into usable data
+  const formattedGameReleasesMap = formatGameReleases(mappedByDayByGameId);
+
   // 4. Sort formatted GameReleases
-  const sortedKeys = Array.from(formattedGamesMap.keys()).sort((a, b) => a - b);
-  const sortedMap = new Map();
+  const sortedKeys = Array.from(formattedGameReleasesMap.keys()).sort(
+    (a, b) => a - b
+  );
+  const sortedMap = new Map<DayNumber, Map<GameId, FormattedGameRelease>>();
   for (const key of sortedKeys) {
-    sortedMap.set(key, formattedGamesMap.get(key));
+    sortedMap.set(key, formattedGameReleasesMap.get(key) as any);
   }
 
   return sortedMap;
 };
 
-//////////////
-
-// export const formatGameReleasesToMap = (gameReleasesRaw: GameReleaseRaw[]) => {
-//   const groupedByDay = groupGameReleasesByDay(gameReleasesRaw);
-//   const dayEntries = Array.from(groupedByDay.entries());
-
-//   const gamesMap = new Map();
-
-//   for (const [gameId, gameReleases] of dayEntries) {
-//     const mergedGameReleases = mergeGameReleasesByGameId(gameReleases);
-
-//     gamesMap.set(gameId, mergedGameReleases);
-//   }
-
-//   const formattedGamesMap = new Map();
-
-//   for (const [date, games] of Array.from(gamesMap.entries())) {
-//     const formattedGamesReleases = new Map();
-
-//     for (const [gameId, gameData] of games.entries()) {
-//       const dateCategoryEnum: any = {
-//         0: "YYYYMMMMDD",
-//         1: "YYYYMMMM",
-//         2: "YYYY",
-//         3: "YYYYQ1",
-//         4: "YYYYQ2",
-//         5: "YYYYQ3",
-//         6: "YYYYQ4",
-//         7: "TBD",
-//       };
-
-//       const gameCategoryEnum: any = {
-//         0: "Game",
-//         1: "DLC",
-//         2: "Expansion",
-//         3: "Bundle",
-//         4: "Standalone DLC",
-//         5: "Mod",
-//         6: "Episode",
-//         7: "Full Season",
-//         8: "Remake",
-//         9: "Remaster",
-//         10: "Expanded Game",
-//         11: "Port",
-//         12: "Fork",
-//         13: "Pack",
-//         14: "Update",
-//       };
-
-//       const releaseRegionEnum: any = {
-//         1: "Europe",
-//         2: "North America",
-//         3: "Australia",
-//         4: "New Zealand",
-//         5: "Japan",
-//         6: "China",
-//         7: "Asia",
-//         8: "Worldwide",
-//         9: "Korea",
-//         10: "Brazil",
-//       };
-
-//       const dayNumber = checkStringAndReturnDayNumber(gameData.human);
-
-//       const formattedGameRelease: FormattedGameRelease = {
-//         releaseId: gameData.id,
-//         gameId: gameData.game.id,
-//         title: gameData.game.name,
-//         slug: gameData.game.slug,
-//         gameType: gameCategoryEnum[gameData.game.category],
-//         dateType: dateCategoryEnum[gameData.category],
-//         date: gameData.date,
-//         day: dayNumber === null ? 50 : dayNumber,
-//         month: gameData.m,
-//         year: gameData.y,
-//         dateString: gameData.human,
-//         region: releaseRegionEnum[gameData.region],
-//         platforms: gameData.platform.map(
-//           (platform: { id: number }) => platform.id
-//         ),
-//         // TODO: Change placeholder img
-//         coverUrl: gameData.game.cover?.url
-//           ? `https:${gameData.game.cover.url}`.replace("t_thumb", "t_original")
-//           : "https://images.igdb.com/igdb/image/upload/t_cover_big/co73t7.jpg",
-//         blurUrl: gameData.game.cover?.url
-//           ? `https:${gameData.game.cover.url}`
-//           : "https://images.igdb.com/igdb/image/upload/t_thumb/co73t7.jpg",
-//         dateUpdated: gameData.updated_at,
-//       };
-
-//       console.log(formattedGameRelease);
-
-//       formattedGamesReleases.set(gameId, formattedGameRelease);
-//     }
-
-//     const dayNumber =
-//       checkStringAndReturnDayNumber(date) === null
-//         ? 50
-//         : checkStringAndReturnDayNumber(date);
-
-//     formattedGamesMap.set(dayNumber, formattedGamesReleases);
-//   }
-
-//   const sortedKeys = Array.from(formattedGamesMap.keys()).sort((a, b) => a - b);
-
-//   const sortedMap = new Map();
-
-//   for (const key of sortedKeys) {
-//     sortedMap.set(key, formattedGamesMap.get(key));
-//   }
-
-//   return sortedMap;
-// };
-
-/////////////
-
 // Links for Section Navigation
-
 export const getPrevMonthURL = (
   currentURL: string,
   year: string,
