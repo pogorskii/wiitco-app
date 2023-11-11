@@ -1,5 +1,15 @@
+// Hashtable variables
+
+export type DayNumber = number;
+export type GameId = number;
+
 // Data fetched from Game API for Monthly Releases
-interface GameReleaseBase {
+type Platform = {
+  id: number;
+  abbreviation: string;
+};
+
+type GameReleaseBase = {
   id: number;
   category: number;
   date: EpochTimeStamp;
@@ -18,11 +28,7 @@ interface GameReleaseBase {
   region: number;
   updated_at: EpochTimeStamp;
   y: number;
-}
-interface Platform {
-  id: number;
-  abbreviation: string;
-}
+};
 
 export type GameReleaseRaw = GameReleaseBase & {
   platform: Platform;
@@ -31,6 +37,9 @@ export type GameReleaseRaw = GameReleaseBase & {
 export type GameReleaseRawWithPlatformArray = GameReleaseBase & {
   platform: Platform[];
 };
+
+export type OnlyKeysOfGameReleaseRawWithPlatformArray =
+  keyof GameReleaseRawWithPlatformArray & keyof GameReleaseBase;
 
 // Formatted Montthly Game Releases
 export type FormattedGameRelease = {

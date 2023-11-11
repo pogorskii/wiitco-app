@@ -2,12 +2,13 @@ import {
   GameReleaseRaw,
   GameReleaseRawWithPlatformArray,
   FormattedGameRelease,
+  DayNumber,
+  GameId,
+  OnlyKeysOfGameReleaseRawWithPlatformArray,
 } from "./definitions";
 
 // Get Day Number from Human Date string
-export const checkStringAndReturnDayNumber = (
-  dateString: string
-): number | null => {
+export const checkStringAndReturnDayNumber = (dateString: string): number => {
   // Split the date string into an array of components.
   const dateComponents = dateString.split(" ");
 
@@ -21,49 +22,56 @@ export const checkStringAndReturnDayNumber = (
     // Return the day number.
     return Number(dayNumberWithoutLeadingZero);
   } else {
-    // The date string does not include a day number.
-    return null;
+    // The date string does not include a day number 50 is a placehloder value for TBD.
+    return 50;
   }
 };
 
-// Initial Grouping of fetched Releases by Day of release
+// 1. Map fetched GameReleases by Day of release
 export const groupGameReleasesByDay = (
   data: GameReleaseRaw[]
-): Map<string, GameReleaseRaw[]> => {
-  const groupedByDay = new Map();
+): Map<DayNumber, GameReleaseRaw[]> => {
+  const groupedByDay = new Map<DayNumber, GameReleaseRaw[]>();
+
   for (const gameRelease of data) {
-    const bucket = groupedByDay.get(gameRelease.human) || [];
+    const dayNumber = checkStringAndReturnDayNumber(gameRelease.human);
+    const bucket = groupedByDay.get(dayNumber) || [];
     bucket.push(gameRelease);
-    groupedByDay.set(gameRelease.human, bucket);
+
+    groupedByDay.set(dayNumber, bucket);
   }
 
   return groupedByDay;
 };
 
-/**
- * Loops over an array of GameRelease objects and merges objects of the same Game with different Platforms
- * @param gameReleaseObjects
- * @returns Map<string, GameReleaseRawWithPlatformArray[]>
- */
+// 2. Map GameReleases by GameId
 export const mergeGameReleasesByGameId = (
   gameReleaseObjects: GameReleaseRaw[]
-): Map<string, GameReleaseRawWithPlatformArray[]> => {
-  const hashTable = new Map();
+): Map<GameId, GameReleaseRawWithPlatformArray> => {
+  const hashTable = new Map<GameId, GameReleaseRawWithPlatformArray>();
 
   for (const gameObject of gameReleaseObjects) {
     const gameId = gameObject.game.id;
-
-    const mergedGameObject = hashTable.get(gameId) || {};
+    const mergedGameObject =
+      hashTable.get(gameId) || ({} as GameReleaseRawWithPlatformArray);
 
     for (const property in gameObject) {
-      if (property === "platform") {
-        if (!Array.isArray(mergedGameObject[property])) {
-          mergedGameObject[property] = [];
-        }
+      const TSStopHatingMePLEASE =
+        property as keyof GameReleaseRawWithPlatformArray;
 
-        (mergedGameObject as any)[property].push((gameObject as any)[property]);
+      if (
+        TSStopHatingMePLEASE ===
+        ("platform" as keyof GameReleaseRawWithPlatformArray)
+      ) {
+        if (!Array.isArray(mergedGameObject[TSStopHatingMePLEASE])) {
+          mergedGameObject[TSStopHatingMePLEASE] = [];
+        }
+        mergedGameObject[TSStopHatingMePLEASE].push(
+          gameObject[TSStopHatingMePLEASE]
+        );
       } else {
-        mergedGameObject[property] = (gameObject as any)[property];
+        mergedGameObject[TSStopHatingMePLEASE] =
+          gameObject[TSStopHatingMePLEASE];
       }
     }
 
@@ -78,66 +86,67 @@ export const mergeGameReleasesByGameId = (
  * @param rawData
  * @returns
  */
-export const formatGameReleasesToMap = (rawData: any) => {
-  const groupedByDay = groupGameReleasesByDay(rawData);
-  const dayEntries = Array.from(groupedByDay.entries());
+export const formatGameReleasesToMap = (gameReleasesRaw: GameReleaseRaw[]) => {
+  // 1. Group all Game Releases by Release Day
+  const mappedByDay = groupGameReleasesByDay(gameReleasesRaw);
 
-  const gamesMap = new Map();
+  // 2. Merge Game Releases of the same Game on different Platforms
+  const mappedByDayByGameId = new Map<
+    number,
+    Map<number, GameReleaseRawWithPlatformArray>
+  >();
 
-  for (const [gameId, gameReleases] of dayEntries) {
+  for (const [dayNumber, gameReleases] of Array.from(mappedByDay.entries())) {
     const mergedGameReleases = mergeGameReleasesByGameId(gameReleases);
-
-    gamesMap.set(gameId, mergedGameReleases);
+    mappedByDayByGameId.set(dayNumber, mergedGameReleases);
   }
 
+  // 3. Format each GameRelease into usable data
+  const dateCategoryEnum: any = {
+    0: "YYYYMMMMDD",
+    1: "YYYYMMMM",
+    2: "YYYY",
+    3: "YYYYQ1",
+    4: "YYYYQ2",
+    5: "YYYYQ3",
+    6: "YYYYQ4",
+    7: "TBD",
+  };
+  const gameCategoryEnum: any = {
+    0: "Game",
+    1: "DLC",
+    2: "Expansion",
+    3: "Bundle",
+    4: "Standalone DLC",
+    5: "Mod",
+    6: "Episode",
+    7: "Full Season",
+    8: "Remake",
+    9: "Remaster",
+    10: "Expanded Game",
+    11: "Port",
+    12: "Fork",
+    13: "Pack",
+    14: "Update",
+  };
+  const releaseRegionEnum: any = {
+    1: "Europe",
+    2: "North America",
+    3: "Australia",
+    4: "New Zealand",
+    5: "Japan",
+    6: "China",
+    7: "Asia",
+    8: "Worldwide",
+    9: "Korea",
+    10: "Brazil",
+  };
   const formattedGamesMap = new Map();
 
-  for (const [date, games] of Array.from(gamesMap.entries())) {
-    const formattedGamesReleases = new Map();
+  for (const [date, games] of Array.from(mappedByDayByGameId.entries())) {
+    const formattedGamesReleases = new Map<number, FormattedGameRelease>();
 
-    for (const [gameId, gameData] of games.entries()) {
-      const dateCategoryEnum: any = {
-        0: "YYYYMMMMDD",
-        1: "YYYYMMMM",
-        2: "YYYY",
-        3: "YYYYQ1",
-        4: "YYYYQ2",
-        5: "YYYYQ3",
-        6: "YYYYQ4",
-        7: "TBD",
-      };
-
-      const gameCategoryEnum: any = {
-        0: "Game",
-        1: "DLC",
-        2: "Expansion",
-        3: "Bundle",
-        4: "Standalone DLC",
-        5: "Mod",
-        6: "Episode",
-        7: "Full Season",
-        8: "Remake",
-        9: "Remaster",
-        10: "Expanded Game",
-        11: "Port",
-        12: "Fork",
-        13: "Pack",
-        14: "Update",
-      };
-
-      const releaseRegionEnum: any = {
-        1: "Europe",
-        2: "North America",
-        3: "Australia",
-        4: "New Zealand",
-        5: "Japan",
-        6: "China",
-        7: "Asia",
-        8: "Worldwide",
-        9: "Korea",
-        10: "Brazil",
-      };
-
+    for (const [gameId, gameData] of Array.from(games.entries())) {
       const dayNumber = checkStringAndReturnDayNumber(gameData.human);
 
       const formattedGameRelease: FormattedGameRelease = {
@@ -166,29 +175,137 @@ export const formatGameReleasesToMap = (rawData: any) => {
         dateUpdated: gameData.updated_at,
       };
 
-      console.log(formattedGameRelease);
-
       formattedGamesReleases.set(gameId, formattedGameRelease);
     }
 
-    const dayNumber =
-      checkStringAndReturnDayNumber(date) === null
-        ? 50
-        : checkStringAndReturnDayNumber(date);
-
-    formattedGamesMap.set(dayNumber, formattedGamesReleases);
+    formattedGamesMap.set(date, formattedGamesReleases);
   }
 
+  // 4. Sort formatted GameReleases
   const sortedKeys = Array.from(formattedGamesMap.keys()).sort((a, b) => a - b);
-
   const sortedMap = new Map();
-
   for (const key of sortedKeys) {
     sortedMap.set(key, formattedGamesMap.get(key));
   }
 
   return sortedMap;
 };
+
+//////////////
+
+// export const formatGameReleasesToMap = (gameReleasesRaw: GameReleaseRaw[]) => {
+//   const groupedByDay = groupGameReleasesByDay(gameReleasesRaw);
+//   const dayEntries = Array.from(groupedByDay.entries());
+
+//   const gamesMap = new Map();
+
+//   for (const [gameId, gameReleases] of dayEntries) {
+//     const mergedGameReleases = mergeGameReleasesByGameId(gameReleases);
+
+//     gamesMap.set(gameId, mergedGameReleases);
+//   }
+
+//   const formattedGamesMap = new Map();
+
+//   for (const [date, games] of Array.from(gamesMap.entries())) {
+//     const formattedGamesReleases = new Map();
+
+//     for (const [gameId, gameData] of games.entries()) {
+//       const dateCategoryEnum: any = {
+//         0: "YYYYMMMMDD",
+//         1: "YYYYMMMM",
+//         2: "YYYY",
+//         3: "YYYYQ1",
+//         4: "YYYYQ2",
+//         5: "YYYYQ3",
+//         6: "YYYYQ4",
+//         7: "TBD",
+//       };
+
+//       const gameCategoryEnum: any = {
+//         0: "Game",
+//         1: "DLC",
+//         2: "Expansion",
+//         3: "Bundle",
+//         4: "Standalone DLC",
+//         5: "Mod",
+//         6: "Episode",
+//         7: "Full Season",
+//         8: "Remake",
+//         9: "Remaster",
+//         10: "Expanded Game",
+//         11: "Port",
+//         12: "Fork",
+//         13: "Pack",
+//         14: "Update",
+//       };
+
+//       const releaseRegionEnum: any = {
+//         1: "Europe",
+//         2: "North America",
+//         3: "Australia",
+//         4: "New Zealand",
+//         5: "Japan",
+//         6: "China",
+//         7: "Asia",
+//         8: "Worldwide",
+//         9: "Korea",
+//         10: "Brazil",
+//       };
+
+//       const dayNumber = checkStringAndReturnDayNumber(gameData.human);
+
+//       const formattedGameRelease: FormattedGameRelease = {
+//         releaseId: gameData.id,
+//         gameId: gameData.game.id,
+//         title: gameData.game.name,
+//         slug: gameData.game.slug,
+//         gameType: gameCategoryEnum[gameData.game.category],
+//         dateType: dateCategoryEnum[gameData.category],
+//         date: gameData.date,
+//         day: dayNumber === null ? 50 : dayNumber,
+//         month: gameData.m,
+//         year: gameData.y,
+//         dateString: gameData.human,
+//         region: releaseRegionEnum[gameData.region],
+//         platforms: gameData.platform.map(
+//           (platform: { id: number }) => platform.id
+//         ),
+//         // TODO: Change placeholder img
+//         coverUrl: gameData.game.cover?.url
+//           ? `https:${gameData.game.cover.url}`.replace("t_thumb", "t_original")
+//           : "https://images.igdb.com/igdb/image/upload/t_cover_big/co73t7.jpg",
+//         blurUrl: gameData.game.cover?.url
+//           ? `https:${gameData.game.cover.url}`
+//           : "https://images.igdb.com/igdb/image/upload/t_thumb/co73t7.jpg",
+//         dateUpdated: gameData.updated_at,
+//       };
+
+//       console.log(formattedGameRelease);
+
+//       formattedGamesReleases.set(gameId, formattedGameRelease);
+//     }
+
+//     const dayNumber =
+//       checkStringAndReturnDayNumber(date) === null
+//         ? 50
+//         : checkStringAndReturnDayNumber(date);
+
+//     formattedGamesMap.set(dayNumber, formattedGamesReleases);
+//   }
+
+//   const sortedKeys = Array.from(formattedGamesMap.keys()).sort((a, b) => a - b);
+
+//   const sortedMap = new Map();
+
+//   for (const key of sortedKeys) {
+//     sortedMap.set(key, formattedGamesMap.get(key));
+//   }
+
+//   return sortedMap;
+// };
+
+/////////////
 
 // Links for Section Navigation
 
