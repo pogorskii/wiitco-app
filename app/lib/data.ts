@@ -2,6 +2,7 @@
 
 import { GameReleaseRaw } from "./definitions";
 
+// ENV export
 const API_SECRET = process.env.TWITCH_API_SECRET;
 const CLIENT_ID = process.env.TWITCH_CLIENT_ID;
 const TWITCH_TOKEN = process.env.TWITCH_TOKEN;
