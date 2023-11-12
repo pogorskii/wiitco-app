@@ -62,16 +62,16 @@ const badgeVariants = cva(
         137: "border light:border-slate-200 bg-[#F5F5F5] text-slate-950 hover:bg-[#ffffff]", // N3DS
         159: "border light:border-slate-200 bg-[#F5F5F5] text-slate-950 hover:bg-[#ffffff]", // DSi
         161: "bg-[#00BCF2] text-white hover:bg-[#40d4ff] hover:text-slate-950", // WMR
-        162: "bg-[#0089FA] text-[#1D1F20] hover:bg-[#48ACFF]", // OculusVR
+        162: "bg-[#0089FA] text-[#F5F5F5] hover:bg-[#48ACFF] hover:text-[#1D1F20]", // OculusVR
         163: "bg-[#1D1F20] text-[#F5F5F5] hover:bg-[#414648]", // SteamVR
         165: "border light:border-slate-200 bg-[#F5F5F5] text-slate-950 hover:bg-[#ffffff]", // PSVR
         167: "border light:border-slate-200 dark:border-none bg-slate-50 text-slate-950 hover:bg-slate-950 hover:text-white", // PS5
         169: "bg-[#107C11] text-white hover:bg-[#19c01a] hover:text-slate-950", // Series
-        384: "bg-[#0089FA] text-[#1D1F20] hover:bg-[#48ACFF]", // Quest
-        385: "bg-[#0089FA] text-[#1D1F20] hover:bg-[#48ACFF]", // Rift
-        386: "bg-[#0089FA] text-[#1D1F20] hover:bg-[#48ACFF]", // Quest 2
+        384: "bg-[#0089FA] text-[#F5F5F5] hover:bg-[#48ACFF] hover:text-[#1D1F20]", // Quest
+        385: "bg-[#0089FA] text-[#F5F5F5] hover:bg-[#48ACFF] hover:text-[#1D1F20]", // Rift
+        386: "bg-[#0089FA] text-[#F5F5F5] hover:bg-[#48ACFF] hover:text-[#1D1F20]", // Quest 2
         390: "border light:border-slate-200 bg-[#F5F5F5] text-slate-950 hover:bg-[#ffffff]", // PSVR2
-        471: "bg-[#0089FA] text-[#1D1F20] hover:bg-[#48ACFF]", // Quest 3
+        471: "bg-[#0089FA] text-[#F5F5F5] hover:bg-[#48ACFF] hover:text-[#1D1F20]", // Quest 3
       },
     },
   }
