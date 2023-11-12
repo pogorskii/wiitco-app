@@ -23,9 +23,11 @@ export async function GamesDay({
       key={game.releaseId}
       id={game.releaseId}
       title={game.title}
+      slug={game.slug}
       imageUrl={game.coverUrl}
       blurUrl={game.blurUrl}
       platforms={game.platforms}
+      gameType={game.gameType}
     />
   ));
 

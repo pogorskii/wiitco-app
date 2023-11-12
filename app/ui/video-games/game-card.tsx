@@ -1,18 +1,24 @@
 import Image from "next/image";
 import { GamePlatforms } from "./game-platforms";
+import { GameType } from "@/app/lib/definitions";
+import { Badge } from "@/components/ui/badge";
 
 export function GameCardVertical({
   id,
   title,
+  slug,
   imageUrl,
   blurUrl,
   platforms,
+  gameType,
 }: {
   id: number;
   title: string;
+  slug: string;
   imageUrl: string;
   blurUrl: string;
   platforms: number[];
+  gameType: GameType;
 }) {
   return (
     <div
@@ -20,6 +26,11 @@ export function GameCardVertical({
       className="col-span-1 shadow border border-gray-200 dark:border-gray-800 flex flex-col overflow-hidden h-auto max-w-full rounded-lg"
     >
       <div className="grow-0 relative z-10 overflow-hidden">
+        {gameType !== GameType.Game && (
+          <Badge variant="secondary" className="absolute z-20 top-2 left-2">
+            {gameType}
+          </Badge>
+        )}
         <Image
           className="hover:scale-105 duration-200 ease-in-out"
           src={imageUrl}

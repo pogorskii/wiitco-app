@@ -57,7 +57,7 @@ export enum GameType {
   StandaloneDLC = "Standalone DLC",
   Mod = "Mod",
   Ep = "Episode",
-  Season = "Full Season",
+  Season = "Season",
   Remake = "Remake",
   Remaster = "Remaster",
   ExpGame = "Expanded Game",
