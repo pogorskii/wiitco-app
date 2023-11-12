@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import { Metadata } from "next";
-import { fetchGamesByMonth } from "@/app/lib/data";
+import { fetchGamesByMonth, fetchPlatforms } from "@/app/lib/data";
 import { formatGameReleasesToMap } from "@/app/lib/utils";
 import { GameReleaseRaw } from "@/app/lib/definitions";
 import { SectionNav } from "@/app/ui/video-games/section-nav";
@@ -33,6 +33,7 @@ export default async function Page({
   }
 
   const gameReleasesPerDay = formatGameReleasesToMap(gameReleasesPerDayRaw);
+  if (gameReleasesPerDay === undefined) return;
   const daysEntries = Array.from(gameReleasesPerDay.entries());
   const gamesCalendar = daysEntries.map((dayEntry) => {
     const [day, games] = dayEntry;

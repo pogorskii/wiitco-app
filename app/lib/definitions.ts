@@ -37,20 +37,62 @@ export type GameReleaseRawWithPlatformArray = GameReleaseBase & {
   platform: Platform[];
 };
 
-// Formatted Montthly Game Releases
+// Formatted Monthly Game Releases
+export enum DateType {
+  WithDay = "YYYYMMMMDD",
+  WithMonth = "YYYYMMMM",
+  YearOnly = "YYYY",
+  Q1 = "YYYYQ1",
+  Q2 = "YYYYQ2",
+  Q3 = "YYYYQ3",
+  Q4 = "YYYYQ4",
+  TBD = "TBD",
+}
+
+export enum GameType {
+  Game = "Game",
+  Dlc = "DLC",
+  Exp = "Expansion",
+  Bundle = "Bundle",
+  StandaloneDLC = "Standalone DLC",
+  Mod = "Mod",
+  Ep = "Episode",
+  Season = "Full Season",
+  Remake = "Remake",
+  Remaster = "Remaster",
+  ExpGame = "Expanded Game",
+  Port = "Port",
+  Fork = "Fork",
+  Pack = "Pack",
+  Upd = "Update",
+}
+
+export enum ReleaseRegion {
+  EU = "Europe",
+  NA = "North America",
+  AU = "Australia",
+  NZ = "New Zealand",
+  JP = "Japan",
+  CN = "China",
+  AS = "Asia",
+  WW = "Worldwide",
+  KR = "Korea",
+  BR = "Brazil",
+}
+
 export type FormattedGameRelease = {
   releaseId: number;
   gameId: number;
   title: string;
   slug: string;
-  gameType: string;
-  dateType: string;
+  gameType: GameType;
+  dateType: DateType;
   date: EpochTimeStamp;
   day: number;
   month: number;
   year: number;
   dateString: string;
-  region: string;
+  releaseRegion: ReleaseRegion;
   platforms: number[];
   coverUrl: string;
   blurUrl: string;

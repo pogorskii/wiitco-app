@@ -1,4 +1,3 @@
-import { ArrowRightOnRectangleIcon } from "@heroicons/react/24/outline";
 import { Button } from "@/components/ui/button";
 
 export function LogInButton() {

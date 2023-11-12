@@ -41,6 +41,28 @@ export async function fetchGameById() {
   }
 }
 
+export async function fetchPlatforms() {
+  try {
+    const headers = new Headers();
+    headers.set("Accept", "application/json");
+    headers.set("Client-ID", `${CLIENT_ID}`);
+    headers.set("Authorization", `Bearer ${TWITCH_TOKEN}`);
+
+    const data = await fetch("https://api.igdb.com/v4/platforms", {
+      method: "POST",
+      headers,
+      body: `fields *;
+      limit 50;
+      offset 200;
+      sort id asc;`,
+    });
+    const result = await data.json();
+    console.log(result);
+  } catch (error) {
+    console.error("Database Error: ", error);
+  }
+}
+
 export async function fetchGamesByMonth(
   year: string,
   month: string
@@ -72,8 +94,6 @@ export async function fetchGamesByMonth(
     );
 
     if (!responses) throw new Error(`Couldn't fetch data from API.`);
-
-    console.log(responses.flat());
 
     return responses.flat();
   } catch (error) {

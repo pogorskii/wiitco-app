@@ -4,6 +4,9 @@ import {
   FormattedGameRelease,
   DayNumber,
   GameId,
+  GameType,
+  DateType,
+  ReleaseRegion,
 } from "./definitions";
 
 // Get Day Number from Human Date string
@@ -78,44 +81,44 @@ export const formatGameReleases = (
     Map<number, GameReleaseRawWithPlatformArray>
   >
 ): Map<DayNumber, Map<GameId, FormattedGameRelease>> => {
-  const dateCategoryEnum: any = {
-    0: "YYYYMMMMDD",
-    1: "YYYYMMMM",
-    2: "YYYY",
-    3: "YYYYQ1",
-    4: "YYYYQ2",
-    5: "YYYYQ3",
-    6: "YYYYQ4",
-    7: "TBD",
+  const dateCategoryEnum: { [key: number]: DateType } = {
+    0: DateType.WithDay,
+    1: DateType.WithMonth,
+    2: DateType.YearOnly,
+    3: DateType.Q1,
+    4: DateType.Q2,
+    5: DateType.Q3,
+    6: DateType.Q4,
+    7: DateType.TBD,
   };
-  const gameCategoryEnum: any = {
-    0: "Game",
-    1: "DLC",
-    2: "Expansion",
-    3: "Bundle",
-    4: "Standalone DLC",
-    5: "Mod",
-    6: "Episode",
-    7: "Full Season",
-    8: "Remake",
-    9: "Remaster",
-    10: "Expanded Game",
-    11: "Port",
-    12: "Fork",
-    13: "Pack",
-    14: "Update",
+  const gameCategoryEnum: { [key: number]: GameType } = {
+    0: GameType.Game,
+    1: GameType.Dlc,
+    2: GameType.Exp,
+    3: GameType.Bundle,
+    4: GameType.StandaloneDLC,
+    5: GameType.Mod,
+    6: GameType.Ep,
+    7: GameType.Season,
+    8: GameType.Remake,
+    9: GameType.Remaster,
+    10: GameType.ExpGame,
+    11: GameType.Port,
+    12: GameType.Fork,
+    13: GameType.Pack,
+    14: GameType.Upd,
   };
-  const releaseRegionEnum: any = {
-    1: "Europe",
-    2: "North America",
-    3: "Australia",
-    4: "New Zealand",
-    5: "Japan",
-    6: "China",
-    7: "Asia",
-    8: "Worldwide",
-    9: "Korea",
-    10: "Brazil",
+  const releaseRegionEnum: { [key: number]: ReleaseRegion } = {
+    1: ReleaseRegion.EU,
+    2: ReleaseRegion.NA,
+    3: ReleaseRegion.AU,
+    4: ReleaseRegion.NZ,
+    5: ReleaseRegion.JP,
+    6: ReleaseRegion.CN,
+    7: ReleaseRegion.AS,
+    8: ReleaseRegion.WW,
+    9: ReleaseRegion.KR,
+    10: ReleaseRegion.BR,
   };
   const formattedGameReleasesMap = new Map<
     DayNumber,
@@ -123,7 +126,7 @@ export const formatGameReleases = (
   >();
 
   for (const [date, games] of Array.from(inputGameReleasesMap.entries())) {
-    const formattedGamesReleases = new Map<number, FormattedGameRelease>();
+    const formattedGamesReleases = new Map<GameId, FormattedGameRelease>();
 
     for (const [gameId, gameData] of Array.from(games.entries())) {
       const dayNumber = checkStringAndReturnDayNumber(gameData.human);
@@ -140,7 +143,7 @@ export const formatGameReleases = (
         month: gameData.m,
         year: gameData.y,
         dateString: gameData.human,
-        region: releaseRegionEnum[gameData.region],
+        releaseRegion: releaseRegionEnum[gameData.region],
         platforms: gameData.platform.map(
           (platform: { id: number }) => platform.id
         ),
@@ -163,12 +166,29 @@ export const formatGameReleases = (
   return formattedGameReleasesMap;
 };
 
+// 4.
+export const sortMapByDayNumber = (
+  mappedData: Map<DayNumber, Map<GameId, FormattedGameRelease>>
+): Map<DayNumber, Map<GameId, FormattedGameRelease>> => {
+  const sortedKeys = Array.from(mappedData.keys()).sort((a, b) => a - b);
+  const sortedMap = new Map<DayNumber, Map<GameId, FormattedGameRelease>>();
+  for (const key of sortedKeys) {
+    const assignedGameReleaseMap = mappedData.get(key);
+    if (assignedGameReleaseMap !== undefined)
+      sortedMap.set(key, assignedGameReleaseMap);
+  }
+
+  return sortedMap;
+};
+
 /**
  * High-order function that takes raw Game Releases data from API and formats it into a hastable
  * @param rawData
  * @returns
  */
-export const formatGameReleasesToMap = (gameReleasesRaw: GameReleaseRaw[]) => {
+export const formatGameReleasesToMap = (
+  gameReleasesRaw: GameReleaseRaw[]
+): Map<DayNumber, Map<GameId, FormattedGameRelease>> => {
   // 1. Group all Game Releases by Release Day
   const mappedByDay: Map<DayNumber, GameReleaseRaw[]> =
     groupGameReleasesByDay(gameReleasesRaw);
@@ -188,13 +208,7 @@ export const formatGameReleasesToMap = (gameReleasesRaw: GameReleaseRaw[]) => {
   const formattedGameReleasesMap = formatGameReleases(mappedByDayByGameId);
 
   // 4. Sort formatted GameReleases
-  const sortedKeys = Array.from(formattedGameReleasesMap.keys()).sort(
-    (a, b) => a - b
-  );
-  const sortedMap = new Map<DayNumber, Map<GameId, FormattedGameRelease>>();
-  for (const key of sortedKeys) {
-    sortedMap.set(key, formattedGameReleasesMap.get(key) as any);
-  }
+  const sortedMap = sortMapByDayNumber(formattedGameReleasesMap);
 
   return sortedMap;
 };
