@@ -6,10 +6,10 @@ import clsx from "clsx";
 
 // Map of links to display in the side navigation.
 const links = [
-  { name: "Movies", href: "/movies-release-dates" },
+  { name: "Movies", href: "/movies" },
   {
     name: "Video Games",
-    href: "/video-games-release-dates",
+    href: "/video-games",
   },
 ];
 

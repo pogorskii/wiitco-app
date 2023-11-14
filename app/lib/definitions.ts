@@ -1,3 +1,9 @@
+import { z } from "zod";
+
+// Game info page
+import { gameSchema } from "./zod-schemas";
+export type Game = z.infer<typeof gameSchema>;
+
 // Hashtable variables
 export type DayNumber = number;
 export type GameId = number;

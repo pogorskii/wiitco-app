@@ -1,6 +1,7 @@
 "use server";
 
 import { GameReleaseRaw } from "./definitions";
+import { gameSchema } from "./zod-schemas";
 
 // ENV export
 const API_SECRET = process.env.TWITCH_API_SECRET;
@@ -22,7 +23,7 @@ export async function fetchTwitchToken() {
   }
 }
 
-export async function fetchGameById() {
+export async function fetchGameBySlug(slug: string) {
   try {
     const headers = new Headers();
     headers.set("Accept", "application/json");
@@ -32,11 +33,12 @@ export async function fetchGameById() {
     const data = await fetch("https://api.igdb.com/v4/games/", {
       method: "POST",
       headers,
-      body: `fields *;
-      where id = 203458;`,
+      body: `fields id, name, slug, age_ratings.category, age_ratings.rating, aggregated_rating, aggregated_rating_count, category, cover.*, dlcs.*, dlcs.cover.*, expansions.*, expansions.cover.*, standalone_expansions.*, standalone_expansions.cover.*, first_release_date, franchises.*, game_engines.*, genres.*, involved_companies.*, involved_companies.company.*, language_supports.*, language_supports.language.*, parent_game.name, parent_game.slug, platforms.id, status, screenshots.*, storyline, summary, videos.*, similar_games.*, similar_games.cover.*, remakes.*, remakes.cover.*, remasters.*, remasters.cover.*, websites.category, websites.url;
+      where slug = "${slug}";`,
     });
     const result = await data.json();
-    console.log(result);
+    const parsedGame = gameSchema.parse(result[0]);
+    return parsedGame;
   } catch (error) {
     console.error("Database Error: ", error);
   }

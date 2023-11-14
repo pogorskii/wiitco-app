@@ -1,8 +1,7 @@
 import { notFound } from "next/navigation";
 import { Metadata } from "next";
-import { fetchGamesByMonth, fetchPlatforms } from "@/app/lib/data";
+import { fetchGamesByMonth } from "@/app/lib/data";
 import { formatGameReleasesToMap } from "@/app/lib/utils";
-import { GameReleaseRaw } from "@/app/lib/definitions";
 import { SectionNav } from "@/app/ui/video-games/section-nav";
 import { GamesDay } from "@/app/ui/video-games/game-day";
 
