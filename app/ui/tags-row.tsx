@@ -14,7 +14,7 @@ export async function TagsRow({
   return (
     <div className="inline-flex gap-1">
       {tags.map((tag, i, arr) => (
-        <span>
+        <span key={tag.slug}>
           <Link
             className="text-blue-500 hover:text-blue-400 hover:underline hover:underline-offset-2 hover:decoration-solid"
             href={`/${type}/${category}/${tag.slug}`}
