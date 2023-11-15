@@ -38,6 +38,7 @@ export async function fetchGameBySlug(slug: string) {
     });
     const result = await data.json();
     const parsedGame = gameSchema.parse(result[0]);
+    console.log(parsedGame);
     return parsedGame;
   } catch (error) {
     console.error("Database Error: ", error);

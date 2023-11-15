@@ -233,7 +233,7 @@ export const gameSchema = z
       videos: videos?.map((v) => {
         return {
           name: v.name,
-          url: "https://www.youtube.com/watch?v=" + v.video_id,
+          videoId: v.video_id,
         };
       }),
       ...rest,
