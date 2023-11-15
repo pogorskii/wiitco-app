@@ -32,7 +32,7 @@ export default async function Page({ params }: { params: { slug: string } }) {
           <div className="col-span-1">
             <Image
               src={game.cover.imageUrl}
-              alt={`${game.title}'s game cover`}
+              alt={`${game.title} game cover`}
               width={game.cover.width}
               height={game.cover.height}
               blurDataURL={game.cover.blurUrl}
@@ -101,7 +101,7 @@ export default async function Page({ params }: { params: { slug: string } }) {
             {game.summary && <TruncText text={game.summary} />}
           </div>
           <div className="col-span-1 flex flex-col justify-start items-center">
-            <p className="mb-2 font-bold text-2xl">Critics's Rating</p>
+            <p className="mb-2 font-bold text-2xl">Critics&apos;s Rating</p>
             <div className="flex flex-col items-center px-10">
               <RatingCircle rating={game.aggregatedRating} />
               <p className="mt-2 text-center">
@@ -117,7 +117,7 @@ export default async function Page({ params }: { params: { slug: string } }) {
       {game.videos && (
         <section>
           <h2 className="mb-2 scroll-m-20 text-2xl font-semibold tracking-tight">
-            {game.title}'s Trailer:
+            {game.title}&apos;s Trailer:
           </h2>
           <YouTubePlayer videoId={game.videos[0].videoId} />
         </section>
@@ -126,7 +126,7 @@ export default async function Page({ params }: { params: { slug: string } }) {
       {game.screenshots && (
         <section>
           <h2 className="mb-2 scroll-m-20 text-2xl font-semibold tracking-tight">
-            {game.title}'s Screenshots:
+            {game.title}&apos;s Screenshots:
           </h2>
           <ImageCarousel images={game.screenshots} altBase={game.title} />
         </section>
