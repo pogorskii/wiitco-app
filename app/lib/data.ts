@@ -172,7 +172,6 @@ export async function fetchGamesByName(
 
     const result = await response.json();
     const parsedGames = gameSearchSchema.parse(result);
-    console.log(parsedGames);
 
     return parsedGames;
   } catch (error) {
