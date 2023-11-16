@@ -142,19 +142,21 @@ export function GameSearchCard({ game }: { game: SingleGameSearch }) {
           </div>
         </div>
       </div>
-      <div className="col-span-1 h-full w-full bg-gray-300">
-        <Image
-          src={game.cover.imageUrl}
-          width={game.cover.width}
-          height={game.cover.height}
-          blurDataURL={game.cover.blurUrl}
-          alt={`${game.name} game cover`}
-          style={{
-            width: "auto",
-            height: "100%",
-            objectFit: "cover",
-          }}
-        />
+      <div className="col-span-1 h-full w-full">
+        <div className="ms-auto w-fit h-full bg-gray-300">
+          <Image
+            src={game.cover.imageUrl}
+            width={game.cover.width}
+            height={game.cover.height}
+            blurDataURL={game.cover.blurUrl}
+            alt={`${game.name} game cover`}
+            style={{
+              width: "auto",
+              height: "100%",
+              objectFit: "cover",
+            }}
+          />
+        </div>
       </div>
     </div>
   );
