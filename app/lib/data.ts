@@ -1,6 +1,5 @@
 "use server";
 
-import { unstable_noStore as noStore } from "next/cache";
 import { GameReleaseRaw } from "./definitions";
 import { gameSchema, gameSearchSchema } from "./zod-schemas";
 
@@ -108,7 +107,6 @@ export async function fetchGamesByMonth(
 
 export async function fetchGamesPages(query: string, itemsPerPage: number) {
   try {
-    noStore();
     // Fetch params
     const REQ_URL = "https://api.igdb.com/v4/games";
     const REQ_SIZE = 500; // NOTE: Max allowed size is 500
@@ -151,7 +149,6 @@ export async function fetchGamesByName(
   page: number
 ) {
   try {
-    noStore();
     // Fetch params
     const REQ_URL = "https://api.igdb.com/v4/games";
     const REQ_SIZE = itemsPerPage; // NOTE: Max allowed size is 500

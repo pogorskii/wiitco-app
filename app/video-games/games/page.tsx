@@ -33,11 +33,11 @@ export default async function Page({
           currentPage={currentPage}
         />
       </Suspense>
-      <Pagination
+      {/* <Pagination
         totalPages={totalPages}
         totalResults={totalResults}
         resultsPerPage={itemsPerPage}
-      />
+      /> */}
     </>
   );
 }
