@@ -4,6 +4,10 @@ import { z } from "zod";
 import { gameSchema } from "./zod-schemas";
 export type Game = z.infer<typeof gameSchema>;
 
+// Games Search page
+import { gameSearchSchema } from "./zod-schemas";
+export type GameSearch = z.infer<typeof gameSearchSchema>;
+
 // Hashtable variables
 export type DayNumber = number;
 export type GameId = number;

@@ -21,7 +21,7 @@ const transformAgeRating = (r: number): string => {
 
 const transformGameCategory = (c: number): string => {
   const categoriesEnum: { [key: number]: string } = {
-    0: "Game",
+    0: "Main Game",
     1: "DLC",
     2: "Expansion",
     3: "Bundle",
@@ -68,12 +68,14 @@ const transformWebsiteCategory = (c: number): string => {
 const coverSchema = z
   .object({
     // TODO: Add sensible placeholder
-    url: z
-      .string()
-      .default("placeholder")
-      .transform((url) => "https:" + url),
+    url: z.string().transform((url) => "https:" + url),
     width: z.number().default(1200),
     height: z.number().default(1600),
+  })
+  .default({
+    url: "//images.igdb.com/igdb/image/upload/t_thumb/co2nbc.png",
+    width: 1200,
+    height: 1600,
   })
   .transform(({ url, ...rest }) => ({
     imageUrl: url.replace("t_thumb", "t_original"),
@@ -153,6 +155,14 @@ export const gameSchema = z
     remakes: z.array(gameBaseSchema).optional(),
     remasters: z.array(gameBaseSchema).optional(),
     platforms: z.array(z.object({ id: z.number() })).optional(),
+    game_engines: z
+      .array(
+        z.object({
+          name: z.string(),
+          slug: z.string(),
+        })
+      )
+      .optional(),
     screenshots: z
       .array(
         z
@@ -210,6 +220,7 @@ export const gameSchema = z
       similar_games,
       standalone_expansions,
       language_supports,
+      game_engines,
       videos,
       ...rest
     }) => ({
@@ -236,6 +247,98 @@ export const gameSchema = z
           videoId: v.video_id,
         };
       }),
+      gameEngines: game_engines,
       ...rest,
     })
   );
+
+export const gameSearchSchema = z.array(
+  z
+    .object({
+      id: z.number(),
+      name: z.string(),
+      slug: z.string(),
+      platforms: z.array(z.object({ id: z.number() })).optional(),
+      category: z.number().default(0).transform(transformGameCategory),
+      cover: z
+        .object({
+          // TODO: Add sensible placeholder
+          url: z.string().transform((url) => "https:" + url),
+          width: z.number().default(264),
+          height: z.number().default(374),
+        })
+        .default({
+          url: "//images.igdb.com/igdb/image/upload/t_thumb/co2nbc.png",
+          width: 264,
+          height: 374,
+        })
+        .transform(({ url, ...rest }) => ({
+          imageUrl: url.replace("t_thumb", "t_cover_big"),
+          blurUrl: url.replace("t_thumb", "t_cover_small"),
+          ...rest,
+        })),
+      aggregated_rating: z.number().default(0),
+      first_release_date: z
+        .number()
+        .transform((val) => new Date(val * 1000))
+        .optional(),
+      franchises: z
+        .array(z.object({ name: z.string(), slug: z.string() }))
+        .optional(),
+      game_engines: z
+        .array(z.object({ name: z.string(), slug: z.string() }))
+        .optional(),
+      genres: z
+        .array(z.object({ name: z.string(), slug: z.string() }))
+        .optional(),
+      language_supports: z
+        .array(
+          z.object({ language: z.object({ id: z.number(), name: z.string() }) })
+        )
+        .optional(),
+      involved_companies: z
+        .array(
+          z.object({
+            company: z.object({ name: z.string(), slug: z.string() }),
+          })
+        )
+        .optional(),
+      parent_game: z
+        .object({
+          name: z.string(),
+          slug: z.string(),
+          first_release_date: z
+            .number()
+            .transform((val) => new Date(val * 1000))
+            .optional(),
+        })
+        .transform(({ first_release_date, ...rest }) => ({
+          releaseDate: first_release_date,
+          ...rest,
+        }))
+        .optional(),
+    })
+    .transform(
+      ({
+        id,
+        platforms,
+        aggregated_rating,
+        first_release_date,
+        game_engines,
+        language_supports,
+        involved_companies,
+        parent_game,
+        ...rest
+      }) => ({
+        gameId: id,
+        platforms: platforms?.map((p) => p.id),
+        rating: aggregated_rating,
+        releaseDate: first_release_date,
+        gameEngines: game_engines,
+        languages: language_supports,
+        companies: involved_companies,
+        parentGame: parent_game,
+        ...rest,
+      })
+    )
+);
