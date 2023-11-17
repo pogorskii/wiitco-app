@@ -4,6 +4,16 @@ import { GameType, GameSearch } from "@/app/lib/definitions";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
 
+// shadcn
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+
 export function GameCardVertical({
   id,
   title,
@@ -22,7 +32,7 @@ export function GameCardVertical({
   gameType: GameType;
 }) {
   return (
-    <div
+    <Card
       key={id}
       className="col-span-1 shadow border border-gray-200 dark:border-gray-800 flex flex-col overflow-hidden h-auto max-w-full rounded-lg"
     >
@@ -44,17 +54,14 @@ export function GameCardVertical({
             blurDataURL={blurUrl}
           />
         </div>
-        <div className="grow relative p-5 pt-0 pb-6">
-          <div className="absolute z-0 inset-x-0 h-full max-w-lg bg-gradient-to-r from-rose-50/50 to-teal-50/50 dark:bg-[radial-gradient(ellipse_at_bottom_right,_var(--tw-gradient-stops))] dark:from-sky-500 dark:to-indigo-900"></div>
-          <h3 className="relative pt-5 mb-3 text-xl font-bold text-gray-900 dark:text-white">
-            {title}
-          </h3>
-          <div className="relative">
+        <CardHeader>
+          <CardTitle className="relative mb-3 text-xl">{title}</CardTitle>
+          <div>
             <GamePlatforms platforms={platforms} />
           </div>
-        </div>
+        </CardHeader>
       </Link>
-    </div>
+    </Card>
   );
 }
 
@@ -109,10 +116,10 @@ export function GameSearchCard({ game }: { game: SingleGameSearch }) {
   const parentReleaseYear = game.parentGame?.releaseDate?.getFullYear();
 
   return (
-    <div className="h-60 grid grid-cols-3 bg-white rounded-lg shadow-md overflow-hidden bg-gradient-to-r from-rose-50/50 to-teal-50/50 dark:bg-[radial-gradient(ellipse_at_bottom_right,_var(--tw-gradient-stops))] dark:from-sky-500 dark:to-indigo-900">
-      <div className="col-span-2 h-full">
-        <div className="h-full flex flex-col items-start justify-between p-4">
-          <h2 className="mb-2 text-xl font-semibold">
+    <Card className="h-60 grid grid-cols-3 shadow-md overflow-hidden">
+      <CardContent className="pt-6 col-span-2 h-full flex flex-col items-start justify-between">
+        <CardHeader className="p-0">
+          <CardTitle className="text-xl font-semibold">
             <Link
               className="hover:text-blue-400 hover:underline hover:underline-offset-2 hover:decoration-solid"
               href={`/video-games/games/${game.slug}`}
@@ -120,30 +127,27 @@ export function GameSearchCard({ game }: { game: SingleGameSearch }) {
               {game.name}
               {releaseYear && ` (${releaseYear})`}
             </Link>
-          </h2>
+          </CardTitle>
           {game.platforms && <GamePlatforms platforms={game.platforms} />}
-          <div className="mt-auto">
-            <span className="inline-block bg-blue-50 text-blue-800 text-xs px-2 rounded-full uppercase font-semibold tracking-wide">
-              {game.category}
-            </span>
-            {game.parentGame && (
-              <span className="text-sm">
-                {" "}
-                of{" "}
-                <Link
-                  className="hover:underline hover:underline-offset-2 hover:decoration-solid"
-                  href={`/video-games/games/${game.parentGame.slug}`}
-                >
-                  {game.parentGame.name}
-                  {parentReleaseYear && ` (${parentReleaseYear})`}
-                </Link>
-              </span>
-            )}
-          </div>
-        </div>
-      </div>
+        </CardHeader>
+        <CardFooter className="mt-auto p-0">
+          <Badge>{game.category}</Badge>
+          {game.parentGame && (
+            <>
+              <span className="ms-1">of</span>
+              <Link
+                className="ms-1 hover:underline hover:underline-offset-2 hover:decoration-solid"
+                href={`/video-games/games/${game.parentGame.slug}`}
+              >
+                {game.parentGame.name}
+                {parentReleaseYear && ` (${parentReleaseYear})`}
+              </Link>
+            </>
+          )}
+        </CardFooter>
+      </CardContent>
       <div className="col-span-1 h-full w-full">
-        <div className="ms-auto w-fit h-full bg-gray-300">
+        <div className="ms-auto w-fit h-full">
           <Image
             src={game.cover.imageUrl}
             width={game.cover.width}
@@ -158,6 +162,6 @@ export function GameSearchCard({ game }: { game: SingleGameSearch }) {
           />
         </div>
       </div>
-    </div>
+    </Card>
   );
 }

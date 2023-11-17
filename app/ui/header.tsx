@@ -1,11 +1,11 @@
 import WIITCOLogo from "@/app/ui/wiitco-logo";
-import NavLinks from "@/app/ui/nav-links";
+import { NavLinks } from "@/app/ui/nav-links";
 import { LogInButton } from "./buttons";
 import { ThemeToggle } from "./theme-toggle";
 
 export default function SideNav() {
   return (
-    <div className="py-2.5">
+    <div className="relative z-40 py-2.5">
       <div className="flex justify-between">
         <WIITCOLogo />
         <div className="flex">

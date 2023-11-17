@@ -28,12 +28,12 @@ export function DayHeader({
       <div ref={ref} className="sticky top-20">
         <h2
           key={day !== 50 ? day : "TBD"}
-          className="flex flex-col self-start col-span-1 scroll-m-20 pb-2 text-3xl font-semibold tracking-tight first:mt-0"
+          className="flex flex-col self-start col-span-1 scroll-m-20 pb-2 text-3xl font-semibold tracking-tight"
         >
           {day !== 50 ? `${displayDate}` : "Without a date"}
         </h2>
         <motion.div
-          className="min-h-[2px] bg-blue-500"
+          className="h-[2px] bg-blue-500"
           style={{ scaleX: scaleX, originX: 0 }}
         />
       </div>

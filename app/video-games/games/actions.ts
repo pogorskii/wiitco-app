@@ -3,26 +3,8 @@
 import { gameSearchSchema } from "@/app/lib/zod-schemas";
 
 // ENV export
-const API_SECRET = process.env.TWITCH_API_SECRET;
 const CLIENT_ID = process.env.TWITCH_CLIENT_ID;
 const TWITCH_TOKEN = process.env.TWITCH_TOKEN;
-
-import { fetchGamesByName } from "@/app/lib/data";
-
-export async function fetchGamesByNameInf({
-  page = 1,
-  itemsPerPage = 20,
-  search = "",
-}: {
-  page?: number;
-  itemsPerPage?: number;
-  search?: string;
-}) {
-  const games = await fetchGamesByName(search, page, itemsPerPage);
-  return games;
-}
-
-/////
 
 export async function fetchGames({
   search = "",
@@ -52,8 +34,6 @@ export async function fetchGames({
            offset ${REQ_SIZE * (page - 1)};
            `,
     });
-
-    // sort first_release_date desc;
 
     if (!response) throw new Error(`Couldn't fetch data from API.`);
 
