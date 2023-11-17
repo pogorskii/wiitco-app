@@ -27,7 +27,7 @@ export default async function Page({
 
   return (
     <>
-      <div className="mb-4">
+      <div className="sticky top-0 mb-4">
         <Search placeholder="Search any game" />
       </div>
       <div key={uuid()} className="grid grid-cols-2 gap-6">
