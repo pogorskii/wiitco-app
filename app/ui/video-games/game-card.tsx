@@ -37,7 +37,7 @@ export function GameCardVertical({
       className="col-span-1 shadow border border-gray-200 dark:border-gray-800 flex flex-col overflow-hidden h-auto max-w-full rounded-lg"
     >
       <Link href={`/video-games/games/${slug}`}>
-        <div className="grow-0 relative z-10 overflow-hidden">
+        <div className="grow-0 relative overflow-hidden">
           {gameType !== GameType.Game && (
             <Badge variant="secondary" className="absolute z-20 top-2 left-2">
               {gameType}
@@ -55,7 +55,7 @@ export function GameCardVertical({
           />
         </div>
         <CardHeader>
-          <CardTitle className="relative mb-3 text-xl">{title}</CardTitle>
+          <CardTitle className="mb-3 text-xl">{title}</CardTitle>
           <div>
             <GamePlatforms platforms={platforms} />
           </div>
@@ -119,24 +119,24 @@ export function GameSearchCard({ game }: { game: SingleGameSearch }) {
     <Card className="h-60 grid grid-cols-3 shadow-md overflow-hidden">
       <CardContent className="pt-6 col-span-2 h-full flex flex-col items-start justify-between">
         <CardHeader className="p-0">
-          <CardTitle className="text-xl font-semibold">
-            <Link
-              className="hover:text-blue-400 hover:underline hover:underline-offset-2 hover:decoration-solid"
-              href={`/video-games/games/${game.slug}`}
-            >
+          <Link
+            className="hover:text-blue-400 hover:underline hover:underline-offset-2 hover:decoration-solid"
+            href={`/video-games/games/${game.slug}`}
+          >
+            <CardTitle className="text-xl font-semibold">
               {game.name}
               {releaseYear && ` (${releaseYear})`}
-            </Link>
-          </CardTitle>
+            </CardTitle>
+          </Link>
           {game.platforms && <GamePlatforms platforms={game.platforms} />}
         </CardHeader>
         <CardFooter className="mt-auto p-0">
           <Badge>{game.category}</Badge>
           {game.parentGame && (
             <>
-              <span className="ms-1">of</span>
+              <span className="mx-2">of</span>
               <Link
-                className="ms-1 hover:underline hover:underline-offset-2 hover:decoration-solid"
+                className="hover:underline hover:underline-offset-2 hover:decoration-solid"
                 href={`/video-games/games/${game.parentGame.slug}`}
               >
                 {game.parentGame.name}
@@ -147,20 +147,23 @@ export function GameSearchCard({ game }: { game: SingleGameSearch }) {
         </CardFooter>
       </CardContent>
       <div className="col-span-1 h-full w-full">
-        <div className="ms-auto w-fit h-full">
-          <Image
-            src={game.cover.imageUrl}
-            width={game.cover.width}
-            height={game.cover.height}
-            blurDataURL={game.cover.blurUrl}
-            alt={`${game.name} game cover`}
-            style={{
-              width: "auto",
-              height: "100%",
-              objectFit: "cover",
-            }}
-          />
-        </div>
+        <Link href={`/video-games/games/${game.slug}`}>
+          <div className="overflow-hidden ms-auto w-fit h-full">
+            <Image
+              className="hover:scale-105 duration-200 ease-in-out"
+              src={game.cover?.imageUrl || "/game-placeholder.webp"}
+              width={game.cover?.width || 1080}
+              height={game.cover?.height || 1920}
+              blurDataURL={game.cover?.blurUrl || "/game-placeholder.webp"}
+              alt={`${game.name} game cover`}
+              style={{
+                width: "auto",
+                height: "100%",
+                objectFit: "cover",
+              }}
+            />
+          </div>
+        </Link>
       </div>
     </Card>
   );

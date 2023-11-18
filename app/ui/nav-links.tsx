@@ -57,7 +57,13 @@ export function NavLinks() {
     <NavigationMenu>
       <NavigationMenuList>
         <NavigationMenuItem>
-          <NavigationMenuTrigger>Movies</NavigationMenuTrigger>
+          <NavigationMenuTrigger
+            className={clsx("rounded-3xl", {
+              "bg-primary/10": pathname.includes(links[0].href),
+            })}
+          >
+            Movies
+          </NavigationMenuTrigger>
           <NavigationMenuContent>
             <ul className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px] ">
               {moviesLinks.map((component) => (
@@ -74,16 +80,14 @@ export function NavLinks() {
         </NavigationMenuItem>
         <NavigationMenuItem>
           <NavigationMenuTrigger
-            className={clsx("rounded-none border-b-4 border-transparent", {
-              "border-[var(--accent)] text-primary": pathname.includes(
-                links[1].href
-              ),
+            className={clsx("rounded-3xl", {
+              "text-pr": pathname.includes(links[1].href),
             })}
           >
             Video Games
           </NavigationMenuTrigger>
           <NavigationMenuContent>
-            <ul className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px] ">
+            <ul className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px]">
               {gamesLinks.map((component) => (
                 <ListItem
                   key={component.title}

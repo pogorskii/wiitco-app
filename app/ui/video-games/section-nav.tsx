@@ -22,7 +22,7 @@ export function SectionNav({ year, month }: { year: string; month: string }) {
   const nextPagePath = getNextMonthURL(pathname, year, month);
 
   return (
-    <div className="sticky top-[-1px] z-20 bg-white dark:bg-[#020817] flex justify-between py-2">
+    <div className="sticky top-[-1px] z-20 bg-background flex justify-between py-2">
       <Button variant="ghost">
         <SlidersHorizontal />
       </Button>

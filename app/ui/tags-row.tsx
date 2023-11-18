@@ -1,4 +1,5 @@
 "use server";
+import { v4 as uuid } from "uuid";
 
 import Link from "next/link";
 
@@ -12,18 +13,17 @@ export async function TagsRow({
   tags: { name: string; slug: string }[];
 }) {
   return (
-    <div className="inline-flex gap-1">
+    <>
       {tags.map((tag, i, arr) => (
-        <span key={tag.slug}>
-          <Link
-            className="text-blue-500 hover:text-blue-400 hover:underline hover:underline-offset-2 hover:decoration-solid"
-            href={`/${type}/${category}/${tag.slug}`}
-          >
-            {tag.name}
-          </Link>
+        <Link
+          key={tag.slug + uuid()}
+          className="ms-2 text-blue-500 hover:text-blue-400 hover:underline hover:underline-offset-2 hover:decoration-solid"
+          href={`/${type}/${category}/${tag.slug}`}
+        >
+          {tag.name}
           {i < arr.length - 1 && ","}
-        </span>
+        </Link>
       ))}
-    </div>
+    </>
   );
 }

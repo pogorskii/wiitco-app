@@ -1,5 +1,6 @@
 import { clsx } from "clsx";
 import Link from "next/link";
+import { AiOutlineRight } from "react-icons/ai";
 
 type Breadcrumb = {
   label: string;
@@ -10,21 +11,30 @@ type Breadcrumb = {
 export function Breadcrumbs({ breadcrumbs }: { breadcrumbs: Breadcrumb[] }) {
   return (
     <nav aria-label="Breadcrumb" className="mb-6 block">
-      <ol className={clsx("flex text-xl md:text-2xl")}>
+      <ol className={clsx("text-xl")}>
         {breadcrumbs.map((breadcrumb, index) => (
           <li
             key={breadcrumb.href}
             aria-current={breadcrumb.active}
-            className={clsx(
-              breadcrumb.active
-                ? "text-gray-900 dark:text-gray-100"
-                : "text-gray-500"
-            )}
+            className="inline-block text-gray-900 dark:text-gray-100"
           >
-            <Link href={breadcrumb.href}>{breadcrumb.label}</Link>
-            {index < breadcrumbs.length - 1 ? (
-              <span className="mx-3 inline-block">/</span>
-            ) : null}
+            <Link
+              className={clsx(
+                {
+                  "text-gray-900 dark:text-gray-100": breadcrumb.active,
+                },
+                {
+                  "text-blue-500 hover:text-blue-400 hover:underline hover:underline-offset-2":
+                    !breadcrumb.active,
+                }
+              )}
+              href={breadcrumb.href}
+            >
+              {breadcrumb.label}
+            </Link>
+            {index < breadcrumbs.length - 1 && (
+              <AiOutlineRight className="mx-3 inline-block" />
+            )}
           </li>
         ))}
       </ol>

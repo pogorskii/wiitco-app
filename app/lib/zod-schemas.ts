@@ -2,11 +2,11 @@ import { z } from "zod";
 
 const transformAgeRating = (r: number): string => {
   const ratingsEnum: { [key: number]: string } = {
-    1: "3",
-    2: "7",
-    3: "12",
-    4: "16",
-    5: "18",
+    1: "Three",
+    2: "Seven",
+    3: "Twelve",
+    4: "Sixteen",
+    5: "Eighteen",
     6: "RP",
     7: "EC",
     8: "E",
@@ -69,19 +69,15 @@ const coverSchema = z
   .object({
     // TODO: Add sensible placeholder
     url: z.string().transform((url) => "https:" + url),
-    width: z.number().default(1200),
-    height: z.number().default(1600),
-  })
-  .default({
-    url: "//images.igdb.com/igdb/image/upload/t_thumb/co2nbc.png",
-    width: 1200,
-    height: 1600,
+    width: z.number(),
+    height: z.number(),
   })
   .transform(({ url, ...rest }) => ({
     imageUrl: url.replace("t_thumb", "t_original"),
     blurUrl: url,
     ...rest,
-  }));
+  }))
+  .optional();
 
 const gameBaseSchema = z.object({
   name: z.string(),
@@ -98,13 +94,7 @@ export const gameSchema = z
     age_ratings: z
       .array(
         z.object({
-          category: z
-            .number()
-            .or(z.string())
-            .transform((val) =>
-              val === 1 ? "ESRB" : val === 2 ? "PEGI" : "Not supported"
-            )
-            .describe(`Age rating's system`),
+          category: z.number().describe(`Age rating's system`),
           rating: z
             .number()
             .transform(transformAgeRating)
@@ -126,6 +116,14 @@ export const gameSchema = z
     franchises: z
       .array(z.object({ name: z.string(), slug: z.string() }))
       .optional(),
+    collections: z
+      .array(
+        z.object({
+          name: z.string(),
+          slug: z.string(),
+        })
+      )
+      .optional(),
     genres: z
       .array(
         z.object({
@@ -134,18 +132,20 @@ export const gameSchema = z
         })
       )
       .optional(),
-    involved_companies: z.array(
-      z.object({
-        company: z.object({
-          name: z.string(),
-          slug: z.string(),
-        }),
-        developer: z.boolean(),
-        porting: z.boolean(),
-        publisher: z.boolean(),
-        supporting: z.boolean(),
-      })
-    ),
+    involved_companies: z
+      .array(
+        z.object({
+          company: z.object({
+            name: z.string(),
+            slug: z.string(),
+          }),
+          developer: z.boolean(),
+          porting: z.boolean(),
+          publisher: z.boolean(),
+          supporting: z.boolean(),
+        })
+      )
+      .optional(),
     parent_game: z
       .object({
         name: z.string(),
@@ -233,7 +233,9 @@ export const gameSchema = z
       publishers: involved_companies
         ?.filter((c) => c.publisher)
         .map((c) => c.company),
-      ageRatings: age_ratings?.filter((r) => r.category !== "Not supported"),
+      ageRatings: age_ratings?.filter(
+        (r) => r.category === 1 || r.category === 2
+      ),
       aggregatedRating: aggregated_rating,
       aggregatedRatingCount: aggregated_rating_count,
       firstReleaseDate: first_release_date,
@@ -262,21 +264,16 @@ export const gameSearchSchema = z.array(
       category: z.number().default(0).transform(transformGameCategory),
       cover: z
         .object({
-          // TODO: Add sensible placeholder
           url: z.string().transform((url) => "https:" + url),
           width: z.number().default(264),
           height: z.number().default(374),
-        })
-        .default({
-          url: "//images.igdb.com/igdb/image/upload/t_thumb/co2nbc.png",
-          width: 264,
-          height: 374,
         })
         .transform(({ url, ...rest }) => ({
           imageUrl: url.replace("t_thumb", "t_cover_big"),
           blurUrl: url.replace("t_thumb", "t_cover_small"),
           ...rest,
-        })),
+        }))
+        .optional(),
       aggregated_rating: z.number().default(0),
       first_release_date: z
         .number()

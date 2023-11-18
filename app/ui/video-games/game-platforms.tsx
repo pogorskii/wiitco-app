@@ -92,7 +92,7 @@ const badgeVariants = cva(
   {
     variants: {
       variant: {
-        3: "bg-[#E95420] text-slate-950 hover:bg-[#f08966]", // Linux
+        3: "bg-[#E95420] text-white hover:bg-[#f08966]", // Linux
         4: "bg-[#E70009] text-white hover:bg-[#ff353c] hover:text-slate-950", // N64
         5: "border light:border-slate-200 bg-[#F5F5F5] text-slate-950 hover:bg-[#ffffff]", // Wii
         6: "bg-[#00BCF2] text-white hover:bg-[#40d4ff] hover:text-slate-950", // PC
