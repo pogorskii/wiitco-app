@@ -43,10 +43,10 @@ export function SimilarItemsCarousel({
         clickable: true,
       }}
       modules={[Pagination, Keyboard, A11y]}
-      className="relative screenshot-swiper"
+      className="relative screenshot-swiper bg-foreground"
     >
       {games.map((slide, i) => (
-        <SwiperSlide className="max-h-[300px] max-w-fit" key={i + 1}>
+        <SwiperSlide className="p-6 max-h-[350px] max-w-fit" key={i + 1}>
           <Link href={slide.slug}>
             <img
               className="max-h-[300px] object-contain"

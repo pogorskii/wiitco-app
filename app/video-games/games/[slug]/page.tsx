@@ -14,6 +14,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { FaPlus } from "react-icons/fa";
 import { FormattedLanguage } from "@/app/lib/zod-schemas";
+import { Game } from "@/app/lib/definitions";
 
 import { fetchHLTBInfo } from "@/app/lib/data";
 
@@ -69,7 +70,7 @@ export default async function Page({ params }: { params: { slug: string } }) {
                 <h2 className="mt-4 mb-1 font-semibold">
                   This game belongs to:
                 </h2>
-                <ul className="mb-6 list-disc">
+                <ul className="mb-6 ml-6 list-disc [&>li]:mt-1">
                   {game.franchises && (
                     <li>
                       <TagsRow
@@ -190,7 +191,19 @@ export default async function Page({ params }: { params: { slug: string } }) {
                 </div>
               )}
             </div>
-            {game.summary && <TruncText text={game.summary} />}
+            {game.summary && (
+              <div className="mb-4">
+                <TruncText text={game.summary} />
+              </div>
+            )}
+
+            {game.remakes ||
+            game.remasters ||
+            game.dlcs ||
+            game.expansions ||
+            game.standaloneDLCs ? (
+              <RelatedTabs game={game} />
+            ) : null}
           </div>
 
           {/* Third column */}
@@ -240,7 +253,7 @@ export default async function Page({ params }: { params: { slug: string } }) {
             {game.languages && (
               <div>
                 <p className="mb-2 font-semibold text-xl text-center">
-                  Supported languages
+                  Supported Languages
                 </p>
                 <LanguagesTable languages={game.languages} />
               </div>
@@ -337,7 +350,9 @@ function HLTBTable({ hltb }: { hltb: HLTB }) {
         {hltb.gameplayMain && (
           <TableRow>
             <TableCell className="px-0 py-2 font-medium">Main</TableCell>
-            <TableCell className="px-0 py-2">{hltb.gameplayMain} hrs</TableCell>
+            <TableCell className="px-0 py-2">
+              {hltb.gameplayMain} {hltb.gameplayMain <= 1 ? "hr" : "hrs"}
+            </TableCell>
           </TableRow>
         )}
         {hltb.gameplayMainExtra && (
@@ -346,7 +361,8 @@ function HLTBTable({ hltb }: { hltb: HLTB }) {
               Main + Extra
             </TableCell>
             <TableCell className="px-0 py-2">
-              {hltb.gameplayMainExtra} hrs
+              {hltb.gameplayMainExtra}{" "}
+              {hltb.gameplayMainExtra <= 1 ? "hr" : "hrs"}
             </TableCell>
           </TableRow>
         )}
@@ -354,11 +370,137 @@ function HLTBTable({ hltb }: { hltb: HLTB }) {
           <TableRow>
             <TableCell className="px-0 py-2 font-medium">100%</TableCell>
             <TableCell className="px-0 py-2">
-              {hltb.gameplayCompletionist} hrs
+              {hltb.gameplayCompletionist}{" "}
+              {hltb.gameplayCompletionist <= 1 ? "hr" : "hrs"}
             </TableCell>
           </TableRow>
         )}
       </TableBody>
     </Table>
+  );
+}
+
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+
+export function RelatedTabs({ game }: { game: Game }) {
+  return (
+    <Tabs
+      defaultValue={
+        game.remakes
+          ? "remakes"
+          : game.remasters
+          ? "remasters"
+          : game.dlcs
+          ? "dlcs"
+          : game.expansions
+          ? "expansions"
+          : "standalones"
+      }
+      className="w-full"
+    >
+      <TabsList className="grid w-full grid-cols-5">
+        {game.remakes && <TabsTrigger value="remakes">Remakes</TabsTrigger>}
+        {game.remasters && (
+          <TabsTrigger value="remasters">Remasters</TabsTrigger>
+        )}
+        {game.dlcs && <TabsTrigger value="dlcs">DLCs</TabsTrigger>}
+        {game.expansions && (
+          <TabsTrigger value="expansions">Expansions</TabsTrigger>
+        )}
+        {game.standaloneDLCs && (
+          <TabsTrigger value="standalones">Standalones</TabsTrigger>
+        )}
+      </TabsList>
+      {game.remakes && (
+        <RelatedTab
+          gameTitle={game.title}
+          tabName="remakes"
+          tabData={game.remakes}
+        />
+      )}
+      {game.remasters && (
+        <RelatedTab
+          gameTitle={game.title}
+          tabName="remasters"
+          tabData={game.remasters}
+        />
+      )}
+      {game.dlcs && (
+        <RelatedTab gameTitle={game.title} tabName="dlcs" tabData={game.dlcs} />
+      )}
+      {game.expansions && (
+        <RelatedTab
+          gameTitle={game.title}
+          tabName="expansions"
+          tabData={game.expansions}
+        />
+      )}
+      {game.standaloneDLCs && (
+        <RelatedTab
+          gameTitle={game.title}
+          tabName="standalones"
+          tabData={game.standaloneDLCs}
+        />
+      )}
+    </Tabs>
+  );
+}
+
+type relatedTabData = {
+  name: string;
+  slug: string;
+  cover?:
+    | {
+        width: number;
+        height: number;
+        imageUrl: string;
+        blurUrl: string;
+      }
+    | undefined;
+}[];
+
+function RelatedTab({
+  gameTitle,
+  tabName,
+  tabData,
+}: {
+  gameTitle: string;
+  tabName: string;
+  tabData: relatedTabData;
+}) {
+  const tabHeading = tabName.slice(0, 1).toUpperCase() + tabName.slice(1);
+
+  return (
+    <TabsContent value={tabName}>
+      <Card>
+        <CardHeader>
+          <CardTitle>
+            {tabHeading} of {gameTitle}
+          </CardTitle>
+        </CardHeader>
+        <CardContent className={`space-x-4 grid grid-cols-2`}>
+          {tabData.map((g) => (
+            <Link
+              className="inline-block col-span-1"
+              href={`/video-games/games/${g.slug}`}
+            >
+              <img src={g.cover?.imageUrl || "/game-placeholder.webp"} />
+              <h3 className="mt-2 scroll-m-20 text-xl font-semibold tracking-tight">
+                {g.name}
+              </h3>
+            </Link>
+          ))}
+        </CardContent>
+      </Card>
+    </TabsContent>
   );
 }
