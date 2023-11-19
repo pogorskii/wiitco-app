@@ -44,11 +44,10 @@ export function ImageCarousel({
     >
       {images.map((slide, i) => (
         <SwiperSlide key={i + 1}>
-          <Image
+          <img
             src={slide.imageUrl}
             width={slide.width}
             height={slide.height}
-            blurDataURL={slide.blurUrl}
             alt={`${altBase}'s Screenshot ${i + 1}`}
           />
         </SwiperSlide>

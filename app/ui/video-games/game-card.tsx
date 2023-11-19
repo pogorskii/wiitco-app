@@ -100,8 +100,6 @@ export function GameCardHorizontal({
           width={500}
           height={900}
           style={{ objectFit: "contain" }}
-          placeholder="blur"
-          blurDataURL={blurUrl}
         />
       </div>
     </div>
@@ -154,7 +152,6 @@ export function GameSearchCard({ game }: { game: SingleGameSearch }) {
               src={game.cover?.imageUrl || "/game-placeholder.webp"}
               width={game.cover?.width || 1080}
               height={game.cover?.height || 1920}
-              blurDataURL={game.cover?.blurUrl || "/game-placeholder.webp"}
               alt={`${game.name} game cover`}
               style={{
                 width: "auto",

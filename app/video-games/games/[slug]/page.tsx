@@ -38,7 +38,6 @@ export default async function Page({ params }: { params: { slug: string } }) {
               alt={`${game.title} game cover`}
               width={game.cover?.width || 1200}
               height={game.cover?.height || 1600}
-              blurDataURL={game.cover?.blurUrl || "/game-placeholder.webp"}
               style={{
                 width: "100%",
               }}
