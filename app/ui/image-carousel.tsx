@@ -45,9 +45,8 @@ export function ImageCarousel({
       {images.map((slide, i) => (
         <SwiperSlide key={i + 1}>
           <img
+            className="h-full w-auto"
             src={slide.imageUrl}
-            width={slide.width}
-            height={slide.height}
             alt={`${altBase}'s Screenshot ${i + 1}`}
           />
         </SwiperSlide>

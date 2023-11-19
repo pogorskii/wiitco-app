@@ -11,6 +11,9 @@ import { Breadcrumbs } from "@/app/ui/breadcrumbs";
 import { formatDistanceToNow } from "date-fns";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { FaPlus } from "react-icons/fa";
+import { FormattedLanguage } from "@/app/lib/zod-schemas";
 
 export default async function Page({ params }: { params: { slug: string } }) {
   const game = await fetchGameBySlug(params.slug);
@@ -29,7 +32,7 @@ export default async function Page({ params }: { params: { slug: string } }) {
         ]}
       />
 
-      <section id="main-info">
+      <section className="mb-6" id="main-info">
         <div className="grid grid-cols-4">
           {/* First column */}
           <div className="col-span-1">
@@ -43,6 +46,10 @@ export default async function Page({ params }: { params: { slug: string } }) {
               }}
               priority
             />
+            {/* TODO: Change appearance if added */}
+            <Button className="mt-2 w-full">
+              <FaPlus className="me-1" /> Watch this game
+            </Button>
             {game.franchises || game.collections ? (
               <div>
                 <h2 className="mt-4 mb-1 font-semibold">
@@ -194,7 +201,7 @@ export default async function Page({ params }: { params: { slug: string } }) {
             </div>
 
             {game.ageRatings && (
-              <div>
+              <div className="mb-6">
                 <p className="mb-2 font-semibold text-xl text-center">
                   Age Ratings
                 </p>
@@ -215,24 +222,32 @@ export default async function Page({ params }: { params: { slug: string } }) {
                 </div>
               </div>
             )}
+
+            {game.languages && (
+              <div>
+                <p className="mb-2 font-semibold text-xl text-center">
+                  Supported languages
+                </p>
+                <LanguagesTable languages={game.languages} />
+              </div>
+            )}
           </div>
         </div>
       </section>
 
       {game.videos && (
-        <section id="trailer">
+        <section className="mb-6" id="trailer">
           <h2 className="mb-2 scroll-m-20 text-2xl font-semibold tracking-tight">
-            {game.title}&apos;s Trailer:
+            {game.title}&apos;s Trailer
           </h2>
           <YouTubePlayer videoId={game.videos[0].videoId} />
         </section>
       )}
-      <div className="mt-6"></div>
 
       {game.screenshots && (
-        <section id="screenshots">
+        <section className="mb-6" id="screenshots">
           <h2 className="mb-2 scroll-m-20 text-2xl font-semibold tracking-tight">
-            {game.title}&apos;s Screenshots:
+            {game.title}&apos;s Screenshots
           </h2>
           <ImageCarousel images={game.screenshots} altBase={game.title} />
         </section>
@@ -240,9 +255,61 @@ export default async function Page({ params }: { params: { slug: string } }) {
 
       {game.similarGames && (
         <div className="max-h-20">
+          <h2 className="mb-2 scroll-m-20 text-2xl font-semibold tracking-tight">
+            More games like {game.title}
+          </h2>
           <SimilarItemsCarousel games={game.similarGames} />
         </div>
       )}
     </>
+  );
+}
+
+import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableFooter,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { FaCheck } from "react-icons/fa";
+
+function LanguagesTable({ languages }: { languages: FormattedLanguage[] }) {
+  return (
+    <Table>
+      <TableHeader>
+        <TableRow>
+          <TableHead></TableHead>
+          <TableHead>Audio</TableHead>
+          <TableHead>Subs</TableHead>
+          <TableHead className="text-right">UI</TableHead>
+        </TableRow>
+      </TableHeader>
+      <TableBody>
+        {languages.map((l) => (
+          <TableRow key={l.id}>
+            <TableCell className="px-0 py-2 font-medium">{l.name}</TableCell>
+            <TableCell className="px-0 py-2">
+              {l.supportType.some((obj) => obj.id === 1) && (
+                <FaCheck className="mx-auto" />
+              )}
+            </TableCell>
+            <TableCell className="px-0 py-2">
+              {l.supportType.some((obj) => obj.id === 2) && (
+                <FaCheck className="mx-auto" />
+              )}
+            </TableCell>
+            <TableCell className="px-0 py-2">
+              {l.supportType.some((obj) => obj.id === 3) && (
+                <FaCheck className="mx-auto" />
+              )}
+            </TableCell>
+          </TableRow>
+        ))}
+      </TableBody>
+    </Table>
   );
 }

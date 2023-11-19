@@ -46,13 +46,11 @@ export function SimilarItemsCarousel({
       className="relative screenshot-swiper"
     >
       {games.map((slide, i) => (
-        <SwiperSlide className="max-h-[400px] max-w-fit" key={i + 1}>
+        <SwiperSlide className="max-h-[300px] max-w-fit" key={i + 1}>
           <Link href={slide.slug}>
             <img
+              className="max-h-[300px] object-contain"
               src={slide.cover?.imageUrl || "/game-placeholder.webp"}
-              width={slide.cover?.width || 400}
-              height={slide.cover?.height || 400}
-              style={{ height: "100%", width: "auto" }}
               alt={slide.name}
             />
           </Link>

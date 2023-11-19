@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { array, z } from "zod";
 
 const transformAgeRating = (r: number): string => {
   const ratingsEnum: { [key: number]: string } = {
@@ -65,9 +65,54 @@ const transformWebsiteCategory = (c: number): string => {
   return categoryString;
 };
 
+type Languages = z.infer<typeof languageSupportsSchema>;
+export type FormattedLanguage = {
+  nativeName: string;
+  id: number;
+  name: string;
+  locale: string;
+  supportType: {
+    id: number;
+    name: string;
+  }[];
+};
+
+const transformLanguages = (langArrRaw: Languages): FormattedLanguage[] => {
+  const languagesMap = new Map<number, any>();
+  const mergeProp = "supportType" as any;
+
+  for (const langObj of langArrRaw) {
+    const id = langObj.language.id;
+    const mergedLangObj = languagesMap.get(id) || ({} as any);
+
+    for (const property in langObj) {
+      if (property === mergeProp) {
+        if (!Array.isArray(mergedLangObj[mergeProp])) {
+          mergedLangObj[mergeProp] = [];
+        }
+        mergedLangObj[mergeProp].push((langObj as any)[mergeProp]);
+      } else {
+        (mergedLangObj as any)[property] = (langObj as any)[property];
+      }
+    }
+
+    languagesMap.set(id, mergedLangObj);
+  }
+
+  const result = [];
+  for (const [id, mergedLangObj] of Array.from(languagesMap)) {
+    const obj = {
+      ...mergedLangObj.language,
+      supportType: mergedLangObj.supportType,
+    };
+    result.push(obj);
+  }
+
+  return result;
+};
+
 const coverSchema = z
   .object({
-    // TODO: Add sensible placeholder
     url: z.string().transform((url) => "https:" + url),
     width: z.number(),
     height: z.number(),
@@ -84,6 +129,31 @@ const gameBaseSchema = z.object({
   slug: z.string(),
   cover: coverSchema.optional(),
 });
+
+const languageSupportsSchema = z.array(
+  z
+    .object({
+      language: z
+        .object({
+          id: z.number(),
+          name: z.string(),
+          native_name: z.string(),
+          locale: z.string(),
+        })
+        .transform(({ native_name, ...rest }) => ({
+          nativeName: native_name,
+          ...rest,
+        })),
+      language_support_type: z.object({
+        id: z.number(),
+        name: z.string(),
+      }),
+    })
+    .transform(({ language, language_support_type }) => ({
+      language,
+      supportType: language_support_type,
+    }))
+);
 
 export const gameSchema = z
   .object({
@@ -197,10 +267,8 @@ export const gameSchema = z
         })
       )
       .optional(),
-    language_supports: z
-      .array(
-        z.object({ language: z.object({ id: z.number(), name: z.string() }) })
-      )
+    language_supports: languageSupportsSchema
+      .transform(transformLanguages)
       .optional(),
     dlcs: z.array(gameBaseSchema).optional(),
     expansions: z.array(gameBaseSchema).optional(),
@@ -242,7 +310,7 @@ export const gameSchema = z
       parentGame: parent_game,
       similarGames: similar_games,
       standaloneDLCs: standalone_expansions,
-      languages: language_supports?.map((l) => l.language),
+      languages: language_supports,
       videos: videos?.map((v) => {
         return {
           name: v.name,
