@@ -8,6 +8,10 @@ export type Game = z.infer<typeof gameSchema>;
 import { gameSearchSchema } from "./zod-schemas";
 export type GameSearch = z.infer<typeof gameSearchSchema>;
 
+// Games Search page
+import { hltbSchema } from "./zod-schemas";
+export type HLTB = z.infer<typeof hltbSchema>;
+
 // Hashtable variables
 export type DayNumber = number;
 export type GameId = number;

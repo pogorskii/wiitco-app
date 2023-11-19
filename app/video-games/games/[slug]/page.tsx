@@ -15,9 +15,13 @@ import { Button } from "@/components/ui/button";
 import { FaPlus } from "react-icons/fa";
 import { FormattedLanguage } from "@/app/lib/zod-schemas";
 
+import { fetchHLTBInfo } from "@/app/lib/data";
+
 export default async function Page({ params }: { params: { slug: string } }) {
   const game = await fetchGameBySlug(params.slug);
   if (!game) return;
+
+  const hltb = await fetchHLTBInfo({ search: game.title });
 
   return (
     <>
@@ -50,6 +54,16 @@ export default async function Page({ params }: { params: { slug: string } }) {
             <Button className="mt-2 w-full">
               <FaPlus className="me-1" /> Watch this game
             </Button>
+
+            {hltb && (
+              <div className="mt-2">
+                <h2 className="mt-4 mb-1 font-semibold">
+                  How long is {hltb.name}?
+                </h2>
+                <HLTBTable hltb={hltb} />
+              </div>
+            )}
+
             {game.franchises || game.collections ? (
               <div>
                 <h2 className="mt-4 mb-1 font-semibold">
@@ -309,6 +323,41 @@ function LanguagesTable({ languages }: { languages: FormattedLanguage[] }) {
             </TableCell>
           </TableRow>
         ))}
+      </TableBody>
+    </Table>
+  );
+}
+
+import { HLTB } from "@/app/lib/definitions";
+
+function HLTBTable({ hltb }: { hltb: HLTB }) {
+  return (
+    <Table>
+      <TableBody>
+        {hltb.gameplayMain && (
+          <TableRow>
+            <TableCell className="px-0 py-2 font-medium">Main</TableCell>
+            <TableCell className="px-0 py-2">{hltb.gameplayMain} hrs</TableCell>
+          </TableRow>
+        )}
+        {hltb.gameplayMainExtra && (
+          <TableRow>
+            <TableCell className="px-0 py-2 font-medium">
+              Main + Extra
+            </TableCell>
+            <TableCell className="px-0 py-2">
+              {hltb.gameplayMainExtra} hrs
+            </TableCell>
+          </TableRow>
+        )}
+        {hltb.gameplayCompletionist && (
+          <TableRow>
+            <TableCell className="px-0 py-2 font-medium">100%</TableCell>
+            <TableCell className="px-0 py-2">
+              {hltb.gameplayCompletionist} hrs
+            </TableCell>
+          </TableRow>
+        )}
       </TableBody>
     </Table>
   );
