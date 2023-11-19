@@ -144,9 +144,9 @@ export function GameSearchCard({ game }: { game: SingleGameSearch }) {
           )}
         </CardFooter>
       </CardContent>
-      <div className="col-span-1 h-full w-full">
+      <div className="col-span-1 w-full">
         <Link href={`/video-games/games/${game.slug}`}>
-          <div className="overflow-hidden ms-auto w-fit h-full">
+          <div className="overflow-hidden ms-auto w-fit h-60">
             <Image
               className="hover:scale-105 duration-200 ease-in-out"
               src={game.cover?.imageUrl || "/game-placeholder.webp"}
