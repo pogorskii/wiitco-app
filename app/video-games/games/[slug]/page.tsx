@@ -5,12 +5,12 @@ import { TagsRow } from "@/app/ui/tags-row";
 import { TruncText } from "@/app/ui/trunc-text";
 import { RatingCircle } from "@/app/ui/rating-circle";
 import { ImageCarousel } from "@/app/ui/image-carousel";
+import { SimilarItemsCarousel } from "@/app/ui/similar-items-carousel";
 import { YouTubePlayer } from "@/app/ui/youtube-player";
 import { Breadcrumbs } from "@/app/ui/breadcrumbs";
 import { formatDistanceToNow } from "date-fns";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
-import { ImageMinus } from "lucide-react";
 
 export default async function Page({ params }: { params: { slug: string } }) {
   const game = await fetchGameBySlug(params.slug);
@@ -237,6 +237,12 @@ export default async function Page({ params }: { params: { slug: string } }) {
           </h2>
           <ImageCarousel images={game.screenshots} altBase={game.title} />
         </section>
+      )}
+
+      {game.similarGames && (
+        <div className="max-h-20">
+          <SimilarItemsCarousel games={game.similarGames} />
+        </div>
       )}
     </>
   );

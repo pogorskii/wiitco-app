@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { useSwiper } from "swiper/react";
 import { GoChevronLeft, GoChevronRight } from "react-icons/go";
@@ -17,20 +18,22 @@ import "swiper/css/navigation";
 import { Pagination, Keyboard, A11y } from "swiper/modules";
 
 export function SimilarItemsCarousel({
-  images,
-  altBase,
+  games,
 }: {
-  images: {
-    imageUrl: string;
-    blurUrl: string;
-    width: number;
-    height: number;
+  games: {
+    name: string;
+    slug: string;
+    cover?: {
+      imageUrl?: string;
+      blurUrl?: string;
+      width?: number;
+      height?: number;
+    };
   }[];
-  altBase: string;
 }) {
   return (
     <Swiper
-      slidesPerView={1}
+      slidesPerView={"auto"}
       spaceBetween={30}
       loop={true}
       keyboard={{
@@ -42,15 +45,18 @@ export function SimilarItemsCarousel({
       modules={[Pagination, Keyboard, A11y]}
       className="relative screenshot-swiper"
     >
-      {images.map((slide, i) => (
-        <SwiperSlide key={i + 1}>
-          <Image
-            src={slide.imageUrl}
-            width={slide.width}
-            height={slide.height}
-            blurDataURL={slide.blurUrl}
-            alt={`${altBase}'s Screenshot ${i + 1}`}
-          />
+      {games.map((slide, i) => (
+        <SwiperSlide className="max-h-[400px] max-w-fit" key={i + 1}>
+          <Link href={slide.slug}>
+            <Image
+              src={slide.cover?.imageUrl || "/game-placeholder.webp"}
+              width={slide.cover?.width || 400}
+              height={slide.cover?.height || 400}
+              style={{ height: "100%", width: "auto" }}
+              blurDataURL={slide.cover?.blurUrl || "/game-placeholder.webp"}
+              alt={slide.name}
+            />
+          </Link>
         </SwiperSlide>
       ))}
       <SwiperControls />
