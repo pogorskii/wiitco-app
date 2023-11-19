@@ -184,7 +184,7 @@ export const gameSchema = z
     videos: z
       .array(
         z.object({
-          name: z.string(),
+          name: z.string().optional(),
           video_id: z.string(),
         })
       )
