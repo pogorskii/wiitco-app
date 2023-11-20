@@ -56,6 +56,7 @@ export function LanguagesTable({
                         <TooltipTrigger>
                           {" "}
                           <img
+                            className="max-w-[35px]"
                             src={`/flags/${l.id}.svg`}
                             alt={`${l.name} (${l.nativeName})`}
                           />
