@@ -26,9 +26,9 @@ export function TruncText({ text }: { text: string }) {
       >
         {text}
       </p>
-      {isTrunc && (
+      {text.length > 360 && (
         <Button variant="link" onClick={handleClick} className="px-0 py-1">
-          Show More
+          {isTrunc ? "Show More" : "Show Less"}
         </Button>
       )}
     </div>

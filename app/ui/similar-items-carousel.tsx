@@ -34,6 +34,7 @@ export function SimilarItemsCarousel({
   return (
     <Swiper
       slidesPerView={"auto"}
+      slidesPerGroupAuto
       spaceBetween={30}
       loop={true}
       keyboard={{
@@ -43,10 +44,10 @@ export function SimilarItemsCarousel({
         clickable: true,
       }}
       modules={[Pagination, Keyboard, A11y]}
-      className="relative screenshot-swiper bg-foreground"
+      className="relative screenshot-swiper"
     >
       {games.map((slide, i) => (
-        <SwiperSlide className="p-6 max-h-[350px] max-w-fit" key={i + 1}>
+        <SwiperSlide className="pb-8 max-h-[350px] max-w-fit" key={i + 1}>
           <Link href={slide.slug}>
             <img
               className="max-h-[300px] object-contain"
@@ -65,21 +66,23 @@ function SwiperControls() {
   const swiper = useSwiper();
 
   return (
-    <div className="absolute w-full flex justify-between top-[50%] translate-y-[-50%] z-10 px-2">
+    <>
       <Button
-        className="bg-white/50 rounded-none p-0 h-[100px]"
+        key="prev"
+        className="absolute z-10 top-[50%] start-2 translate-y-[-50%] bg-white/50 rounded-none p-0 h-[100px]"
         variant="ghost"
         onClick={() => swiper.slidePrev()}
       >
         <GoChevronLeft fontSize={36} />
       </Button>
       <Button
-        className="bg-white/50 rounded-none p-0 h-[100px]"
+        key="next"
+        className="absolute z-10 top-[50%] end-2 translate-y-[-50%] bg-white/50 rounded-none p-0 h-[100px]"
         variant="ghost"
         onClick={() => swiper.slideNext()}
       >
         <GoChevronRight fontSize={36} />
       </Button>
-    </div>
+    </>
   );
 }

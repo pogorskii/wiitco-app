@@ -1,4 +1,6 @@
+import { formatDistanceToNow } from "date-fns";
 import { fetchGameBySlug } from "@/app/lib/data";
+import { fetchHLTBInfo } from "./actions";
 import Image from "next/image";
 import { GamePlatforms } from "@/app/ui/video-games/game-platforms";
 import { TagsRow } from "@/app/ui/tags-row";
@@ -8,15 +10,12 @@ import { ImageCarousel } from "@/app/ui/image-carousel";
 import { SimilarItemsCarousel } from "@/app/ui/similar-items-carousel";
 import { YouTubePlayer } from "@/app/ui/youtube-player";
 import { Breadcrumbs } from "@/app/ui/breadcrumbs";
-import { formatDistanceToNow } from "date-fns";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { FaPlus } from "react-icons/fa";
-import { FormattedLanguage } from "@/app/lib/zod-schemas";
 import { Game } from "@/app/lib/definitions";
-
-import { fetchHLTBInfo } from "@/app/lib/data";
+import { LanguagesTable } from "@/app/ui/video-games/languages-table";
 
 export default async function Page({ params }: { params: { slug: string } }) {
   const game = await fetchGameBySlug(params.slug);
@@ -191,9 +190,16 @@ export default async function Page({ params }: { params: { slug: string } }) {
                 </div>
               )}
             </div>
+
             {game.summary && (
               <div className="mb-4">
                 <TruncText text={game.summary} />
+              </div>
+            )}
+
+            {game.websites && (
+              <div className="mb-8">
+                <LinksList links={game.websites} />
               </div>
             )}
 
@@ -263,7 +269,7 @@ export default async function Page({ params }: { params: { slug: string } }) {
       </section>
 
       {game.videos && (
-        <section className="mb-6" id="trailer">
+        <section className="mb-6 px-40" id="trailer">
           <h2 className="mb-2 scroll-m-20 text-2xl font-semibold tracking-tight">
             {game.title}&apos;s Trailer
           </h2>
@@ -272,7 +278,7 @@ export default async function Page({ params }: { params: { slug: string } }) {
       )}
 
       {game.screenshots && (
-        <section className="mb-6" id="screenshots">
+        <section className="mb-6 px-40" id="screenshots">
           <h2 className="mb-2 scroll-m-20 text-2xl font-semibold tracking-tight">
             {game.title}&apos;s Screenshots
           </h2>
@@ -292,58 +298,11 @@ export default async function Page({ params }: { params: { slug: string } }) {
   );
 }
 
-import {
-  Table,
-  TableBody,
-  TableCaption,
-  TableCell,
-  TableFooter,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { FaCheck } from "react-icons/fa";
-
-function LanguagesTable({ languages }: { languages: FormattedLanguage[] }) {
-  return (
-    <Table>
-      <TableHeader>
-        <TableRow>
-          <TableHead></TableHead>
-          <TableHead>Audio</TableHead>
-          <TableHead>Subs</TableHead>
-          <TableHead className="text-right">UI</TableHead>
-        </TableRow>
-      </TableHeader>
-      <TableBody>
-        {languages.map((l) => (
-          <TableRow key={l.id}>
-            <TableCell className="px-0 py-2 font-medium">{l.name}</TableCell>
-            <TableCell className="px-0 py-2">
-              {l.supportType.some((obj) => obj.id === 1) && (
-                <FaCheck className="mx-auto" />
-              )}
-            </TableCell>
-            <TableCell className="px-0 py-2">
-              {l.supportType.some((obj) => obj.id === 2) && (
-                <FaCheck className="mx-auto" />
-              )}
-            </TableCell>
-            <TableCell className="px-0 py-2">
-              {l.supportType.some((obj) => obj.id === 3) && (
-                <FaCheck className="mx-auto" />
-              )}
-            </TableCell>
-          </TableRow>
-        ))}
-      </TableBody>
-    </Table>
-  );
-}
-
+// HowLongToBeat Table Info
+import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
 import { HLTB } from "@/app/lib/definitions";
 
-function HLTBTable({ hltb }: { hltb: HLTB }) {
+async function HLTBTable({ hltb }: { hltb: HLTB }) {
   return (
     <Table>
       <TableBody>
@@ -380,18 +339,11 @@ function HLTBTable({ hltb }: { hltb: HLTB }) {
   );
 }
 
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
+// Related Games Tabs
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
-export function RelatedTabs({ game }: { game: Game }) {
+async function RelatedTabs({ game }: { game: Game }) {
   return (
     <Tabs
       defaultValue={
@@ -468,7 +420,7 @@ type relatedTabData = {
     | undefined;
 }[];
 
-function RelatedTab({
+async function RelatedTab({
   gameTitle,
   tabName,
   tabData,
@@ -477,7 +429,10 @@ function RelatedTab({
   tabName: string;
   tabData: relatedTabData;
 }) {
-  const tabHeading = tabName.slice(0, 1).toUpperCase() + tabName.slice(1);
+  const tabHeading =
+    tabName === "dlcs"
+      ? "DLCs"
+      : tabName.slice(0, 1).toUpperCase() + tabName.slice(1);
 
   return (
     <TabsContent value={tabName}>
@@ -487,14 +442,19 @@ function RelatedTab({
             {tabHeading} of {gameTitle}
           </CardTitle>
         </CardHeader>
-        <CardContent className={`space-x-4 grid grid-cols-2`}>
+        <CardContent className="min-h-[200px] grid grid-cols-3 gap-4">
           {tabData.map((g) => (
             <Link
-              className="inline-block col-span-1"
+              key={g.slug}
+              className="overflow-hidden w-full h-full inline-block relative col-span-1 text-white hover:text-blue-400 transition-colors duration-200"
               href={`/video-games/games/${g.slug}`}
             >
-              <img src={g.cover?.imageUrl || "/game-placeholder.webp"} />
-              <h3 className="mt-2 scroll-m-20 text-xl font-semibold tracking-tight">
+              <img
+                className="h-full"
+                src={g.cover?.imageUrl || "/game-placeholder.webp"}
+              />
+              <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-transparent to-black"></div>
+              <h3 className="absolute bottom-0 p-2 scroll-m-20 text-base font-semibold tracking-tight">
                 {g.name}
               </h3>
             </Link>
@@ -503,4 +463,67 @@ function RelatedTab({
       </Card>
     </TabsContent>
   );
+}
+
+import {
+  FaExternalLinkAlt,
+  FaWikipediaW,
+  FaFacebookSquare,
+  FaTwitch,
+  FaInstagramSquare,
+  FaYoutubeSquare,
+  FaApple,
+  FaAndroid,
+  FaSteamSquare,
+  FaRedditSquare,
+  FaItchIo,
+  FaDiscord,
+} from "react-icons/fa";
+import { FaXTwitter } from "react-icons/fa6";
+import { SiEpicgames, SiGogdotcom } from "react-icons/si";
+import { IconType } from "react-icons/lib";
+
+function LinksList({
+  links,
+}: {
+  links: {
+    url: string;
+    category: number;
+  }[];
+}) {
+  const sortedLinks = links.sort((a, b) => a.category - b.category);
+
+  const categoryEnum: { [key: number]: [string, IconType] } = {
+    1: ["Official site", FaExternalLinkAlt],
+    2: ["Wikia", FaExternalLinkAlt],
+    3: ["Wikipedia", FaWikipediaW],
+    4: ["Facebook", FaFacebookSquare],
+    5: ["X (Twitter)", FaXTwitter],
+    6: ["Twitch", FaTwitch],
+    8: ["Instagram", FaInstagramSquare],
+    9: ["YouTube", FaYoutubeSquare],
+    10: ["iPhone", FaApple],
+    11: ["iPad", FaApple],
+    12: ["Android", FaAndroid],
+    13: ["Steam", FaSteamSquare],
+    14: ["Reddit", FaRedditSquare],
+    15: ["Itch", FaItchIo],
+    16: ["Epic Games", SiEpicgames],
+    17: ["GOG", SiGogdotcom],
+    18: ["Discord", FaDiscord],
+  };
+
+  const listItems = sortedLinks.map((l, i) => {
+    const Icon = categoryEnum[l.category][1];
+    return (
+      <li key={i}>
+        <a className="hover:underline hover:underline-offset-4" href={l.url}>
+          <Icon className="inline-block me-1.5" />
+          <span>{categoryEnum[l.category][0]}</span>
+        </a>
+      </li>
+    );
+  });
+
+  return <ul className="grid grid-cols-3 gap-2">{listItems}</ul>;
 }

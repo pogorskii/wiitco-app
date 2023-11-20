@@ -9,7 +9,7 @@ import { gameSearchSchema } from "./zod-schemas";
 export type GameSearch = z.infer<typeof gameSearchSchema>;
 
 // Games Search page
-import { hltbSchema } from "./zod-schemas";
+import { hltbSchema } from "../video-games/games/[slug]/schemas";
 export type HLTB = z.infer<typeof hltbSchema>;
 
 // Hashtable variables
