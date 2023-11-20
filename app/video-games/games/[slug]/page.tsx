@@ -446,11 +446,11 @@ async function RelatedTab({
           {tabData.map((g) => (
             <Link
               key={g.slug}
-              className="overflow-hidden w-full h-full inline-block relative col-span-1 text-white hover:text-blue-400 transition-colors duration-200"
+              className="overflow-hidden w-full inline-block relative col-span-1 text-white hover:text-blue-400 transition-colors duration-200"
               href={`/video-games/games/${g.slug}`}
             >
               <img
-                className="h-full"
+                className="object-cover"
                 src={g.cover?.imageUrl || "/game-placeholder.webp"}
               />
               <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-transparent to-black"></div>
