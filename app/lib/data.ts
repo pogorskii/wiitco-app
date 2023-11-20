@@ -44,27 +44,6 @@ export async function fetchGameBySlug(slug: string) {
   }
 }
 
-export async function fetchLangs(slug: string) {
-  try {
-    const headers = new Headers();
-    headers.set("Accept", "application/json");
-    headers.set("Client-ID", `${CLIENT_ID}`);
-    headers.set("Authorization", `Bearer ${TWITCH_TOKEN}`);
-
-    const data = await fetch("https://api.igdb.com/v4/languages", {
-      method: "POST",
-      headers,
-      body: `fields *;
-      limit 500;
-      sort id asc;`,
-    });
-    const result = await data.json();
-    return result;
-  } catch (error) {
-    console.error("Database Error: ", error);
-  }
-}
-
 export async function fetchGamesByMonth(
   year: string,
   month: string

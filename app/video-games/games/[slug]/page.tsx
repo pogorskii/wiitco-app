@@ -55,14 +55,17 @@ export default async function Page({ params }: { params: { slug: string } }) {
               <FaPlus className="me-1" /> Watch this game
             </Button>
 
-            {hltb && (
+            {hltb &&
+            (hltb.gameplayCompletionist ||
+              hltb.gameplayMain ||
+              hltb.gameplayMainExtra) ? (
               <div className="mt-2">
                 <h2 className="mt-4 mb-1 font-semibold">
                   How long is {hltb.name}?
                 </h2>
                 <HLTBTable hltb={hltb} />
               </div>
-            )}
+            ) : null}
 
             {game.franchises || game.collections ? (
               <div>
@@ -306,26 +309,26 @@ async function HLTBTable({ hltb }: { hltb: HLTB }) {
   return (
     <Table>
       <TableBody>
-        {hltb.gameplayMain && (
+        {hltb.gameplayMain ? (
           <TableRow>
-            <TableCell className="px-0 py-2 font-medium">Main</TableCell>
+            <TableCell className="px-0 py-2 font-medium">Story</TableCell>
             <TableCell className="px-0 py-2">
               {hltb.gameplayMain} {hltb.gameplayMain <= 1 ? "hr" : "hrs"}
             </TableCell>
           </TableRow>
-        )}
-        {hltb.gameplayMainExtra && (
+        ) : null}
+        {hltb.gameplayMainExtra ? (
           <TableRow>
             <TableCell className="px-0 py-2 font-medium">
-              Main + Extra
+              Story + Extra
             </TableCell>
             <TableCell className="px-0 py-2">
               {hltb.gameplayMainExtra}{" "}
               {hltb.gameplayMainExtra <= 1 ? "hr" : "hrs"}
             </TableCell>
           </TableRow>
-        )}
-        {hltb.gameplayCompletionist && (
+        ) : null}
+        {hltb.gameplayCompletionist ? (
           <TableRow>
             <TableCell className="px-0 py-2 font-medium">100%</TableCell>
             <TableCell className="px-0 py-2">
@@ -333,7 +336,7 @@ async function HLTBTable({ hltb }: { hltb: HLTB }) {
               {hltb.gameplayCompletionist <= 1 ? "hr" : "hrs"}
             </TableCell>
           </TableRow>
-        )}
+        ) : null}
       </TableBody>
     </Table>
   );
