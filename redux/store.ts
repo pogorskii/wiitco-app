@@ -1,9 +1,10 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { TypedUseSelectorHook, useSelector } from "react-redux";
 import authReducer from "./features/auth-slice";
+import gameFiltersReducer from "./features/game-filters-slice";
 
 export const store = configureStore({
-  reducer: { authReducer },
+  reducer: { authReducer, gameFiltersReducer },
 });
 
 export type RootState = ReturnType<typeof store.getState>;

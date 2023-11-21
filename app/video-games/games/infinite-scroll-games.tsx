@@ -1,7 +1,7 @@
 "use client";
 
 import { GameSearch } from "@/app/lib/definitions";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useInView } from "react-intersection-observer";
 import { fetchGames } from "./actions";
 import { GameSearchCard } from "@/app/ui/video-games/game-card";
@@ -10,9 +10,11 @@ import { Spinner } from "@/app/ui/spinner";
 export default function InfiniteScrollGames({
   search = "",
   initialGames,
+  categories,
 }: {
   search: string;
   initialGames?: GameSearch;
+  categories?: string;
 }) {
   const [games, setGames] = useState(initialGames);
   const [page, setPage] = useState(1);
@@ -23,7 +25,12 @@ export default function InfiniteScrollGames({
 
   async function loadMoreGames() {
     const next = page + 1;
-    const games = await fetchGames({ page: next, search, itemsPerPage });
+    const games = await fetchGames({
+      page: next,
+      search,
+      itemsPerPage,
+      categories,
+    });
     if (games?.length) {
       setPage(next);
       setGames((prev) => [...(prev?.length ? prev : []), ...games]);
