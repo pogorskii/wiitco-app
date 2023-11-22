@@ -207,7 +207,7 @@ function PlatformFilter() {
         <SelectGroup>
           <SelectLabel>Current Generation</SelectLabel>
           {currentGen.map((platform) => (
-            <SelectItem value={platform.value.toString()}>
+            <SelectItem key={platform.value} value={platform.value.toString()}>
               {platform.label}
             </SelectItem>
           ))}
@@ -215,7 +215,7 @@ function PlatformFilter() {
         <SelectGroup>
           <SelectLabel>VR Platforms</SelectLabel>
           {vrGen.map((platform) => (
-            <SelectItem value={platform.value.toString()}>
+            <SelectItem key={platform.value} value={platform.value.toString()}>
               {platform.label}
             </SelectItem>
           ))}
@@ -223,7 +223,7 @@ function PlatformFilter() {
         <SelectGroup>
           <SelectLabel>8th Generation</SelectLabel>
           {eighthGen.map((platform) => (
-            <SelectItem value={platform.value.toString()}>
+            <SelectItem key={platform.value} value={platform.value.toString()}>
               {platform.label}
             </SelectItem>
           ))}
@@ -231,7 +231,7 @@ function PlatformFilter() {
         <SelectGroup>
           <SelectLabel>7th Generation</SelectLabel>
           {seventhGen.map((platform) => (
-            <SelectItem value={platform.value.toString()}>
+            <SelectItem key={platform.value} value={platform.value.toString()}>
               {platform.label}
             </SelectItem>
           ))}
@@ -239,7 +239,7 @@ function PlatformFilter() {
         <SelectGroup>
           <SelectLabel>6th Generation</SelectLabel>
           {sixthGen.map((platform) => (
-            <SelectItem value={platform.value.toString()}>
+            <SelectItem key={platform.value} value={platform.value.toString()}>
               {platform.label}
             </SelectItem>
           ))}
@@ -247,7 +247,7 @@ function PlatformFilter() {
         <SelectGroup>
           <SelectLabel>5th Generation</SelectLabel>
           {fifthGen.map((platform) => (
-            <SelectItem value={platform.value.toString()}>
+            <SelectItem key={platform.value} value={platform.value.toString()}>
               {platform.label}
             </SelectItem>
           ))}
@@ -255,7 +255,7 @@ function PlatformFilter() {
         <SelectGroup>
           <SelectLabel>Other Platforms</SelectLabel>
           {otherGen.map((platform) => (
-            <SelectItem value={platform.value.toString()}>
+            <SelectItem key={platform.value} value={platform.value.toString()}>
               {platform.label}
             </SelectItem>
           ))}
