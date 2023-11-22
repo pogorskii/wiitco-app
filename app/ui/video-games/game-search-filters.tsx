@@ -1,14 +1,6 @@
 "use client";
 
-import {
-  JSXElementConstructor,
-  Key,
-  PromiseLikeOfReactNode,
-  ReactElement,
-  ReactNode,
-  ReactPortal,
-  useState,
-} from "react";
+import { useState } from "react";
 import { DropdownMenuCheckboxItemProps } from "@radix-ui/react-dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { useSearchParams, usePathname, useRouter } from "next/navigation";
@@ -39,7 +31,7 @@ export function GamesSearchFilters() {
   );
 }
 
-function GameCategoryFilter() {
+export function GameCategoryFilter() {
   // Hooks
   const searchParams = useSearchParams();
   const pathname = usePathname();
@@ -177,7 +169,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-function PlatformFilter() {
+export function PlatformFilter() {
   // Hooks
   const searchParams = useSearchParams();
   const pathname = usePathname();
@@ -315,6 +307,58 @@ function SortingSelector() {
       <SelectContent>
         <SelectGroup>
           <SelectLabel>Sort results by...</SelectLabel>
+          {rules.map((rule) => (
+            <SelectItem key={rule.value} value={rule.value}>
+              {rule.label}
+            </SelectItem>
+          ))}
+        </SelectGroup>
+      </SelectContent>
+    </Select>
+  );
+}
+
+// Filter Unknown Games (for calendar)
+// Sorting selector
+export function FilterUnknownGames() {
+  // Hooks
+  const searchParams = useSearchParams();
+  const pathname = usePathname();
+  const { replace } = useRouter();
+
+  // Initial states based on URL params
+  const filter = searchParams.get("filterunknown") || "true";
+  const rules = [
+    {
+      value: "false",
+      label: "Show All Games",
+    },
+    {
+      value: "true",
+      label: "Filter Unknown Games",
+    },
+  ];
+
+  function handleSelect(currentValue: string) {
+    const params = new URLSearchParams(searchParams);
+
+    if (currentValue === "true") {
+      params.delete("filterunknown");
+    } else {
+      params.set("filterunknown", currentValue);
+    }
+    replace(`${pathname}?${params.toString()}`);
+    return;
+  }
+
+  return (
+    <Select onValueChange={handleSelect} defaultValue={filter}>
+      <SelectTrigger>
+        <SelectValue placeholder="Filter Releases" />
+      </SelectTrigger>
+      <SelectContent>
+        <SelectGroup>
+          <SelectLabel>Filter Releases</SelectLabel>
           {rules.map((rule) => (
             <SelectItem key={rule.value} value={rule.value}>
               {rule.label}

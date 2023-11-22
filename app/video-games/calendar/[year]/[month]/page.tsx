@@ -11,12 +11,27 @@ export const metadata: Metadata = {
 
 export default async function Page({
   params,
+  searchParams,
 }: {
   params: { year: string; month: string };
+  searchParams?: {
+    categories?: string;
+    platforms?: string;
+    filterunknown?: string;
+  };
 }) {
+  const categories = searchParams?.categories;
+  const platforms = searchParams?.platforms;
+  const filterUnknown = searchParams?.filterunknown;
   const year = params.year;
   const month = params.month;
-  const gameReleasesPerDayRaw = await fetchGamesByMonth(year, month);
+  const gameReleasesPerDayRaw = await fetchGamesByMonth({
+    year,
+    month,
+    categories,
+    platforms,
+    filterUnknown,
+  });
 
   if (
     gameReleasesPerDayRaw === undefined ||

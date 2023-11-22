@@ -15,6 +15,12 @@ import {
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 
+import {
+  PlatformFilter,
+  GameCategoryFilter,
+  FilterUnknownGames,
+} from "./game-search-filters";
+
 export function SectionNav({ year, month }: { year: string; month: string }) {
   const dateString = getMonthYearName(month, year);
   const pathname = usePathname();
@@ -22,24 +28,35 @@ export function SectionNav({ year, month }: { year: string; month: string }) {
   const nextPagePath = getNextMonthURL(pathname, year, month);
 
   return (
-    <div className="sticky top-[-1px] z-20 bg-background flex justify-between py-2">
-      <Button variant="ghost">
-        <SlidersHorizontal />
-      </Button>
-      <div className="flex items-center gap-2">
-        <Link href={prevPagePath}>
-          <ChevronLeft />
-        </Link>
+    <div className="sticky top-[-1px] z-20 bg-background py-2">
+      <div className="flex justify-center">
+        {/* <Button variant="ghost">
+          <SlidersHorizontal />
+        </Button> */}
+        <div className="flex items-center gap-2">
+          <Link href={prevPagePath}>
+            <ChevronLeft />
+          </Link>
 
-        <p>{dateString}</p>
+          <p>{dateString}</p>
 
-        <Link href={nextPagePath}>
-          <ChevronRight />
-        </Link>
+          <Link href={nextPagePath}>
+            <ChevronRight />
+          </Link>
+        </div>
+        {/* <Button variant="ghost">
+          <Download />
+        </Button> */}
       </div>
-      <Button variant="ghost">
-        <Download />
-      </Button>
+      <div className="flex justify-between">
+        <div className="me-2">
+          <PlatformFilter />
+        </div>
+        <GameCategoryFilter />
+        <div className="ms-auto">
+          <FilterUnknownGames />
+        </div>
+      </div>
     </div>
   );
 }

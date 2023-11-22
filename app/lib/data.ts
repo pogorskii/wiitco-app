@@ -44,10 +44,19 @@ export async function fetchGameBySlug(slug: string) {
   }
 }
 
-export async function fetchGamesByMonth(
-  year: string,
-  month: string
-): Promise<GameReleaseRaw[] | undefined> {
+export async function fetchGamesByMonth({
+  year,
+  month,
+  categories = "main,dlc,expansion",
+  platforms,
+  filterUnknown = "true",
+}: {
+  year: string;
+  month: string;
+  categories?: string;
+  platforms?: string;
+  filterUnknown?: string;
+}): Promise<GameReleaseRaw[] | undefined> {
   try {
     // Fetch params
     const REQ_URL = "https://api.igdb.com/v4/release_dates";
@@ -59,13 +68,38 @@ export async function fetchGamesByMonth(
     headers.set("Accept", "application/json");
     headers.set("Client-ID", `${CLIENT_ID}`);
     headers.set("Authorization", `Bearer ${TWITCH_TOKEN}`);
+
+    const categoriesEnum: { [key: string]: number } = {
+      main: 0,
+      dlc: 1,
+      expansion: 2,
+      bundle: 3,
+      standalone: 4,
+      mod: 5,
+      episode: 6,
+      season: 7,
+      remake: 8,
+      remaster: 9,
+      expanded: 10,
+      port: 11,
+      update: 14,
+    };
+    const categoriesNums = categories
+      .split(",")
+      .map((x) => categoriesEnum[x])
+      .join(",");
+
     const responses = await Promise.all(
       reqArr.map(async (_, i) => {
         const response = await fetch(REQ_URL, {
           method: "POST",
           headers,
           body: `fields category, date, human, m, y, platform.abbreviation, region, updated_at, game.id, game.category, game.cover.url, game.name, game.slug;
-          where m = ${month} & y = ${year} & game.category != (3, 5, 11, 12, 13, 14) & game.themes != (42) & game.follows > 0;
+          where m = ${month} & y = ${year} & game.themes != (42) ${
+            categories ? `& game.category = (${categoriesNums}) ` : ""
+          }${platforms ? `& platform = (${platforms}) ` : ""}${
+            filterUnknown === "true" ? "& game.follows > 1" : ""
+          };
           limit ${REQ_SIZE};
           offset ${REQ_SIZE * i};
           sort date asc;`,

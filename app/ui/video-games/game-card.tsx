@@ -39,7 +39,7 @@ export function GameCardVertical({
       <Link href={`/video-games/games/${slug}`}>
         <div className="grow-0 relative overflow-hidden">
           {gameType !== GameType.Game && (
-            <Badge variant="secondary" className="absolute z-20 top-2 left-2">
+            <Badge variant="secondary" className="absolute z-10 top-2 left-2">
               {gameType}
             </Badge>
           )}
