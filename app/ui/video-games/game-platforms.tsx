@@ -1,4 +1,4 @@
-export const platformsMap = [
+export const platformsMap222 = [
   { value: "pc", label: "PC", valueDB: 6 },
   { value: "playstation 5", label: "PlayStation 5", valueDB: 167 },
   { value: "xbox series", label: "Xbox Series", valueDB: 169 },
@@ -45,6 +45,67 @@ export const platformsMap = [
   { value: "game boy", label: "Game Boy", valueDB: 33 },
   { value: "nes", label: "NES", valueDB: 18 },
   { value: "snes", label: "SNES", valueDB: 19 },
+];
+
+export const currentGen = [
+  { label: "PC", value: 6 },
+  { label: "Mac", value: 14 },
+  { label: "Linux", value: 3 },
+  { label: "PlayStation 5", value: 167 },
+  { label: "Xbox Series", value: 169 },
+  { label: "Nintendo Switch", value: 130 },
+  { label: "iOS", value: 39 },
+  { label: "Android", value: 34 },
+  { label: "Browser", value: 82 },
+  { label: "Arcade", value: 52 },
+];
+export const vrGen = [
+  { label: "Oculus Quest 3", value: 471 },
+  { label: "Oculus Quest 2", value: 386 },
+  { label: "Oculus Quest", value: 384 },
+  { label: "Oculus Rift", value: 385 },
+  { label: "Oculus VR", value: 162 },
+  { label: "Steam VR", value: 163 },
+  { label: "PlayStation VR 2", value: 390 },
+  { label: "PlayStation VR", value: 165 },
+  { label: "Windows MR", value: 161 },
+];
+export const eighthGen = [
+  { label: "PlayStation 4", value: 48 },
+  { label: "Xbox One", value: 49 },
+  { label: "WiiU", value: 41 },
+  { label: "PlayStation Vita", value: 46 },
+  { label: "New Nintendo 3DS", value: 137 },
+  { label: "Nintendo 3DS", value: 37 },
+];
+export const seventhGen = [
+  { label: "PlayStation 3", value: 9 },
+  { label: "Xbox 360", value: 12 },
+  { label: "Nintendo Wii", value: 5 },
+  { label: "PSP", value: 38 },
+  { label: "Nintendo DS", value: 20 },
+  { label: "Nintendo DSi", value: 159 },
+];
+export const sixthGen = [
+  { label: "PlayStation 2", value: 8 },
+  { label: "Xbox OG", value: 11 },
+  { label: "Nintendo GameCube", value: 21 },
+  { label: "Sega Dreamcast", value: 23 },
+  { label: "Game Boy Advance", value: 24 },
+];
+export const fifthGen = [
+  { label: "PlayStation 1", value: 7 },
+  { label: "Nintendo 64", value: 4 },
+  { label: "Sega Saturn", value: 32 },
+  { label: "Game Boy Color", value: 22 },
+  { label: "Virtual Boy", value: 87 },
+];
+export const otherGen = [
+  { label: "Mobile", value: 55 },
+  { label: "Sega Genesis", value: 29 },
+  { label: "Game Boy", value: 33 },
+  { label: "NES", value: 18 },
+  { label: "SNES", value: 19 },
 ];
 
 export function GamePlatforms({ platforms }: { platforms: number[] }) {

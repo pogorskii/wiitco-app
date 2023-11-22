@@ -1,6 +1,14 @@
 "use client";
 
-import { useState } from "react";
+import {
+  JSXElementConstructor,
+  Key,
+  PromiseLikeOfReactNode,
+  ReactElement,
+  ReactNode,
+  ReactPortal,
+  useState,
+} from "react";
 import { DropdownMenuCheckboxItemProps } from "@radix-ui/react-dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { useSearchParams, usePathname, useRouter } from "next/navigation";
@@ -23,7 +31,8 @@ export function GamesSearchFilters() {
         <PlatformFilter />
       </div>
       <GameCategoryFilter />
-      <div className="ms-auto">
+      <div className="ms-auto flex items-center text-sm">
+        <p className="shrink-0 me-2">Sort games by:</p>
         <SortingSelector />
       </div>
     </div>
@@ -109,7 +118,7 @@ function GameCategoryFilter() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="outline">
+        <Button variant="outline" className="bg-white font-normal">
           Categories {categoriesQuantity > 0 && `(${categoriesQuantity})`}
         </Button>
       </DropdownMenuTrigger>
@@ -123,7 +132,6 @@ function GameCategoryFilter() {
         >
           Select All
         </DropdownMenuCheckboxItem>
-
         {checkboxesArr.map((_checkbox, i, arr) => (
           <DropdownMenuCheckboxItem
             key={i}
@@ -147,21 +155,24 @@ function GameCategoryFilter() {
 }
 
 // Platform filter
-import { platformsMap } from "./game-platforms";
-import { Check, ChevronsUpDown } from "lucide-react";
-import { cn } from "@/lib/utils";
 import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-} from "@/components/ui/command";
+  currentGen,
+  vrGen,
+  eighthGen,
+  seventhGen,
+  sixthGen,
+  fifthGen,
+  otherGen,
+} from "./game-platforms";
 import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 function PlatformFilter() {
   // Hooks
@@ -170,80 +181,91 @@ function PlatformFilter() {
   const { replace } = useRouter();
 
   // Initial states based on URL params
-  const platforms = searchParams.get("platforms") || "";
-  const [open, setOpen] = useState(false);
-  const [value, setValue] = useState(
-    () => platformsMap.find((p) => p.valueDB === Number(platforms))?.value || ""
-  );
+  const platforms = searchParams.get("platforms") || "all";
+  const [value, setValue] = useState(platforms);
 
-  function handleSelect(currentValue: string) {
+  function handleSelect(value: string) {
     const params = new URLSearchParams(searchParams);
-    if (currentValue === value) {
+    if (value === "all") {
       params.delete("platforms");
       setValue("");
     } else {
-      const newValueObj = platformsMap.find((p) => p.value === currentValue);
-      if (!newValueObj) return;
-      params.set("platforms", newValueObj.valueDB.toString());
-      setValue(currentValue);
+      params.set("platforms", value);
+      setValue(value);
     }
     replace(`${pathname}?${params.toString()}`);
-    setOpen(false);
     return;
   }
 
   return (
-    <Popover open={open} onOpenChange={setOpen}>
-      <PopoverTrigger asChild>
-        <Button
-          variant="outline"
-          role="combobox"
-          aria-expanded={open}
-          className="w-[200px] justify-between"
-        >
-          {value
-            ? platformsMap.find(
-                (platform) => platform.value.toString() === value
-              )?.label
-            : "Select platform..."}
-          <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-        </Button>
-      </PopoverTrigger>
-      <PopoverContent className="w-[200px] p-0">
-        <Command>
-          <CommandInput placeholder="Start typing platform..." />
-          <CommandEmpty>No platform found.</CommandEmpty>
-          <CommandGroup>
-            {platformsMap.map((platform) => (
-              <CommandItem
-                key={platform.value}
-                value={platform.value.toString()}
-                onSelect={(currentValue) => handleSelect(currentValue)}
-              >
-                <Check
-                  className={cn(
-                    "mr-2 h-4 w-4",
-                    value === platform.value.toString()
-                      ? "opacity-100"
-                      : "opacity-0"
-                  )}
-                />
-                {platform.label}
-              </CommandItem>
-            ))}
-          </CommandGroup>
-        </Command>
-      </PopoverContent>
-    </Popover>
+    <Select onValueChange={handleSelect} defaultValue={value}>
+      <SelectTrigger className="w-[280px]">
+        <SelectValue placeholder="Select Platform" />
+      </SelectTrigger>
+      <SelectContent>
+        <SelectItem value="all">All Platforms</SelectItem>
+        <SelectGroup>
+          <SelectLabel>Current Generation</SelectLabel>
+          {currentGen.map((platform) => (
+            <SelectItem value={platform.value.toString()}>
+              {platform.label}
+            </SelectItem>
+          ))}
+        </SelectGroup>
+        <SelectGroup>
+          <SelectLabel>VR Platforms</SelectLabel>
+          {vrGen.map((platform) => (
+            <SelectItem value={platform.value.toString()}>
+              {platform.label}
+            </SelectItem>
+          ))}
+        </SelectGroup>
+        <SelectGroup>
+          <SelectLabel>8th Generation</SelectLabel>
+          {eighthGen.map((platform) => (
+            <SelectItem value={platform.value.toString()}>
+              {platform.label}
+            </SelectItem>
+          ))}
+        </SelectGroup>
+        <SelectGroup>
+          <SelectLabel>7th Generation</SelectLabel>
+          {seventhGen.map((platform) => (
+            <SelectItem value={platform.value.toString()}>
+              {platform.label}
+            </SelectItem>
+          ))}
+        </SelectGroup>
+        <SelectGroup>
+          <SelectLabel>6th Generation</SelectLabel>
+          {sixthGen.map((platform) => (
+            <SelectItem value={platform.value.toString()}>
+              {platform.label}
+            </SelectItem>
+          ))}
+        </SelectGroup>
+        <SelectGroup>
+          <SelectLabel>5th Generation</SelectLabel>
+          {fifthGen.map((platform) => (
+            <SelectItem value={platform.value.toString()}>
+              {platform.label}
+            </SelectItem>
+          ))}
+        </SelectGroup>
+        <SelectGroup>
+          <SelectLabel>Other Platforms</SelectLabel>
+          {otherGen.map((platform) => (
+            <SelectItem value={platform.value.toString()}>
+              {platform.label}
+            </SelectItem>
+          ))}
+        </SelectGroup>
+      </SelectContent>
+    </Select>
   );
 }
 
 // Sorting selector
-import {
-  DropdownMenuRadioGroup,
-  DropdownMenuRadioItem,
-} from "@/components/ui/dropdown-menu";
-
 function SortingSelector() {
   // Hooks
   const searchParams = useSearchParams();
@@ -251,9 +273,7 @@ function SortingSelector() {
   const { replace } = useRouter();
 
   // Initial states based on URL params
-  const sortInit = searchParams.get("sort") || "popularity";
-  const [sortingRule, setSortingRule] = useState(sortInit);
-
+  const filter = searchParams.get("sort") || "popularity";
   const rules = [
     {
       value: "popularity",
@@ -261,11 +281,11 @@ function SortingSelector() {
     },
     {
       value: "date-newer",
-      label: "Newer Release Date",
+      label: "Newest Games",
     },
     {
       value: "date-older",
-      label: "Older Release Date",
+      label: "Oldest Games",
     },
     {
       value: "title-a-z",
@@ -278,37 +298,28 @@ function SortingSelector() {
   ];
 
   function handleSelect(currentValue: string) {
-    if (currentValue === sortingRule) return;
-
     const params = new URLSearchParams(searchParams);
     params.set("sort", currentValue);
     replace(`${pathname}?${params.toString()}`);
-    setSortingRule(currentValue);
     return;
   }
 
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button variant="outline">
-          Sort by {rules.find((r) => r.value === sortingRule)?.label}
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent className="w-56">
-        <DropdownMenuLabel>Sort results by...</DropdownMenuLabel>
-        <DropdownMenuSeparator />
-        <DropdownMenuRadioGroup
-          value={sortingRule}
-          onValueChange={handleSelect}
-        >
+    <Select onValueChange={handleSelect} defaultValue={filter}>
+      <SelectTrigger>
+        <SelectValue placeholder="Sort by" />
+      </SelectTrigger>
+      <SelectContent>
+        <SelectGroup>
+          <SelectLabel>Sort results by...</SelectLabel>
           {rules.map((rule) => (
-            <DropdownMenuRadioItem key={rule.value} value={rule.value}>
+            <SelectItem key={rule.value} value={rule.value}>
               {rule.label}
-            </DropdownMenuRadioItem>
+            </SelectItem>
           ))}
-        </DropdownMenuRadioGroup>
-      </DropdownMenuContent>
-    </DropdownMenu>
+        </SelectGroup>
+      </SelectContent>
+    </Select>
   );
 }
 
