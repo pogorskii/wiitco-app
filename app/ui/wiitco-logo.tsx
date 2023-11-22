@@ -27,7 +27,7 @@ export default function WIITCOLogo() {
         />
         <circle cx="12" cy="12" r="1" fill="#F97316" />
       </svg>
-      <p className="text-2xl font-medium">WIITCO</p>
+      <p className="text-xl font-medium">When Is It Coming Out?</p>
     </Link>
   );
 }

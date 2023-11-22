@@ -19,7 +19,7 @@ import { LanguagesTable } from "@/app/ui/video-games/languages-table";
 
 export default async function Page({ params }: { params: { slug: string } }) {
   const game = await fetchGameBySlug(params.slug);
-  if (!game) return;
+  if (!game) return <p>No game found.</p>;
 
   const hltb = await fetchHLTBInfo({ search: game.title });
 
@@ -27,6 +27,7 @@ export default async function Page({ params }: { params: { slug: string } }) {
     <>
       <Breadcrumbs
         breadcrumbs={[
+          { label: "Home", href: "/" },
           { label: "Games", href: "/video-games/games" },
           {
             label: game.title,
@@ -141,7 +142,7 @@ export default async function Page({ params }: { params: { slug: string } }) {
                   </span>
                   <TagsRow
                     type="video-games"
-                    category="company"
+                    category="companies"
                     tags={game.developers}
                   ></TagsRow>
                 </div>
@@ -155,7 +156,7 @@ export default async function Page({ params }: { params: { slug: string } }) {
                   </span>
                   <TagsRow
                     type="video-games"
-                    category="company"
+                    category="companies"
                     tags={game.publishers}
                   ></TagsRow>
                 </div>
@@ -241,7 +242,7 @@ export default async function Page({ params }: { params: { slug: string } }) {
                 <p className="mb-2 font-semibold text-xl text-center">
                   Age Ratings
                 </p>
-                <div className="flex gap-2">
+                <div className="flex items-center justify-center gap-2">
                   {game.ageRatings.map((r) => (
                     <Image
                       key={r.rating}

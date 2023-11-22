@@ -6,7 +6,8 @@ import { gameSearchSchema } from "@/app/lib/zod-schemas";
 const CLIENT_ID = process.env.TWITCH_CLIENT_ID;
 const TWITCH_TOKEN = process.env.TWITCH_TOKEN;
 
-export async function fetchGames({
+export async function fetchGamesByGenre({
+  genre = "",
   search = "",
   itemsPerPage = 20,
   page = 1,
@@ -14,6 +15,7 @@ export async function fetchGames({
   platforms,
   sort = "popularity",
 }: {
+  genre?: string;
   search?: string;
   itemsPerPage?: number;
   page?: number;
@@ -87,7 +89,7 @@ export async function fetchGames({
       method: "POST",
       headers,
       body: `fields id, name, slug, category, cover.*, alternative_names.name, aggregated_rating, first_release_date, franchises.name, franchises.slug, game_engines.name, game_engines.slug, genres.name, genres.slug, language_supports.language.name, involved_companies.company.name, involved_companies.company.slug, parent_game.name, parent_game.slug, parent_game.first_release_date, platforms.*;
-           where (name ~ *"${search}"* | alternative_names.name ~ *"${search}"*) & ${
+           where (name ~ *"${search}"* | alternative_names.name ~ *"${search}"*) & genres.slug = "${genre}" & ${
         platforms ? `platforms = (${platforms}) & ` : ""
       }category = (${categoriesNums}) & themes != (42) ${sortFilterString};
            sort ${sortString};

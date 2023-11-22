@@ -17,43 +17,20 @@ import {
 type Checked = DropdownMenuCheckboxItemProps["checked"];
 
 export function GamesSearchFilters() {
-  const categoriesEnum: { [key: number]: string } = {
-    0: "Main Game",
-    1: "DLC",
-    2: "Expansion",
-    3: "Bundle",
-    4: "Standalone DLC",
-    5: "Mod",
-    6: "Episode",
-    7: "Season",
-    8: "Remake",
-    9: "Remaster",
-    10: "Expanded Game",
-    11: "Port",
-    12: "Fork",
-    13: "Pack",
-    14: "Update",
-  };
-
-  // game.category != (3, 5, 11, 12, 13, 14)
-
   return (
-    <>
-      <SearchFilterCheckbox
-        name="Categories"
-        description="Categories of games"
-      />
-    </>
+    <div className="flex">
+      <div className="me-2">
+        <PlatformFilter />
+      </div>
+      <GameCategoryFilter />
+      <div className="ms-auto">
+        <SortingSelector />
+      </div>
+    </div>
   );
 }
 
-function SearchFilterCheckbox({
-  name,
-  description,
-}: {
-  name: string;
-  description: string;
-}) {
+function GameCategoryFilter() {
   // Hooks
   const searchParams = useSearchParams();
   const pathname = usePathname();
@@ -61,46 +38,39 @@ function SearchFilterCheckbox({
 
   // Initial states based on URL params
   const categories = searchParams.get("categories") || "";
-  const [categoriesCount, setCategoriesCount] = useState(
-    searchParams.get("categories")?.split(",").length || 0
-  );
-  const [showAll, setShowAll] = useState<Checked>(false);
-  const [showMainGames, setShowMainGames] = useState<Checked>(
-    categories.includes("main")
-  );
-  const [showDLCs, setShowDLCs] = useState<Checked>(categories.includes("dlc"));
-  const [showExpansions, setShowExpansions] = useState<Checked>(
-    categories.includes("expansion")
-  );
+  const [checkboxesArr, setCheckboxesArr] = useState<Checked[]>([
+    categories.includes("main"),
+    categories.includes("dlc"),
+    categories.includes("expansion"),
+    categories.includes("bundle"),
+    categories.includes("standalone"),
+    categories.includes("mod"),
+    categories.includes("episode"),
+    categories.includes("season"),
+    categories.includes("remake"),
+    categories.includes("remaster"),
+    categories.includes("expanded"),
+    categories.includes("port"),
+    categories.includes("update"),
+  ]);
+  const areAllActive = checkboxesArr.every((x) => x === true);
 
-  const [showBundles, setShowBundles] = useState<Checked>(
-    categories.includes("bundle")
-  );
-  const [showStandalones, setShowStandalones] = useState<Checked>(
-    categories.includes("standalone")
-  );
-  const [showMods, setShowMods] = useState<Checked>(categories.includes("mod"));
-  const [showEpisodes, setShowEpisodes] = useState<Checked>(
-    categories.includes("episode")
-  );
-  const [showSeasons, setShowSeasons] = useState<Checked>(
-    categories.includes("season")
-  );
-  const [showRemakes, setShowRemakes] = useState<Checked>(
-    categories.includes("remake")
-  );
-  const [showRemasters, setShowRemasters] = useState<Checked>(
-    categories.includes("remaster")
-  );
-  const [showExpanded, setShowExpanded] = useState<Checked>(
-    categories.includes("expanded")
-  );
-  const [showPorts, setShowPorts] = useState<Checked>(
-    categories.includes("port")
-  );
-  const [showUpdates, setShowUpdates] = useState<Checked>(
-    categories.includes("update")
-  );
+  const checkboxesMap: { [key: number]: { name: string; value: string } } = {
+    0: { name: "Main Game", value: "main" },
+    1: { name: "DLC", value: "dlc" },
+    2: { name: "Expansion", value: "expansion" },
+    3: { name: "Bundle", value: "bundle" },
+    4: { name: "Standalone DLC", value: "standalone" },
+    5: { name: "Mod", value: "mod" },
+    6: { name: "Episode", value: "episode" },
+    7: { name: "Season", value: "season" },
+    8: { name: "Remake", value: "remake" },
+    9: { name: "Remaster", value: "remaster" },
+    10: { name: "Expanded Game", value: "expanded" },
+    11: { name: "Port", value: "port" },
+    12: { name: "Update", value: "update" },
+  };
+  const checkboxesValues = Object.values(checkboxesMap).map((e) => e.value);
 
   const handleCheck = (value: string) => {
     const params = new URLSearchParams(searchParams);
@@ -117,156 +87,232 @@ function SearchFilterCheckbox({
       params.delete("categories");
     }
 
-    // "Optimistically" update category count UI
-    setCategoriesCount(
-      categories.includes(value) ? categoriesCount - 1 : categoriesCount + 1
-    );
-
     replace(`${pathname}?${params.toString()}`);
   };
+
+  const handleAllCheck = () => {
+    const params = new URLSearchParams(searchParams);
+    if (areAllActive) {
+      params.delete("categories");
+      replace(`${pathname}?${params.toString()}`);
+      setCheckboxesArr(new Array(checkboxesArr.length).fill(false));
+    } else {
+      params.set("categories", checkboxesValues.join(","));
+      setCheckboxesArr(new Array(checkboxesArr.length).fill(true));
+    }
+    replace(`${pathname}?${params.toString()}`);
+    return;
+  };
+
+  const categoriesQuantity = checkboxesArr.filter((x) => x === true).length;
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="outline">
-          {name} ({categoriesCount})
+          Categories {categoriesQuantity > 0 && `(${categoriesQuantity})`}
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56">
-        <DropdownMenuLabel>{description}</DropdownMenuLabel>
+        <DropdownMenuLabel>Categories of games</DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuCheckboxItem
           className="font-semibold"
-          checked={showAll}
-          onCheckedChange={() => {
-            // handleCheck("main");
-            // setShowMainGames(!showMainGames);
-          }}
+          checked={areAllActive}
+          onCheckedChange={handleAllCheck}
         >
           Select All
         </DropdownMenuCheckboxItem>
-        <DropdownMenuCheckboxItem
-          checked={showMainGames}
-          onCheckedChange={() => {
-            handleCheck("main");
-            setShowMainGames(!showMainGames);
-          }}
-        >
-          Main Game
-        </DropdownMenuCheckboxItem>
-        <DropdownMenuCheckboxItem
-          checked={showDLCs}
-          onCheckedChange={() => {
-            handleCheck("dlc");
-            setShowDLCs(!showDLCs);
-          }}
-        >
-          DLC
-        </DropdownMenuCheckboxItem>
-        <DropdownMenuCheckboxItem
-          checked={showExpansions}
-          onCheckedChange={() => {
-            handleCheck("expansion");
-            setShowExpansions(!showExpansions);
-          }}
-        >
-          Expansion
-        </DropdownMenuCheckboxItem>
-        <DropdownMenuCheckboxItem
-          checked={showBundles}
-          onCheckedChange={() => {
-            handleCheck("bundle");
-            setShowBundles(!showBundles);
-          }}
-        >
-          Bundle
-        </DropdownMenuCheckboxItem>
-        <DropdownMenuCheckboxItem
-          checked={showStandalones}
-          onCheckedChange={() => {
-            handleCheck("standalone");
-            setShowStandalones(!showStandalones);
-          }}
-        >
-          Standalone DLC
-        </DropdownMenuCheckboxItem>
-        <DropdownMenuCheckboxItem
-          checked={showMods}
-          onCheckedChange={() => {
-            handleCheck("mod");
-            setShowMods(!showMods);
-          }}
-        >
-          Mod
-        </DropdownMenuCheckboxItem>
-        <DropdownMenuCheckboxItem
-          checked={showEpisodes}
-          onCheckedChange={() => {
-            handleCheck("episode");
-            setShowEpisodes(!showEpisodes);
-          }}
-        >
-          Episode
-        </DropdownMenuCheckboxItem>
-        <DropdownMenuCheckboxItem
-          checked={showSeasons}
-          onCheckedChange={() => {
-            handleCheck("season");
-            setShowSeasons(!showSeasons);
-          }}
-        >
-          Season
-        </DropdownMenuCheckboxItem>
-        <DropdownMenuCheckboxItem
-          checked={showRemakes}
-          onCheckedChange={() => {
-            handleCheck("remake");
-            setShowRemakes(!showRemakes);
-          }}
-        >
-          Remake
-        </DropdownMenuCheckboxItem>
-        <DropdownMenuCheckboxItem
-          checked={showRemasters}
-          onCheckedChange={() => {
-            handleCheck("remaster");
-            setShowRemasters(!showRemasters);
-          }}
-        >
-          Remake
-        </DropdownMenuCheckboxItem>
-        <DropdownMenuCheckboxItem
-          checked={showExpanded}
-          onCheckedChange={() => {
-            handleCheck("expanded");
-            setShowExpanded(!showExpanded);
-          }}
-        >
-          Expanded Game
-        </DropdownMenuCheckboxItem>
-        <DropdownMenuCheckboxItem
-          checked={showPorts}
-          onCheckedChange={() => {
-            handleCheck("port");
-            setShowPorts(!showPorts);
-          }}
-        >
-          Port
-        </DropdownMenuCheckboxItem>
-        <DropdownMenuCheckboxItem
-          checked={showUpdates}
-          onCheckedChange={() => {
-            handleCheck("update");
-            setShowUpdates(!showUpdates);
-          }}
-        >
-          Expanded Game
-        </DropdownMenuCheckboxItem>
+
+        {checkboxesArr.map((_checkbox, i, arr) => (
+          <DropdownMenuCheckboxItem
+            key={i}
+            checked={arr[i]}
+            onCheckedChange={() => {
+              handleCheck(checkboxesMap[i].value);
+              setCheckboxesArr(
+                checkboxesArr.map((checkboxValue, u) => {
+                  if (u === i) return !checkboxValue;
+                  return checkboxValue;
+                })
+              );
+            }}
+          >
+            {checkboxesMap[i].name}
+          </DropdownMenuCheckboxItem>
+        ))}
       </DropdownMenuContent>
     </DropdownMenu>
   );
 }
 
+// Platform filter
+import { platformsMap } from "./game-platforms";
+import { Check, ChevronsUpDown } from "lucide-react";
+import { cn } from "@/lib/utils";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+} from "@/components/ui/command";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+
+function PlatformFilter() {
+  // Hooks
+  const searchParams = useSearchParams();
+  const pathname = usePathname();
+  const { replace } = useRouter();
+
+  // Initial states based on URL params
+  const platforms = searchParams.get("platforms") || "";
+  const [open, setOpen] = useState(false);
+  const [value, setValue] = useState(
+    () => platformsMap.find((p) => p.valueDB === Number(platforms))?.value || ""
+  );
+
+  function handleSelect(currentValue: string) {
+    const params = new URLSearchParams(searchParams);
+    if (currentValue === value) {
+      params.delete("platforms");
+      setValue("");
+    } else {
+      const newValueObj = platformsMap.find((p) => p.value === currentValue);
+      if (!newValueObj) return;
+      params.set("platforms", newValueObj.valueDB.toString());
+      setValue(currentValue);
+    }
+    replace(`${pathname}?${params.toString()}`);
+    setOpen(false);
+    return;
+  }
+
+  return (
+    <Popover open={open} onOpenChange={setOpen}>
+      <PopoverTrigger asChild>
+        <Button
+          variant="outline"
+          role="combobox"
+          aria-expanded={open}
+          className="w-[200px] justify-between"
+        >
+          {value
+            ? platformsMap.find(
+                (platform) => platform.value.toString() === value
+              )?.label
+            : "Select platform..."}
+          <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent className="w-[200px] p-0">
+        <Command>
+          <CommandInput placeholder="Start typing platform..." />
+          <CommandEmpty>No platform found.</CommandEmpty>
+          <CommandGroup>
+            {platformsMap.map((platform) => (
+              <CommandItem
+                key={platform.value}
+                value={platform.value.toString()}
+                onSelect={(currentValue) => handleSelect(currentValue)}
+              >
+                <Check
+                  className={cn(
+                    "mr-2 h-4 w-4",
+                    value === platform.value.toString()
+                      ? "opacity-100"
+                      : "opacity-0"
+                  )}
+                />
+                {platform.label}
+              </CommandItem>
+            ))}
+          </CommandGroup>
+        </Command>
+      </PopoverContent>
+    </Popover>
+  );
+}
+
+// Sorting selector
+import {
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
+} from "@/components/ui/dropdown-menu";
+
+function SortingSelector() {
+  // Hooks
+  const searchParams = useSearchParams();
+  const pathname = usePathname();
+  const { replace } = useRouter();
+
+  // Initial states based on URL params
+  const sortInit = searchParams.get("sort") || "popularity";
+  const [sortingRule, setSortingRule] = useState(sortInit);
+
+  const rules = [
+    {
+      value: "popularity",
+      label: "Popularity",
+    },
+    {
+      value: "date-newer",
+      label: "Newer Release Date",
+    },
+    {
+      value: "date-older",
+      label: "Older Release Date",
+    },
+    {
+      value: "title-a-z",
+      label: "Title (A to Z)",
+    },
+    {
+      value: "title-z-a",
+      label: "Title (Z to A)",
+    },
+  ];
+
+  function handleSelect(currentValue: string) {
+    if (currentValue === sortingRule) return;
+
+    const params = new URLSearchParams(searchParams);
+    params.set("sort", currentValue);
+    replace(`${pathname}?${params.toString()}`);
+    setSortingRule(currentValue);
+    return;
+  }
+
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button variant="outline">
+          Sort by {rules.find((r) => r.value === sortingRule)?.label}
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent className="w-56">
+        <DropdownMenuLabel>Sort results by...</DropdownMenuLabel>
+        <DropdownMenuSeparator />
+        <DropdownMenuRadioGroup
+          value={sortingRule}
+          onValueChange={handleSelect}
+        >
+          {rules.map((rule) => (
+            <DropdownMenuRadioItem key={rule.value} value={rule.value}>
+              {rule.label}
+            </DropdownMenuRadioItem>
+          ))}
+        </DropdownMenuRadioGroup>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+}
+
+// Search Bar
 export function Search({ placeholder }: { placeholder: string }) {
   const searchParams = useSearchParams();
   const pathname = usePathname();

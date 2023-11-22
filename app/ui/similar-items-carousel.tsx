@@ -43,14 +43,14 @@ export function SimilarItemsCarousel({
       pagination={{
         clickable: true,
       }}
-      modules={[Pagination, Keyboard, A11y]}
+      modules={[Pagination, A11y]}
       className="relative screenshot-swiper"
     >
       {games.map((slide, i) => (
-        <SwiperSlide className="pb-8 max-h-[350px] max-w-fit" key={i + 1}>
-          <Link href={slide.slug}>
+        <SwiperSlide className="mb-8 max-w-fit" key={i + 1}>
+          <Link href={slide.slug} className="block h-full aspect-[4/3]">
             <img
-              className="max-h-[300px] object-contain"
+              className="h-[300px]"
               src={slide.cover?.imageUrl || "/game-placeholder.webp"}
               alt={slide.name}
             />

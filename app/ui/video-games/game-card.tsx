@@ -128,8 +128,10 @@ export function GameSearchCard({ game }: { game: SingleGameSearch }) {
           </Link>
           {game.platforms && <GamePlatforms platforms={game.platforms} />}
         </CardHeader>
-        <CardFooter className="mt-auto p-0">
-          <Badge>{game.category}</Badge>
+        <CardFooter className="mt-auto p-0 text-base">
+          <Badge>
+            {game.category === "Standalone DLC" ? "Standalone" : game.category}
+          </Badge>
           {game.parentGame && (
             <>
               <span className="mx-2">of</span>

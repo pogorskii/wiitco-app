@@ -3,17 +3,19 @@
 import { GameSearch } from "@/app/lib/definitions";
 import { useEffect, useState } from "react";
 import { useInView } from "react-intersection-observer";
-import { fetchGames } from "./actions";
+import { fetchGamesByGenre } from "./actions";
 import { GameSearchCard } from "@/app/ui/video-games/game-card";
 import { Spinner } from "@/app/ui/spinner";
 
-export default function InfiniteScrollGames({
+export default function InfiniteGenreGames({
+  genre,
   search = "",
   initialGames,
   categories,
   platforms,
   sort,
 }: {
+  genre: string;
   search: string;
   initialGames?: GameSearch;
   categories?: string;
@@ -29,8 +31,9 @@ export default function InfiniteScrollGames({
 
   async function loadMoreGames() {
     const next = page + 1;
-    const games = await fetchGames({
+    const games = await fetchGamesByGenre({
       page: next,
+      genre,
       search,
       itemsPerPage,
       categories,
