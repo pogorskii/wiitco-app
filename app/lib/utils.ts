@@ -150,10 +150,10 @@ export const formatGameReleases = (
         // TODO: Change placeholder img
         coverUrl: gameData.game.cover?.url
           ? `https:${gameData.game.cover.url}`.replace("t_thumb", "t_original")
-          : "https://images.igdb.com/igdb/image/upload/t_cover_big/co73t7.jpg",
+          : "/game-placeholder.webp",
         blurUrl: gameData.game.cover?.url
           ? `https:${gameData.game.cover.url}`
-          : "https://images.igdb.com/igdb/image/upload/t_thumb/co73t7.jpg",
+          : "/game-placeholder.webp",
         dateUpdated: gameData.updated_at,
       };
 

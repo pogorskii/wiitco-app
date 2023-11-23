@@ -1,4 +1,3 @@
-import { notFound } from "next/navigation";
 import { Metadata } from "next";
 import { fetchGamesByMonth } from "@/app/lib/data";
 import { formatGameReleasesToMap } from "@/app/lib/utils";
@@ -37,7 +36,6 @@ export default async function Page({
     gameReleasesPerDayRaw === undefined ||
     gameReleasesPerDayRaw.length === 0
   ) {
-    // notFound();
     return (
       <>
         <SectionNav year={year} month={month} />
