@@ -41,30 +41,6 @@ const transformGameCategory = (c: number): string => {
   return categoryString;
 };
 
-const transformWebsiteCategory = (c: number): string => {
-  const categoryEnum: { [key: number]: string } = {
-    1: "Official site",
-    2: "Wikia",
-    3: "Wikipedia",
-    4: "Facebook",
-    5: "Twitter (X)",
-    6: "Twitch",
-    8: "Instagram",
-    9: "YouTube",
-    10: "iPhone",
-    11: "iPad",
-    12: "Android",
-    13: "Steam",
-    14: "Reddit",
-    15: "Itch",
-    16: "Epic Games",
-    17: "GOG",
-    18: "Discord",
-  };
-  const categoryString = categoryEnum[c] || "Not supported";
-  return categoryString;
-};
-
 type Languages = z.infer<typeof languageSupportsSchema>;
 export type FormattedLanguage = {
   nativeName: string;
@@ -155,6 +131,50 @@ const languageSupportsSchema = z.array(
     }))
 );
 
+const collectionSchema = z.object({
+  name: z.string(),
+  slug: z.string(),
+  games: z
+    .array(
+      z
+        .object({
+          id: z.number(),
+          name: z.string(),
+          slug: z.string(),
+          cover: z
+            .object({
+              url: z.string().transform((url) => "https:" + url),
+              width: z.number(),
+              height: z.number(),
+            })
+            .optional(),
+          category: z.number().default(0).transform(transformGameCategory),
+          platforms: z
+            .array(
+              z
+                .number()
+                .or(z.object({ id: z.number() }))
+                .transform((entry) =>
+                  typeof entry === "object" ? entry.id : entry
+                )
+            )
+            .optional(),
+          parent_game: z
+            .object({
+              name: z.string(),
+              slug: z.string(),
+            })
+            .optional(),
+        })
+        .transform(({ parent_game, ...rest }) => ({
+          parentGame: parent_game,
+          ...rest,
+        }))
+    )
+    .optional(),
+});
+export type Collection = z.infer<typeof collectionSchema>;
+
 export const gameSchema = z
   .object({
     id: z.number().describe(`Game's ID`),
@@ -183,17 +203,8 @@ export const gameSchema = z
       .number()
       .transform((val) => new Date(val * 1000))
       .optional(),
-    franchises: z
-      .array(z.object({ name: z.string(), slug: z.string() }))
-      .optional(),
-    collections: z
-      .array(
-        z.object({
-          name: z.string(),
-          slug: z.string(),
-        })
-      )
-      .optional(),
+    franchises: z.array(collectionSchema).optional(),
+    collections: z.array(collectionSchema).optional(),
     genres: z
       .array(
         z.object({

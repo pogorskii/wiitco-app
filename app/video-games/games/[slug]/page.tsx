@@ -20,7 +20,6 @@ import { LanguagesTable } from "@/app/ui/video-games/languages-table";
 export default async function Page({ params }: { params: { slug: string } }) {
   const game = await fetchGameBySlug(params.slug);
   if (!game) return <p>No game found.</p>;
-
   const hltb = await fetchHLTBInfo({ search: game.title });
 
   return (
@@ -68,32 +67,33 @@ export default async function Page({ params }: { params: { slug: string } }) {
               </div>
             ) : null}
 
-            {game.franchises || game.collections ? (
+            {(game.franchises && game.franchises[0].games) ||
+            (game.collections && game.collections[0].games) ? (
               <div>
                 <h2 className="mt-4 mb-1 font-semibold">
                   This game belongs to:
                 </h2>
-                <ul className="mb-6 ml-6 list-disc [&>li]:mt-1">
-                  {game.franchises && (
-                    <li>
-                      <TagsRow
-                        type="video-games"
-                        category="franchises"
-                        tags={game.franchises}
-                      ></TagsRow>{" "}
-                      franchise
-                    </li>
-                  )}
-                  {game.collections && (
-                    <li>
-                      <TagsRow
-                        type="video-games"
-                        category="collections"
-                        tags={game.collections}
-                      ></TagsRow>{" "}
-                      series
-                    </li>
-                  )}
+                <ul className="mb-6 [&>li]:mt-1">
+                  {game.franchises &&
+                    game.franchises.map((collection, i) => {
+                      if (!collection.games) return;
+
+                      return (
+                        <li key={i}>
+                          <SeriesModal type="Franchise" data={collection} />
+                        </li>
+                      );
+                    })}
+                  {game.collections &&
+                    game.collections.map((collection, i) => {
+                      if (!collection.games) return;
+
+                      return (
+                        <li key={i}>
+                          <SeriesModal type="Series" data={collection} />
+                        </li>
+                      );
+                    })}
                 </ul>
               </div>
             ) : null}
@@ -530,4 +530,102 @@ function LinksList({
   });
 
   return <ul className="grid grid-cols-3 gap-2">{listItems}</ul>;
+}
+
+// Franchise / Series Popover
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Separator } from "@/components/ui/separator";
+
+import { Collection } from "@/app/lib/zod-schemas";
+
+function SeriesModal({ type, data }: { type: string; data: Collection }) {
+  if (!data || !data.games) return;
+
+  const gamesQuantity = data.games.length;
+
+  return (
+    <Dialog>
+      <DialogTrigger asChild>
+        <Button
+          className="w-full justify-start rounded-none h-fit py-1"
+          variant="outline"
+        >
+          {data.name} {type}
+        </Button>
+      </DialogTrigger>
+      <DialogContent className="max-w-4xl">
+        <DialogHeader>
+          <DialogTitle>
+            {data.name} {type}
+          </DialogTitle>
+          <DialogDescription>
+            There {gamesQuantity > 1 ? "are" : "is"} {gamesQuantity}{" "}
+            {gamesQuantity > 1 ? "games" : "game"} in this collection.
+          </DialogDescription>
+        </DialogHeader>
+        <ScrollArea className="h-96 w-auto rounded-md border">
+          <div className="grid px-4 py-2">
+            {data.games.map((game, i, arr) => (
+              <div key={i}>
+                <div className="py-2 flex justify-between">
+                  <div className="shrink-0 flex flex-col items-start justify-between">
+                    <div>
+                      <Link
+                        className="block mb-1 hover:underline hover:underline-offset-2"
+                        href={`/video-games/games/${game.slug}`}
+                      >
+                        <h3 className="scroll-m-20 text-xl font-medium tracking-tight">
+                          {game.name}
+                        </h3>
+                      </Link>
+                      {game.platforms && (
+                        <GamePlatforms platforms={game.platforms} />
+                      )}
+                    </div>
+                    <div>
+                      <Badge className="inline-block">{game.category}</Badge>
+                      {game.parentGame && (
+                        <>
+                          {" "}
+                          of{" "}
+                          <a
+                            className="hover:underline hover:underline-offset-2"
+                            href={`/video-games/games/${game.parentGame.slug}`}
+                          >
+                            {game.parentGame.name}
+                          </a>
+                        </>
+                      )}
+                    </div>
+                  </div>
+                  <Link
+                    className="block mb-1 hover:underline hover:underline-offset-2"
+                    href={`/video-games/games/${game.slug}`}
+                  >
+                    <img
+                      className="max-h-32"
+                      src={
+                        game.cover?.url.replace("thumb", "cover_big") ||
+                        "/game-placeholder.webp"
+                      }
+                    />
+                  </Link>
+                </div>
+                {i < arr.length - 1 && <Separator />}
+              </div>
+            ))}
+          </div>
+        </ScrollArea>
+      </DialogContent>
+    </Dialog>
+  );
 }

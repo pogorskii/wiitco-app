@@ -319,7 +319,6 @@ function SortingSelector() {
 }
 
 // Filter Unknown Games (for calendar)
-// Sorting selector
 export function FilterUnknownGames() {
   // Hooks
   const searchParams = useSearchParams();
@@ -335,7 +334,7 @@ export function FilterUnknownGames() {
     },
     {
       value: "true",
-      label: "Filter Unknown Games",
+      label: "Hide Niche Games",
     },
   ];
 

@@ -48,7 +48,7 @@ export function SimilarItemsCarousel({
     >
       {games.map((slide, i) => (
         <SwiperSlide className="mb-8 max-w-fit" key={i + 1}>
-          <Link href={slide.slug} className="block h-full aspect-[4/3]">
+          <Link href={slide.slug} className="block h-full">
             <img
               className="h-[300px]"
               src={slide.cover?.imageUrl || "/game-placeholder.webp"}
