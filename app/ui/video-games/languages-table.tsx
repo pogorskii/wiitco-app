@@ -32,7 +32,7 @@ export function LanguagesTable({
   }
 
   return (
-    <div className="mb-8">
+    <div className="mb-8 self-start w-full">
       <h2 className="mb-2 font-semibold text-lg text-start">
         Supported Languages
       </h2>
