@@ -379,9 +379,11 @@ async function AgeRatings({
   }[];
 }) {
   return (
-    <div className="mb-8">
-      <h2 className="mt-8 mb-2 font-semibold text-lg">Age Ratings</h2>
-      <div className="flex items-center justify-center gap-2">
+    <div className="mb-8 w-full">
+      <h2 className="mt-8 mb-2 font-semibold text-lg text-start">
+        Age Ratings
+      </h2>
+      <div className="flex items-center justify-start gap-2">
         {ageRatings.map((r) => (
           <Image
             key={r.rating}

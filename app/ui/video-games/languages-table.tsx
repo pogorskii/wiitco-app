@@ -32,7 +32,7 @@ export function LanguagesTable({
   }
 
   return (
-    <>
+    <div className="mb-8">
       <h2 className="mb-2 font-semibold text-lg text-start">
         Supported Languages
       </h2>
@@ -93,6 +93,6 @@ export function LanguagesTable({
           {isOpen ? "Show Less" : "Show More"}
         </Button>
       )}
-    </>
+    </div>
   );
 }
