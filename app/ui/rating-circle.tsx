@@ -12,7 +12,7 @@ export function RatingCircle({
 }) {
   return (
     <>
-      <h2 className="mb-2 font-semibold text-xl">Critic Rating</h2>
+      <h2 className="mb-2 font-semibold text-lg text-start">Critic Rating</h2>
       <figure className="relative max-w-[100px]">
         <svg
           width="100%"

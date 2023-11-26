@@ -74,19 +74,19 @@ export default async function Page({ params }: { params: { slug: string } }) {
           (hltb.gameplayCompletionist ||
             hltb.gameplayMain ||
             hltb.gameplayMainExtra) ? (
-            <>
-              <p className="mt-4 mb-1 font-semibold text-xl">
+            <div className="mb-8">
+              <p className="mb-2 font-semibold text-lg">
                 How long is {hltb.name}?
               </p>
               <HLTBTable hltb={hltb} />
-            </>
+            </div>
           ) : null}
 
           {(game.franchises && game.franchises[0].games) ||
           (game.collections && game.collections[0].games) ? (
-            <div>
-              <p className="mt-4 mb-2 font-semibold text-xl">Part of:</p>
-              <ul className="mb-6 [&>li]:mt-1">
+            <div className="mb-8">
+              <p className="mb-2 font-semibold text-lg">Related to</p>
+              <ul className="[&>li]:mt-1">
                 {game.franchises &&
                   game.franchises.map((collection, i) => {
                     if (!collection.games) return;
@@ -144,7 +144,7 @@ export default async function Page({ params }: { params: { slug: string } }) {
                   </Link>
                 </span>
               )}
-              <h1 className="scroll-m-20 pb-2 text-xl md:text-2xl font-semibold tracking-tight first:mt-0">
+              <h1 className="mb-2 scroll-m-20 text-xl md:text-2xl font-semibold first:mt-0">
                 {game.title}
               </h1>
               {game.firstReleaseDate && (
@@ -159,7 +159,7 @@ export default async function Page({ params }: { params: { slug: string } }) {
             </div>
           </div>
 
-          <Button className="mt-4 mb-6 w-full md:hidden">
+          <Button className="mb-2 mt-4 w-full md:hidden">
             <FaPlus className="me-1" /> Watch this game
           </Button>
 
@@ -270,8 +270,8 @@ export default async function Page({ params }: { params: { slug: string } }) {
 
               {/* YouTube Video Embed */}
               {game.videos && (
-                <section className="mb-6" id="trailer">
-                  <h2 className="mb-2 scroll-m-20 text-2xl font-semibold tracking-tight">
+                <section className="mb-8" id="trailer">
+                  <h2 className="mb-2 scroll-m-20 text-lg font-semibold">
                     {game.title}&apos;s Trailer
                   </h2>
                   <YouTubePlayer videoId={game.videos[0].videoId} />
@@ -280,8 +280,8 @@ export default async function Page({ params }: { params: { slug: string } }) {
 
               {/* Screenshots Slider */}
               {game.screenshots && (
-                <section className="mb-6" id="screenshots">
-                  <h2 className="mb-2 scroll-m-20 text-2xl font-semibold tracking-tight">
+                <section className="mb-8" id="screenshots">
+                  <h2 className="mb-2 scroll-m-20 text-lg font-semibold">
                     {game.title}&apos;s Screenshots
                   </h2>
                   <ImageCarousel
@@ -296,19 +296,19 @@ export default async function Page({ params }: { params: { slug: string } }) {
                 (hltb.gameplayCompletionist ||
                   hltb.gameplayMain ||
                   hltb.gameplayMainExtra) ? (
-                  <>
-                    <p className="mt-4 mb-1 font-semibold text-xl">
+                  <div className="mb-8">
+                    <h2 className="mb-2 font-semibold text-lg">
                       How long is {hltb.name}?
-                    </p>
+                    </h2>
                     <HLTBTable hltb={hltb} />
-                  </>
+                  </div>
                 ) : null}
 
                 {(game.franchises && game.franchises[0].games) ||
                 (game.collections && game.collections[0].games) ? (
-                  <div>
-                    <p className="mt-4 mb-2 font-semibold text-xl">Part of:</p>
-                    <ul className="mb-6 [&>li]:mt-1">
+                  <div className="mb-8">
+                    <h2 className="mb-2 font-semibold text-lg">Related to</h2>
+                    <ul className="[&>li]:mt-1">
                       {game.franchises &&
                         game.franchises.map((collection, i) => {
                           if (!collection.games) return;
@@ -337,10 +337,10 @@ export default async function Page({ params }: { params: { slug: string } }) {
               {/* Similar Games Slider */}
               {game.similarGames && (
                 <>
-                  <h2 className="mb-2 sm:mb-[340px] scroll-m-20 text-2xl font-semibold tracking-tight">
+                  <h2 className="mb-2 lg:mb-[340px] scroll-m-20 text-lg font-semibold">
                     More games like {game.title}
                   </h2>
-                  <div className="sm:absolute bottom-0 left-1/2 sm:translate-x-[-50%] sm:w-[90vw]">
+                  <div className="lg:absolute bottom-0 left-1/2 lg:translate-x-[-50%] lg:w-[90vw]">
                     <SimilarItemsCarousel games={game.similarGames} />
                   </div>
                 </>
@@ -379,9 +379,9 @@ async function AgeRatings({
   }[];
 }) {
   return (
-    <>
-      <h2 className="mt-6 mb-2 font-semibold text-xl">Age Ratings</h2>
-      <div className="mb-6 flex items-center justify-center gap-2">
+    <div className="mb-8">
+      <h2 className="mt-8 mb-2 font-semibold text-lg">Age Ratings</h2>
+      <div className="flex items-center justify-center gap-2">
         {ageRatings.map((r) => (
           <Image
             key={r.rating}
@@ -396,7 +396,7 @@ async function AgeRatings({
           />
         ))}
       </div>
-    </>
+    </div>
   );
 }
 
@@ -459,9 +459,9 @@ async function RelatedTabs({ game }: { game: Game }) {
           ? "expansions"
           : "standalones"
       }
-      className="w-full mb-6"
+      className="w-full mb-8"
     >
-      <TabsList className="grid w-full grid-cols-3 lg:grid-cols-5">
+      <TabsList className="w-full grid grid-cols-3 lg:grid-cols-5">
         {game.remakes && <TabsTrigger value="remakes">Remakes</TabsTrigger>}
         {game.remasters && (
           <TabsTrigger value="remasters">Remasters</TabsTrigger>
@@ -539,8 +539,8 @@ async function RelatedTab({
   return (
     <TabsContent value={tabName}>
       <Card>
-        <CardHeader>
-          <CardTitle>
+        <CardHeader className="pb-2">
+          <CardTitle className="text-lg">
             {tabHeading} of {gameTitle}
           </CardTitle>
         </CardHeader>
@@ -708,7 +708,7 @@ function SeriesModal({ type, data }: { type: string; data: Collection }) {
                     href={`/video-games/games/${game.slug}`}
                   >
                     <img
-                      className="max-h-32"
+                      className="ms-auto max-h-32"
                       src={
                         game.cover?.url.replace("thumb", "cover_big") ||
                         "/game-placeholder.webp"

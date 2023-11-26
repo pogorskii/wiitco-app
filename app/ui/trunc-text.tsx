@@ -12,7 +12,7 @@ export function TruncText({ text }: { text: string }) {
   }
 
   return (
-    <div>
+    <div className="mb-8">
       <p
         className={clsx(
           "leading-7 [&:not(:first-child)]:mt-4",

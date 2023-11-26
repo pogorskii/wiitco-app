@@ -8,7 +8,6 @@ import Link from "next/link";
 import {
   Card,
   CardContent,
-  CardDescription,
   CardFooter,
   CardHeader,
   CardTitle,
@@ -167,7 +166,7 @@ export function GameSearchCard({ game }: { game: SingleGameSearch }) {
   return (
     <>
       {/* Desktop version */}
-      <Card className="col-span-2 md:col-span-1 hidden sm:grid h-60 grid-cols-3 shadow-md overflow-hidden">
+      <Card className="col-span-2 md:col-span-1 hidden sm:grid min-h-60 grid-cols-3 shadow-md overflow-hidden">
         <CardContent className="pt-6 col-span-2 h-full flex flex-col items-start justify-between">
           <CardHeader className="p-0">
             <Link
@@ -176,34 +175,37 @@ export function GameSearchCard({ game }: { game: SingleGameSearch }) {
             >
               <CardTitle className="text-xl font-semibold">
                 {game.name}
-                {releaseYear && ` (${releaseYear})`}
               </CardTitle>
             </Link>
             {game.platforms && <GamePlatforms platforms={game.platforms} />}
           </CardHeader>
-          <CardFooter className="mt-auto p-0 text-base">
-            <Badge>
-              {game.category === "Standalone DLC"
-                ? "Standalone"
-                : game.category}
-            </Badge>
-            {game.parentGame && (
-              <>
-                <span className="mx-2">of</span>
-                <Link
-                  className="hover:underline hover:underline-offset-2 hover:decoration-solid"
-                  href={`/video-games/games/${game.parentGame.slug}`}
-                >
-                  {game.parentGame.name}
-                  {parentReleaseYear && ` (${parentReleaseYear})`}
-                </Link>
-              </>
-            )}
+          <CardFooter className="flex flex-col items-start mt-auto p-0 text-base">
+            <p className="mt-2 mb-1">{game.releaseDate?.toDateString()}</p>
+            <div>
+              <Badge>
+                {game.category === "Standalone DLC"
+                  ? "Standalone"
+                  : game.category}
+              </Badge>
+              {game.parentGame && (
+                <span>
+                  {" "}
+                  of{" "}
+                  <Link
+                    className="hover:underline hover:underline-offset-2 hover:decoration-solid"
+                    href={`/video-games/games/${game.parentGame.slug}`}
+                  >
+                    {game.parentGame.name}
+                    {parentReleaseYear && ` (${parentReleaseYear})`}
+                  </Link>
+                </span>
+              )}
+            </div>
           </CardFooter>
         </CardContent>
         <div className="col-span-1 w-full">
           <Link href={`/video-games/games/${game.slug}`}>
-            <div className="overflow-hidden ms-auto w-fit h-60">
+            <div className="overflow-hidden ms-auto w-fit h-full">
               <Image
                 className="hover:scale-105 duration-200 ease-in-out"
                 src={game.cover?.imageUrl || "/game-placeholder.webp"}

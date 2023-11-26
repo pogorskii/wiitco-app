@@ -1,8 +1,7 @@
 import { v4 as uuid } from "uuid";
-import { Search } from "@/app/ui/search";
-import { fetchGamesByCompany } from "./actions";
-import InfiniteCompanyGames from "./infinite-company-games";
-import { GamesSearchFilters } from "@/app/ui/video-games/game-search-filters";
+import { SectionNav } from "@/app/ui/video-games/section-nav";
+import { fetchGamesSearch } from "../../actions";
+import InfiniteGamesSearch from "../../infinite-games-search";
 import { Breadcrumbs } from "@/app/ui/breadcrumbs";
 
 export default async function Page({
@@ -28,7 +27,7 @@ export default async function Page({
     .map((w) => w.slice(0, 1).toLocaleUpperCase() + w.slice(1))
     .join(" ");
 
-  const games = await fetchGamesByCompany({
+  const games = await fetchGamesSearch({
     company,
     search,
     categories,
@@ -52,14 +51,9 @@ export default async function Page({
       <h1 className="scroll-m-20 border-b pb-2 text-3xl font-semibold tracking-tight first:mt-0">
         Games by {companyName}
       </h1>
-      <div className="mx-[-20px] p-4 sticky z-10 top-0 mb-4 bg-background">
-        <Search placeholder="Search any game" />
-        <div className="py-4 pb-0">
-          <GamesSearchFilters />
-        </div>
-      </div>
-      <div key={uuid()} className="grid grid-cols-2 gap-6">
-        <InfiniteCompanyGames
+      <SectionNav />
+      <div key={uuid()} className="grid grid-cols-1 md:grid-cols-2 sm:gap-6">
+        <InfiniteGamesSearch
           initialGames={games}
           company={company}
           search={search}

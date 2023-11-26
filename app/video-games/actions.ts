@@ -6,8 +6,11 @@ import { gameSearchSchema } from "@/app/lib/zod-schemas";
 const CLIENT_ID = process.env.TWITCH_CLIENT_ID;
 const TWITCH_TOKEN = process.env.TWITCH_TOKEN;
 
-export async function fetchGames({
+export async function fetchGamesSearch({
   search = "",
+  engine,
+  company,
+  genre,
   itemsPerPage = 20,
   page = 1,
   categories = "main,dlc,expansion",
@@ -15,6 +18,9 @@ export async function fetchGames({
   sort = "popularity",
 }: {
   search?: string;
+  engine?: string;
+  company?: string;
+  genre?: string;
   itemsPerPage?: number;
   page?: number;
   categories?: string;
@@ -83,13 +89,19 @@ export async function fetchGames({
     const sortFilterString =
       sortingRules.find((r) => r.rule === sort)?.filter || "";
 
+    // Composite Parts of the query's Body string;
+    const platformsQuery = platforms ? `platforms = (${platforms}) & ` : "";
+    const engineQuery = engine ? `game_engines.slug = "${engine}" & ` : "";
+    const companyQuery = company
+      ? `involved_companies.company.slug = "${company}" & `
+      : "";
+    const genreQuery = genre ? `genres.slug = "${genre}" & ` : "";
+
     const response = await fetch(REQ_URL, {
       method: "POST",
       headers,
       body: `fields id, name, slug, category, cover.*, alternative_names.name, aggregated_rating, first_release_date, franchises.name, franchises.slug, game_engines.name, game_engines.slug, genres.name, genres.slug, language_supports.language.name, involved_companies.company.name, involved_companies.company.slug, parent_game.name, parent_game.slug, parent_game.first_release_date, platforms.*;
-           where (name ~ *"${search}"* | alternative_names.name ~ *"${search}"*) & ${
-        platforms ? `platforms = (${platforms}) & ` : ""
-      }category = (${categoriesNums}) & themes != (42) ${sortFilterString};
+           where (name ~ *"${search}"* | alternative_names.name ~ *"${search}"*) & ${platformsQuery}${engineQuery}${companyQuery}${genreQuery}category = (${categoriesNums}) & themes != (42) ${sortFilterString};
            sort ${sortString};
            limit ${REQ_SIZE};
            offset ${REQ_SIZE * (page - 1)};

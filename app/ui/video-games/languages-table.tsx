@@ -33,7 +33,7 @@ export function LanguagesTable({
 
   return (
     <>
-      <h2 className="mb-2 font-semibold text-xl text-center">
+      <h2 className="mb-2 font-semibold text-lg text-start">
         Supported Languages
       </h2>
       <Table>

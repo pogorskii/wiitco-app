@@ -1,6 +1,6 @@
 import { v4 as uuid } from "uuid";
-import { fetchGames } from "./actions";
-import InfiniteScrollGames from "./infinite-scroll-games";
+import { fetchGamesSearch } from "../actions";
+import InfiniteGamesSearch from "../infinite-games-search";
 import { Breadcrumbs } from "@/app/ui/breadcrumbs";
 import { SectionNav } from "@/app/ui/video-games/section-nav";
 
@@ -19,7 +19,7 @@ export default async function Page({
   const platforms = searchParams?.platforms;
   const sort = searchParams?.sort;
 
-  const games = await fetchGames({ search, categories, platforms, sort });
+  const games = await fetchGamesSearch({ search, categories, platforms, sort });
 
   return (
     <>
@@ -34,7 +34,7 @@ export default async function Page({
       </h1>
       <SectionNav />
       <div key={uuid()} className="grid grid-cols-1 md:grid-cols-2 sm:gap-6">
-        <InfiniteScrollGames
+        <InfiniteGamesSearch
           initialGames={games}
           search={search}
           categories={categories}
