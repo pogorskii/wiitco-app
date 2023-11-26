@@ -670,7 +670,7 @@ function SeriesModal({ type, data }: { type: string; data: Collection }) {
             {gamesQuantity > 1 ? "games" : "game"} in this collection.
           </DialogDescription>
         </DialogHeader>
-        <ScrollArea className="h-full w-auto rounded-md border">
+        <ScrollArea className="h-full max-h-[70vh] w-auto rounded-md border">
           <div className="grid px-2 md:px-4 py-1 md:py-2">
             {data.games.map((game, i, arr) => (
               <div key={i}>
