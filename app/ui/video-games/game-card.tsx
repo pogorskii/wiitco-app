@@ -167,7 +167,7 @@ export function GameSearchCard({ game }: { game: SingleGameSearch }) {
   return (
     <>
       {/* Desktop version */}
-      <Card className="hidden sm:grid h-60 grid-cols-3 shadow-md overflow-hidden">
+      <Card className="col-span-2 md:col-span-1 hidden sm:grid h-60 grid-cols-3 shadow-md overflow-hidden">
         <CardContent className="pt-6 col-span-2 h-full flex flex-col items-start justify-between">
           <CardHeader className="p-0">
             <Link
@@ -222,7 +222,7 @@ export function GameSearchCard({ game }: { game: SingleGameSearch }) {
       </Card>
 
       {/* Mobile version */}
-      <div className="flex sm:hidden py-4">
+      <div className="col-span-2 md:col-span-1 flex sm:hidden py-4">
         <div className="w-24 grow-0 shrink-0">
           <Link href={`/video-games/games/${game.slug}`}>
             <div className="overflow-hidden ms-auto w-fit">

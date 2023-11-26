@@ -713,6 +713,7 @@ function SeriesModal({ type, data }: { type: string; data: Collection }) {
                         game.cover?.url.replace("thumb", "cover_big") ||
                         "/game-placeholder.webp"
                       }
+                      alt={game.name}
                     />
                   </Link>
                 </div>
