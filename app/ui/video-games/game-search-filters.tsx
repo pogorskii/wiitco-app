@@ -112,12 +112,12 @@ export function GameCategoryFilter() {
       <DropdownMenuTrigger asChild>
         <Button
           variant="outline"
-          className="bg-white font-normal dark:border-slate-800 dark:bg-slate-950 dark:ring-offset-slate-950 dark:placeholder:text-slate-400 dark:focus:ring-slate-300"
+          className="px-3 sm:px-4 justify-start sm:justify-center w-full sm:w-auto bg-white font-normal dark:border-slate-800 dark:bg-slate-950 dark:ring-offset-slate-950 dark:placeholder:text-slate-400 dark:focus:ring-slate-300"
         >
           Categories {categoriesQuantity > 0 && `(${categoriesQuantity})`}
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="w-56">
+      <DropdownMenuContent className="w-[86vw] sm:w-56 bg-white dark:bg-slate-950">
         <DropdownMenuLabel>Categories of games</DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuCheckboxItem
@@ -194,7 +194,7 @@ export function PlatformFilter() {
 
   return (
     <Select onValueChange={handleSelect} defaultValue={value}>
-      <SelectTrigger className="w-[280px]">
+      <SelectTrigger className="w-full sm:w-[280px]">
         <SelectValue placeholder="Select Platform" />
       </SelectTrigger>
       <SelectContent>
@@ -261,7 +261,7 @@ export function PlatformFilter() {
 }
 
 // Sorting selector
-function SortingSelector() {
+export function SortingSelector() {
   // Hooks
   const searchParams = useSearchParams();
   const pathname = usePathname();
@@ -366,38 +366,5 @@ export function FilterUnknownGames() {
         </SelectGroup>
       </SelectContent>
     </Select>
-  );
-}
-
-// Search Bar
-export function Search({ placeholder }: { placeholder: string }) {
-  const searchParams = useSearchParams();
-  const pathname = usePathname();
-  const { replace } = useRouter();
-
-  const handleSearch = (term: string) => {
-    const params = new URLSearchParams(searchParams);
-    if (term) {
-      params.set("search", term);
-    } else {
-      params.delete("search");
-    }
-    replace(`${pathname}?${params.toString()}`);
-  };
-
-  return (
-    <div className="relative flex flex-1 flex-shrink-0">
-      <label htmlFor="search" className="sr-only">
-        Search
-      </label>
-      <input
-        className="w-full pl-10"
-        placeholder={placeholder}
-        onChange={(e) => {
-          handleSearch(e.target.value);
-        }}
-        defaultValue={searchParams.get("search")?.toString()}
-      />
-    </div>
   );
 }

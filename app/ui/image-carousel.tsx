@@ -62,7 +62,7 @@ function SwiperControls() {
     <>
       <Button
         key="prev"
-        className="absolute z-10 top-[50%] start-2 translate-y-[-50%] bg-white/50 rounded-none p-0 h-[100px]"
+        className="absolute z-10 top-[50%] start-0 sm:start-2 translate-y-[-50%] bg-white/50 rounded-none p-0 h-full sm:h-[100px]"
         variant="ghost"
         onClick={() => swiper.slidePrev()}
       >
@@ -70,7 +70,7 @@ function SwiperControls() {
       </Button>
       <Button
         key="next"
-        className="absolute z-10 top-[50%] end-2 translate-y-[-50%] bg-white/50 rounded-none p-0 h-[100px]"
+        className="absolute z-10 top-[50%] end-0 sm:end-2 translate-y-[-50%] bg-white/50 rounded-none p-0 h-full sm:h-[100px]"
         variant="ghost"
         onClick={() => swiper.slideNext()}
       >

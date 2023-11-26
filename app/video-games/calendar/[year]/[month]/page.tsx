@@ -1,7 +1,7 @@
 import { Metadata } from "next";
 import { fetchGamesByMonth } from "@/app/lib/data";
 import { formatGameReleasesToMap } from "@/app/lib/utils";
-import { SectionNav } from "@/app/ui/video-games/section-nav";
+import { CalendarNav } from "@/app/ui/video-games/calendar-nav";
 import { GamesDay } from "@/app/ui/video-games/game-day";
 
 export const metadata: Metadata = {
@@ -38,7 +38,7 @@ export default async function Page({
   ) {
     return (
       <>
-        <SectionNav year={year} month={month} />
+        <CalendarNav year={year} month={month} />
         <h2>No games currently scheduled for this month.</h2>
       </>
     );
@@ -56,7 +56,7 @@ export default async function Page({
 
   return (
     <main className="flex flex-col gap-6">
-      <SectionNav year={year} month={month} />
+      <CalendarNav year={year} month={month} />
       {gamesCalendar}
     </main>
   );

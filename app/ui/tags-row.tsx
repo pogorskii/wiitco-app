@@ -17,9 +17,10 @@ export async function TagsRow({
       {tags.map((tag, i, arr) => (
         <Link
           key={tag.slug + uuid()}
-          className="ms-2 text-blue-500 hover:text-blue-400 hover:underline hover:underline-offset-4 hover:decoration-solid"
+          className=" text-blue-500 hover:text-blue-400 hover:underline hover:underline-offset-4 hover:decoration-solid"
           href={`/${type}/${category}/${tag.slug}`}
         >
+          {" "}
           {tag.name}
           {i < arr.length - 1 && ","}
         </Link>

@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { useSwiper } from "swiper/react";
@@ -15,7 +14,7 @@ import "swiper/css/pagination";
 import "swiper/css/navigation";
 
 // import required modules
-import { Pagination, Keyboard, A11y } from "swiper/modules";
+import { Pagination, A11y } from "swiper/modules";
 
 export function SimilarItemsCarousel({
   games,
@@ -35,7 +34,12 @@ export function SimilarItemsCarousel({
     <Swiper
       slidesPerView={"auto"}
       slidesPerGroupAuto
-      spaceBetween={30}
+      spaceBetween={15}
+      breakpoints={{
+        640: {
+          spaceBetween: 30,
+        },
+      }}
       loop={true}
       keyboard={{
         enabled: true,
@@ -50,7 +54,7 @@ export function SimilarItemsCarousel({
         <SwiperSlide className="mb-8 max-w-fit" key={i + 1}>
           <Link href={slide.slug} className="block h-full">
             <img
-              className="h-[300px]"
+              className="h-[150px] sm:h-[300px]"
               src={slide.cover?.imageUrl || "/game-placeholder.webp"}
               alt={slide.name}
             />
@@ -69,7 +73,7 @@ function SwiperControls() {
     <>
       <Button
         key="prev"
-        className="absolute z-10 top-[50%] start-2 translate-y-[-50%] bg-white/50 rounded-none p-0 h-[100px]"
+        className="absolute z-10 top-[50%] start-0 sm:start-2 translate-y-[-50%] bg-white/50 rounded-none p-0 h-full sm:h-[100px]"
         variant="ghost"
         onClick={() => swiper.slidePrev()}
       >
@@ -77,7 +81,7 @@ function SwiperControls() {
       </Button>
       <Button
         key="next"
-        className="absolute z-10 top-[50%] end-2 translate-y-[-50%] bg-white/50 rounded-none p-0 h-[100px]"
+        className="absolute z-10 top-[50%] end-0 sm:end-2 translate-y-[-50%] bg-white/50 rounded-none p-0 h-full sm:h-[100px]"
         variant="ghost"
         onClick={() => swiper.slideNext()}
       >

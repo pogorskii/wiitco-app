@@ -6,8 +6,8 @@ export default function WIITCOLogo() {
     <Link href="/" className={`${GeistSans.className} flex gap-2 items-center`}>
       <svg
         xmlns="http://www.w3.org/2000/svg"
-        width="50px"
-        height="50px"
+        width="40px"
+        height="40px"
         fill="none"
         viewBox="0 0 24 24"
         stroke="currentColor"
@@ -27,7 +27,10 @@ export default function WIITCOLogo() {
         />
         <circle cx="12" cy="12" r="1" fill="#F97316" />
       </svg>
-      <p className="text-xl font-medium">When Is It Coming Out?</p>
+      <p className="hidden lg:block text-xl font-medium">
+        When Is It Coming Out?
+      </p>
+      <p className="lg:hidden text-xl font-medium">WIITCO</p>
     </Link>
   );
 }

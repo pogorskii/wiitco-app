@@ -1,11 +1,8 @@
 "use client";
 
 import { useState } from "react";
-
 import { FormattedLanguage } from "@/app/lib/zod-schemas";
-
 import { Button } from "@/components/ui/button";
-
 import {
   Table,
   TableBody,
@@ -36,13 +33,16 @@ export function LanguagesTable({
 
   return (
     <>
+      <h2 className="mb-2 font-semibold text-xl text-center">
+        Supported Languages
+      </h2>
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead></TableHead>
-            <TableHead>Audio</TableHead>
-            <TableHead>Subs</TableHead>
-            <TableHead className="text-right">UI</TableHead>
+            <TableHead className="text-start h-8 px-1"></TableHead>
+            <TableHead className="text-start h-8 px-1">Audio</TableHead>
+            <TableHead className="text-start h-8 px-1">Subs</TableHead>
+            <TableHead className="text-start h-8 px-1">UI</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>

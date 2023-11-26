@@ -61,7 +61,9 @@ export default function InfiniteScrollGames({
         </p>
       )}
       {games?.map((game) => (
-        <GameSearchCard key={game.slug} game={game} />
+        <div className="col-span-2 md:col-span-1">
+          <GameSearchCard key={game.slug} game={game} />
+        </div>
       ))}
       {/* Loading spinner */}
       {loadingActive && (
