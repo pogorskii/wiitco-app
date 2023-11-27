@@ -122,7 +122,7 @@ async function updateAgeRatingContentDescriptions({
   }
 }
 
-export async function fetchAndUpdateAgeRatingContentDescription(i: number) {
+export async function fetchAndUpdateAgeRatingContentDescription(i: number = 0) {
   const fetchedData = await fetchAgeRatingContentDescriptions(i);
 
   if (!fetchedData.length) return;
