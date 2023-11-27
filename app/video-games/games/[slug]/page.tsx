@@ -18,10 +18,18 @@ import { Game } from "@/app/lib/definitions";
 import { LanguagesTable } from "@/app/ui/video-games/languages-table";
 import { Separator } from "@/components/ui/separator";
 
+import prisma from "@/app/lib/prisma";
+
 export default async function Page({ params }: { params: { slug: string } }) {
   const game = await fetchGameBySlug(params.slug);
   if (!game) return <p>No game found.</p>;
   const hltb = await fetchHLTBInfo({ search: game.title });
+
+  const feed = await prisma.game.findMany({
+    where: {
+      title: "Sonic",
+    },
+  });
 
   return (
     <>
@@ -36,6 +44,11 @@ export default async function Page({ params }: { params: { slug: string } }) {
           },
         ]}
       />
+      {feed.map((game) => (
+        <p key={game.id}>
+          id: {game.id}, title: {game.title}, slug: {game.slug}
+        </p>
+      ))}
 
       <div className="grid grid-cols-4 gap-6">
         {/* First column */}
