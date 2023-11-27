@@ -66,7 +66,7 @@ export async function fetchAndUpdateLanguages() {
 import { ageRatingContentDescriptionsSchema } from "./zod-schemas";
 import { AgeRatingContentDescriptions } from "./zod-schemas";
 
-async function fetchAgeRatingContentDescriptions() {
+async function fetchAgeRatingContentDescriptions(i: number = 0) {
   try {
     const headers = new Headers();
     headers.set("Accept", "application/json");
@@ -80,16 +80,18 @@ async function fetchAgeRatingContentDescriptions() {
         headers,
         body: `fields *;
       limit 500;
-      offset 1000;`,
+      offset ${i * 500};`,
       }
     );
     const result = await data.json();
     if (!result) throw new Error(`Couldn't fetch languages`);
+    if (result.length === 0) return [];
 
     const parsedData = ageRatingContentDescriptionsSchema.parse(result);
     return parsedData;
   } catch (error) {
     console.error("IGDB Error: ", error);
+    return [];
   }
 }
 
@@ -121,7 +123,15 @@ async function updateAgeRatingContentDescriptions({
 }
 
 export async function fetchAndUpdateAgeRatingContentDescription() {
-  const data = await fetchAgeRatingContentDescriptions();
-  if (!data) return;
-  await updateAgeRatingContentDescriptions({ descriptions: data });
+  let fetchedData = await fetchAgeRatingContentDescriptions();
+  let iteration = 1;
+
+  while (fetchedData.length) {
+    await updateAgeRatingContentDescriptions({ descriptions: fetchedData });
+    fetchedData = await fetchAgeRatingContentDescriptions(iteration);
+    iteration++;
+
+    // Add a timeout of 0.3 seconds to respect limitation of IGDB API
+    await new Promise((resolve) => setTimeout(resolve, 300));
+  }
 }
