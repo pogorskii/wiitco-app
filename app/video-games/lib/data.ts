@@ -122,13 +122,9 @@ async function updateAgeRatingContentDescriptions({
   }
 }
 
-export async function fetchAndUpdateAgeRatingContentDescription() {
-  let fetchedData = await fetchAgeRatingContentDescriptions();
-  let iteration = 1;
+export async function fetchAndUpdateAgeRatingContentDescription(i: number) {
+  const fetchedData = await fetchAgeRatingContentDescriptions(i);
 
-  while (fetchedData.length) {
-    await updateAgeRatingContentDescriptions({ descriptions: fetchedData });
-    fetchedData = await fetchAgeRatingContentDescriptions(iteration);
-    iteration++;
-  }
+  if (!fetchedData.length) return;
+  await updateAgeRatingContentDescriptions({ descriptions: fetchedData });
 }
