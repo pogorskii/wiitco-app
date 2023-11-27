@@ -11,8 +11,32 @@ datasource db {
   directUrl = env("POSTGRES_URL_NON_POOLING") // uses a direct connection
 }
 
+// Games Models
 model Game {
-  id    Int    @id @default(autoincrement())
-  title String
-  slug  String
+  id   Int    @id
+  name String
+  slug String
+}
+
+// model GameAgeRating {
+//   id                   Int    @id
+//   category             Int
+//   content_descriptions
+//   checksum             String
+// }
+
+model GameAgeRatingContentDescription {
+  id          Int    @id
+  category    Int
+  description String
+  checksum    String @unique
+}
+
+model GameLanguage {
+  id          Int    @id
+  name        String
+  native_name String
+  locale      String
+  updated_at  Int
+  checksum    String @unique
 }
