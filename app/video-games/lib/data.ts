@@ -130,8 +130,5 @@ export async function fetchAndUpdateAgeRatingContentDescription() {
     await updateAgeRatingContentDescriptions({ descriptions: fetchedData });
     fetchedData = await fetchAgeRatingContentDescriptions(iteration);
     iteration++;
-
-    // Add a timeout of 0.3 seconds to respect limitation of IGDB API
-    await new Promise((resolve) => setTimeout(resolve, 300));
   }
 }
