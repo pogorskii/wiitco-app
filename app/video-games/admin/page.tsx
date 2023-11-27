@@ -19,11 +19,13 @@ export default async function Page() {
     }, 0);
 
     while (result === "OK") {
-      result = await fetchAndUpdateAgeRatingContentDescription(1);
+      result = await fetchAndUpdateAgeRatingContentDescription(iteration);
       setTimeout(() => {
         console.log(`Iteration ${iteration} finished`);
       }, 0);
       iteration++;
+
+      if (result === "EMPTY") console.log("Finished updating");
     }
   };
 
