@@ -40,3 +40,12 @@ model GameLanguage {
   updated_at  Int
   checksum    String @unique
 }
+
+model GameEngine {
+  id          Int     @id
+  name        String
+  slug        String
+  description String?
+  updated_at  Int
+  checksum    String  @unique
+}
