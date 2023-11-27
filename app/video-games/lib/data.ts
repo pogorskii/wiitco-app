@@ -125,6 +125,7 @@ async function updateAgeRatingContentDescriptions({
 export async function fetchAndUpdateAgeRatingContentDescription(i: number = 0) {
   const fetchedData = await fetchAgeRatingContentDescriptions(i);
 
-  if (!fetchedData.length) return;
+  if (!fetchedData.length) return "EMPTY";
   await updateAgeRatingContentDescriptions({ descriptions: fetchedData });
+  return "OK";
 }

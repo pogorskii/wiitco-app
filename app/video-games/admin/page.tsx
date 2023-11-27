@@ -10,11 +10,21 @@ export default async function Page() {
   const updateLanguages = async () => {
     await fetchAndUpdateLanguages();
   };
+
   const updateAgeRatingContentDescriptions = async () => {
-    await fetchAndUpdateAgeRatingContentDescription();
+    let result = await fetchAndUpdateAgeRatingContentDescription();
+    let iteration = 1;
     setTimeout(() => {
-      console.log("Operation finished");
+      console.log("First iteration finished");
     }, 0);
+
+    while (result === "OK") {
+      result = await fetchAndUpdateAgeRatingContentDescription(1);
+      setTimeout(() => {
+        console.log(`Iteration ${iteration} finished`);
+      }, 0);
+      iteration++;
+    }
   };
 
   return (
