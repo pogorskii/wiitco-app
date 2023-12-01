@@ -4,6 +4,8 @@ import { formatGameReleasesToMap } from "@/app/lib/utils";
 import { CalendarNav } from "@/app/ui/video-games/calendar-nav";
 import { GamesDay } from "@/app/ui/video-games/game-day";
 
+import prisma from "@/app/lib/prisma";
+
 export const metadata: Metadata = {
   title: "Video Games Release Dates",
 };
@@ -31,6 +33,16 @@ export default async function Page({
     platforms,
     filterUnknown,
   });
+
+  const gameTest = await prisma.game.findMany({
+    where: {
+      name: {
+        search: "fallout & dust",
+      },
+    },
+  });
+
+  console.log(gameTest);
 
   if (
     gameReleasesPerDayRaw === undefined ||

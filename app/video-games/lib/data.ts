@@ -16,19 +16,21 @@ export const drop = async () => {
 // Fetch function for testing purposes
 export const fetchTest = async () => {
   try {
-    const data = await fetch("https://api.igdb.com/v4/games", {
+    const data = await fetch("https://api.igdb.com/v4/platforms", {
       method: "POST",
       headers,
-      body: `fields *, age_ratings.*;
+      body: `fields *;
+      where generation = null;
       limit 500;
-      offset 0;
+      offset ${0 * 500};
       sort id asc;`,
+      cache: "no-store",
     });
     const result = await data.json();
     if (!result) throw new Error(`Couldn't fetch TEST`);
     if (result.length === 0) return [];
 
-    console.log(result.age_ratings);
+    console.log(result);
     return result;
   } catch (error) {
     console.error("IGDB Error: ", error);
@@ -53,6 +55,7 @@ const fetchTemplate = async ({
       limit 500;
       offset ${i * 500};
       sort id asc;`,
+      cache: "no-store",
     });
     const result = await data.json();
     if (!result) throw new Error(`Couldn't fetch from ${endpoint}`);
@@ -75,17 +78,17 @@ const updateLanguages = async (languages: Languages) => {
         where: { id: language.id },
         update: {
           name: language.name,
-          native_name: language.native_name,
+          nativeName: language.native_name,
           locale: language.locale,
-          updated_at: language.updated_at,
+          updatedAt: language.updated_at,
           checksum: language.checksum,
         },
         create: {
           id: language.id,
           name: language.name,
-          native_name: language.native_name,
+          nativeName: language.native_name,
           locale: language.locale,
-          updated_at: language.updated_at,
+          updatedAt: language.updated_at,
           checksum: language.checksum,
         },
       });
@@ -103,6 +106,43 @@ export const fetchAndUpdateLanguages = async (i?: number) => {
   return "OK";
 };
 
+// Age Ratings
+import { ageRatingsSchema } from "./zod-schemas";
+import { AgeRatings } from "./zod-schemas";
+
+const updateAgeRatings = async (ageRatings: AgeRatings) => {
+  for (const entry of ageRatings) {
+    try {
+      await prisma.gameAgeRating.upsert({
+        where: { id: entry.id },
+        update: {
+          category: entry.category,
+          rating: entry.rating,
+          checksum: entry.checksum,
+        },
+        create: {
+          id: entry.id,
+          category: entry.category,
+          rating: entry.rating,
+          synopsis: entry.synopsis,
+          gameId: entry.game_id,
+          checksum: entry.checksum,
+        },
+      });
+    } catch (error) {
+      console.error("Prisma error", error);
+    }
+  }
+};
+
+export const fetchAndUpdateAgeRatings = async (i?: number) => {
+  const fetchedData = await fetchTemplate({ i, endpoint: "age_ratings" });
+  if (!fetchedData.length) return "EMPTY";
+  const parsedData = ageRatingsSchema.parse(fetchedData);
+  await updateAgeRatings(parsedData);
+  return "OK";
+};
+
 // Game Engines
 import { gameEnginesSchema } from "./zod-schemas";
 import { GameEngines } from "./zod-schemas";
@@ -115,14 +155,14 @@ const updateGameEngines = async (engines: GameEngines) => {
         update: {
           name: entry.name,
           slug: entry.slug,
-          updated_at: entry.updated_at,
+          updatedAt: entry.updated_at,
           checksum: entry.checksum,
         },
         create: {
           id: entry.id,
           name: entry.name,
           slug: entry.slug,
-          updated_at: entry.updated_at,
+          updatedAt: entry.updated_at,
           checksum: entry.checksum,
         },
       });
@@ -140,45 +180,6 @@ export const fetchAndUpdateGameEngines = async (i?: number) => {
   return "OK";
 };
 
-// Regions
-import { regionsSchema } from "./zod-schemas";
-import { Regions } from "./zod-schemas";
-
-const updateRegions = async (regions: Regions) => {
-  for (const entry of regions) {
-    try {
-      await prisma.gameRegion.upsert({
-        where: { id: entry.id },
-        update: {
-          name: entry.name,
-          identifier: entry.identifier,
-          category: entry.category,
-          updated_at: entry.updated_at,
-          checksum: entry.checksum,
-        },
-        create: {
-          id: entry.id,
-          name: entry.name,
-          identifier: entry.identifier,
-          category: entry.category,
-          updated_at: entry.updated_at,
-          checksum: entry.checksum,
-        },
-      });
-    } catch (error) {
-      console.error("Prisma error", error);
-    }
-  }
-};
-
-export const fetchAndUpdateRegions = async (i?: number) => {
-  const fetchedData = await fetchTemplate({ i, endpoint: "regions" });
-  if (!fetchedData.length) return "EMPTY";
-  const parsedData = regionsSchema.parse(fetchedData);
-  await updateRegions(parsedData);
-  return "OK";
-};
-
 // Genres
 import { genresSchema } from "./zod-schemas";
 import { Genres } from "./zod-schemas";
@@ -191,14 +192,14 @@ const updateGenres = async (genres: Genres) => {
         update: {
           name: entry.name,
           slug: entry.slug,
-          updated_at: entry.updated_at,
+          updatedAt: entry.updated_at,
           checksum: entry.checksum,
         },
         create: {
           id: entry.id,
           name: entry.name,
           slug: entry.slug,
-          updated_at: entry.updated_at,
+          updatedAt: entry.updated_at,
           checksum: entry.checksum,
         },
       });
@@ -228,14 +229,14 @@ const updatePlayerPerspectives = async (perspectives: PlayerPerspectives) => {
         update: {
           name: entry.name,
           slug: entry.slug,
-          updated_at: entry.updated_at,
+          updatedAt: entry.updated_at,
           checksum: entry.checksum,
         },
         create: {
           id: entry.id,
           name: entry.name,
           slug: entry.slug,
-          updated_at: entry.updated_at,
+          updatedAt: entry.updated_at,
           checksum: entry.checksum,
         },
       });
@@ -268,14 +269,14 @@ const updateReleaseDateStatuses = async (statuses: ReleaseDateStatuses) => {
         update: {
           name: entry.name,
           description: entry.description,
-          updated_at: entry.updated_at,
+          updatedAt: entry.updated_at,
           checksum: entry.checksum,
         },
         create: {
           id: entry.id,
           name: entry.name,
           description: entry.description,
-          updated_at: entry.updated_at,
+          updatedAt: entry.updated_at,
           checksum: entry.checksum,
         },
       });
@@ -293,5 +294,301 @@ export const fetchAndUpdateReleaseDateStatuses = async (i?: number) => {
   if (!fetchedData.length) return "EMPTY";
   const parsedData = releaseDateStatusesSchema.parse(fetchedData);
   await updateReleaseDateStatuses(parsedData);
+  return "OK";
+};
+
+// Covers
+import { coversSchema } from "./zod-schemas";
+import { Covers } from "./zod-schemas";
+
+const fetchCovers = async ({
+  i = 0,
+  endpoint,
+}: {
+  i?: number;
+  endpoint: string;
+}) => {
+  try {
+    const data = await fetch(`https://api.igdb.com/v4/${endpoint}`, {
+      method: "POST",
+      headers,
+      body: `fields *;
+      where game != null;
+      limit 500;
+      offset ${i * 500};
+      sort id asc;`,
+      cache: "no-store",
+    });
+    const result = await data.json();
+    if (!result) throw new Error(`Couldn't fetch from ${endpoint}`);
+    if (result.length === 0) return [];
+    return result;
+  } catch (error) {
+    console.error("IGDB Error: ", error);
+    return [];
+  }
+};
+
+const updateCovers = async (covers: Covers) => {
+  for (const entry of covers) {
+    try {
+      await prisma.gameCover.upsert({
+        where: { id: entry.id },
+        update: {
+          gameId: entry.game,
+          imageId: entry.image_id,
+          width: entry.width,
+          height: entry.height,
+          checksum: entry.checksum,
+        },
+        create: {
+          id: entry.id,
+          gameId: entry.game,
+          imageId: entry.image_id,
+          width: entry.width,
+          height: entry.height,
+          checksum: entry.checksum,
+        },
+      });
+    } catch (error) {
+      console.error("Prisma error", error);
+    }
+  }
+};
+
+export const fetchAndUpdateCovers = async (i?: number) => {
+  const fetchedData = await fetchCovers({
+    i,
+    endpoint: "covers",
+  });
+  if (!fetchedData.length) return "EMPTY";
+  const parsedData = coversSchema.parse(fetchedData);
+  await updateCovers(parsedData);
+  return "OK";
+};
+
+// Game
+import { gamesSchema } from "./zod-schemas";
+import { Games } from "./zod-schemas";
+const fetchGames = async ({
+  i = 0,
+  endpoint = "games",
+}: {
+  i?: number;
+  endpoint: string;
+}) => {
+  try {
+    const data = await fetch(`https://api.igdb.com/v4/${endpoint}`, {
+      method: "POST",
+      headers,
+      body: `fields *;
+      where themes != (42);
+      limit 500;
+      offset ${i * 500};
+      sort id asc;`,
+      cache: "no-store",
+    });
+    const result = await data.json();
+    if (!result) throw new Error(`Couldn't fetch from ${endpoint}`);
+    if (result.length === 0) return [];
+    return result;
+  } catch (error) {
+    console.error("IGDB Error: ", error);
+    return [];
+  }
+};
+
+const updateGames = async (games: Games) => {
+  for (const entry of games) {
+    try {
+      await prisma.game.upsert({
+        where: { id: entry.id },
+        update: {
+          name: entry.name,
+          slug: entry.slug,
+          ageRatingIds: entry.age_ratings,
+          aggregatedRating: entry.aggregated_rating,
+          aggregatedRatingCount: entry.aggregated_rating_count,
+          alternativeNameIds: entry.alternative_names,
+          category: entry.category,
+          mainCollectionId: entry.collection,
+          collectionIds: entry.collections,
+          coverId: entry.cover,
+          dlcIds: entry.dlcs,
+          expandedGameIds: entry.expanded_games,
+          expansionIds: entry.expansions,
+          externalServiceIds: entry.external_games,
+          firstReleaseDate: entry.first_release_date,
+          follows: entry.follows,
+          mainFranchiseId: entry.franchise,
+          franchiseIds: entry.franchises,
+          engineIds: entry.game_engines,
+          genreIds: entry.genres,
+          hypes: entry.hypes,
+          involvedCompanyIds: entry.involved_companies,
+          languageSupportIds: entry.language_supports,
+          parentGameId: entry.parent_game,
+          platformIds: entry.platforms,
+          playerPerspectiveIds: entry.player_perspectives,
+          portIds: entry.ports,
+          releaseDateIds: entry.release_dates,
+          remakeIds: entry.remakes,
+          remasterIds: entry.remasters,
+          screenshotIds: entry.screenshots,
+          similarGameIds: entry.similar_games,
+          standaloneExpansionIds: entry.standalone_expansions,
+          status: entry.status,
+          summary: entry.summary,
+          themeIds: entry.themes,
+          versionParentId: entry.version_parent,
+          versionTitle: entry.version_title,
+          websiteIds: entry.websites,
+          updatedAt: entry.updated_at,
+          checksum: entry.checksum,
+        },
+        create: {
+          id: entry.id,
+          name: entry.name,
+          slug: entry.slug,
+          ageRatingIds: entry.age_ratings,
+          aggregatedRating: entry.aggregated_rating,
+          aggregatedRatingCount: entry.aggregated_rating_count,
+          alternativeNameIds: entry.alternative_names,
+          category: entry.category,
+          mainCollectionId: entry.collection,
+          collectionIds: entry.collections,
+          coverId: entry.cover,
+          dlcIds: entry.dlcs,
+          expandedGameIds: entry.expanded_games,
+          expansionIds: entry.expansions,
+          externalServiceIds: entry.external_games,
+          firstReleaseDate: entry.first_release_date,
+          follows: entry.follows,
+          mainFranchiseId: entry.franchise,
+          franchiseIds: entry.franchises,
+          engineIds: entry.game_engines,
+          genreIds: entry.genres,
+          hypes: entry.hypes,
+          involvedCompanyIds: entry.involved_companies,
+          languageSupportIds: entry.language_supports,
+          parentGameId: entry.parent_game,
+          platformIds: entry.platforms,
+          playerPerspectiveIds: entry.player_perspectives,
+          portIds: entry.ports,
+          releaseDateIds: entry.release_dates,
+          remakeIds: entry.remakes,
+          remasterIds: entry.remasters,
+          screenshotIds: entry.screenshots,
+          similarGameIds: entry.similar_games,
+          standaloneExpansionIds: entry.standalone_expansions,
+          status: entry.status,
+          summary: entry.summary,
+          themeIds: entry.themes,
+          versionParentId: entry.version_parent,
+          versionTitle: entry.version_title,
+          websiteIds: entry.websites,
+          updatedAt: entry.updated_at,
+          checksum: entry.checksum,
+        },
+      });
+    } catch (error) {
+      console.error("Prisma error", error);
+    }
+  }
+};
+
+export const fetchAndUpdateGames = async (i?: number) => {
+  const fetchedData = await fetchGames({
+    i,
+    endpoint: "games",
+  });
+  if (!fetchedData.length) return "EMPTY";
+  const parsedData = gamesSchema.parse(fetchedData);
+  await updateGames(parsedData);
+  return "OK";
+};
+
+/// NEW
+import { companiesSchema } from "./zod-schemas";
+import { Companies } from "./zod-schemas";
+
+const fetchCompanies = async ({
+  i = 0,
+  endpoint,
+}: {
+  i?: number;
+  endpoint: string;
+}) => {
+  try {
+    const data = await fetch(`https://api.igdb.com/v4/${endpoint}`, {
+      method: "POST",
+      headers,
+      body: `fields *, logo.*;
+      where parent = null;
+      limit 500;
+      offset ${i * 500};
+      sort id asc;`,
+      cache: "no-store",
+    });
+    const result = await data.json();
+    if (!result) throw new Error(`Couldn't fetch from ${endpoint}`);
+    if (result.length === 0) return [];
+    return result;
+  } catch (error) {
+    console.error("IGDB Error: ", error);
+    return [];
+  }
+};
+
+const createCompanies = async (companies: Companies) => {
+  for (const e of companies) {
+    try {
+      await prisma.gameCompany.create({
+        data: {
+          id: e.id,
+          name: e.name,
+          slug: e.slug,
+          changedCompanyId: e.changed_company_id,
+          country: e.country,
+          description: e.description,
+          developedGameIds: e.developed,
+          publishedGameIds: e.publsihed,
+          parentCompanyId: e.parent,
+          updatedAt: e.updated_at,
+          checksum: e.checksum,
+        },
+      });
+      if (e.logo) {
+        await prisma.gameCompany.update({
+          where: {
+            id: e.id,
+          },
+          data: {
+            logo: {
+              create: {
+                id: e.logo.id,
+                imageId: e.logo.image_id,
+                width: e.logo.width,
+                height: e.logo.height,
+                checksum: e.logo.checksum,
+              },
+            },
+          },
+        });
+      }
+    } catch (error) {
+      console.error("Prisma error", error);
+    }
+  }
+};
+
+export const fetchAndCreateCompanies = async (i?: number) => {
+  const fetchedData = await fetchCompanies({
+    i,
+    endpoint: "companies",
+  });
+  if (!fetchedData.length) return "EMPTY";
+  const parsedData = companiesSchema.parse(fetchedData);
+  await createCompanies(parsedData);
   return "OK";
 };

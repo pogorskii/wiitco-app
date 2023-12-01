@@ -1,8 +1,6 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["fullTextSearch"]
 }
 
 datasource db {
@@ -11,59 +9,527 @@ datasource db {
   directUrl = env("POSTGRES_URL_NON_POOLING") // uses a direct connection
 }
 
-// Games Models
-model Game {
-  id   Int    @id
-  name String
-  slug String
+// Game Models
+// Reference tables that have only parent relations
+model GCollectionType {
+  id          Int           @id
+  name        String
+  description String
+  collections GCollection[]
+  updatedAt   DateTime
+  checksum    String        @unique
 }
 
-model GameLanguage {
-  id          Int    @id
+model GFranchise {
+  id            Int             @id
+  name          String
+  slug          String          @unique
+  mainGames     Game[]
+  secondaryGame GameFranchise[]
+  updatedAt     DateTime
+  checksum      String          @unique
+}
+
+model GRegion {
+  id            Int             @id
+  name          String
+  identifier    String
+  category      String
+  localizations GLocalization[]
+  updatedAt     DateTime
+  checksum      String
+}
+
+model GCompanyLogo {
+  id           Int        @id
+  aplhaChannel Boolean    @default(false)
+  animated     Boolean    @default(false)
+  imageId      String
+  width        Int?
+  height       Int?
+  companies    GCompany[]
+  checksum     String     @unique
+}
+
+model GEngineLogo {
+  id           Int       @id
+  aplhaChannel Boolean   @default(false)
+  animated     Boolean   @default(false)
+  imageId      String
+  width        Int?
+  height       Int?
+  engines      GEngine[]
+  checksum     String    @unique
+}
+
+model GPlatformLogo {
+  id           Int         @id
+  aplhaChannel Boolean     @default(false)
+  animated     Boolean     @default(false)
+  imageId      String
+  width        Int?
+  height       Int?
+  platforms    GPlatform[]
+  checksum     String      @unique
+}
+
+model GPlatformFamily {
+  id        Int         @id
+  name      String
+  slug      String      @unique
+  platforms GPlatform[]
+  checksum  String      @unique
+}
+
+model GMode {
+  id        Int        @id
+  name      String
+  slug      String     @unique
+  games     GameMode[]
+  updatedAt DateTime
+  checksum  String     @unique
+}
+
+model GGenre {
+  id        Int         @id
+  name      String
+  slug      String      @unique
+  games     GameGenre[]
+  updatedAt DateTime
+  checksum  String      @unique
+}
+
+model GLanguage {
+  id         Int                @id
+  name       String
+  nativeName String
+  locale     String
+  supports   GLanguageSupport[]
+  updatedAt  DateTime
+  checksum   String             @unique
+}
+
+model GLanguageSupportType {
+  id        Int                @id
+  name      String
+  supports  GLanguageSupport[]
+  updatedAt DateTime
+  checksum  String             @unique
+}
+
+model GPlayerPerspective {
+  id        Int                     @id
+  name      String
+  slug      String                  @unique
+  games     GamePlayerPerspective[]
+  updatedAt DateTime
+  checksum  String                  @unique
+}
+
+model GReleaseDateStatus {
+  id          Int            @id
   name        String
-  native_name String
-  locale      String
-  updated_at  Int
-  checksum    String @unique
+  description String
+  releases    GReleaseDate[]
+  updatedAt   DateTime
+  checksum    String         @unique
+}
+
+model GTheme {
+  id        Int         @id
+  name      String
+  slug      String      @unique
+  games     GameTheme[]
+  updatedAt DateTime
+  checksum  String      @unique
+}
+
+// Main Table
+model Game {
+  id                 Int                     @id
+  name               String
+  slug               String                  @unique
+  ageRatings         GAgeRating[]
+  rating             Float
+  reviewsCount       Int
+  altNames           GAltName[]
+  category           Int
+  mainSeries         GCollection?            @relation(fields: [mainSeriesId], references: [id])
+  mainSeriesId       Int?
+  collections        GameCollection[]
+  cover              GCover?
+  dlcs               Game[]                  @relation("DLC")
+  dlcOf              Game?                   @relation("DLC", fields: [dlcOfId], references: [id])
+  dlcOfId            Int?
+  expandedEditions   Game[]                  @relation("Expanded Edition")
+  expandedFrom       Game?                   @relation("Expanded Edition", fields: [expandedFromId], references: [id])
+  expandedFromId     Int?
+  expansions         Game[]                  @relation("Expansion")
+  expansionOf        Game?                   @relation("Expansion", fields: [expansionOfId], references: [id])
+  expansionOfId      Int?
+  firstReleaseDate   DateTime?
+  localizations      GLocalization[]
+  follows            Int
+  mainFranchise      GFranchise?             @relation(fields: [mainFranchiseId], references: [id])
+  mainFranchiseId    Int?
+  franchises         GameFranchise[]
+  developers         GameDeveloper[]
+  publishers         GamePublisher[]
+  engines            GameEngine[]
+  externalServices   GExternalService[]
+  modes              GameMode[]
+  genres             GameGenre[]
+  hypes              Int
+  languageSupports   GLanguageSupport[]
+  childGames         Game[]                  @relation("Child Game")
+  parentGame         Game?                   @relation("Child Game", fields: [parentGameId], references: [id])
+  parentGameId       Int?
+  playerPerspectives GamePlayerPerspective[]
+  platforms          GamePlatform[]
+  ports              Game[]                  @relation("Port")
+  portOf             Game?                   @relation("Port", fields: [portOfId], references: [id])
+  portOfId           Int?
+  releaseDates       GReleaseDate[]
+  remakes            Game[]                  @relation("Remake")
+  remakeOf           Game?                   @relation("Remake", fields: [remakeOfId], references: [id])
+  remakeOfId         Int?
+  remasters          Game[]                  @relation("Remaster")
+  remasterOf         Game?                   @relation("Remaster", fields: [remasterOfId], references: [id])
+  remasterOfId       Int?
+  screenshots        GScreenshot[]
+  videos             GVideo[]
+  similarOf          GameSimilarGame[]       @relation("Similar Game")
+  similarTo          GameSimilarGame[]
+  standaloneDlcs     Game[]                  @relation("Standalone DLC")
+  standaloneDlcOf    Game?                   @relation("Standalone DLC", fields: [standaloneDlcOfId], references: [id])
+  standaloneDlcOfId  Int?
+  status             Int?
+  summary            String?
+  themes             GameTheme[]
+  versions           Game[]                  @relation("Version")
+  versionOf          Game?                   @relation("Version", fields: [versionOfId], references: [id])
+  versionOfId        Int?
+  versionTitle       String?
+  websites           GWebsite[]
+}
+
+// Models for tables where rows unique to each Game
+model GAgeRating {
+  id             Int                     @id
+  category       Int
+  rating         Int
+  synopsis       String?
+  ratingCoverUrl String?
+  game           Game                    @relation(fields: [gameId], references: [id])
+  gameId         Int
+  descriptions   GAgeRatingDescription[]
+  checksum       String                  @unique
+}
+
+model GAgeRatingDescription {
+  id          Int        @id
+  category    Int
+  description String
+  ageRating   GAgeRating @relation(fields: [ageRatingId], references: [id])
+  ageRatingId Int
+  checksum    String     @unique
+}
+
+model GAltName {
+  id       Int     @id
+  name     String
+  comment  String?
+  game     Game    @relation(fields: [gameId], references: [id])
+  gameId   Int
+  checksum String  @unique
+}
+
+model GCover {
+  id           Int     @id
+  aplhaChannel Boolean @default(false)
+  animated     Boolean @default(false)
+  imageId      String
+  width        Int?
+  height       Int?
+  game         Game    @relation(fields: [gameId], references: [id])
+  gameId       Int     @unique
+  checksum     String  @unique
+}
+
+model GLocalization {
+  id        Int      @id
+  name      String
+  region    GRegion? @relation(fields: [regionId], references: [id])
+  regionId  Int?
+  game      Game     @relation(fields: [gameId], references: [id])
+  gameId    Int
+  updatedAt DateTime
+  checksum  String   @unique
+}
+
+model GExternalService {
+  id         Int        @id
+  name       String
+  category   Int
+  countries  Int[]
+  media      Int?
+  platform   GPlatform? @relation(fields: [platformId], references: [id])
+  platformId Int?
+  game       Game       @relation(fields: [gameId], references: [id])
+  gameId     Int
+  url        String?
+  updatedAt  DateTime
+  checksum   String     @unique
+}
+
+model GLanguageSupport {
+  id            Int                  @id
+  name          String
+  game          Game                 @relation(fields: [gameId], references: [id])
+  gameId        Int
+  language      GLanguage            @relation(fields: [languageId], references: [id])
+  languageId    Int
+  supportType   GLanguageSupportType @relation(fields: [supportTypeId], references: [id])
+  supportTypeId Int
+  updatedAt     DateTime
+  checksum      String               @unique
+}
+
+model GReleaseDate {
+  id         Int                 @id
+  category   Int
+  game       Game                @relation(fields: [gameId], references: [id])
+  gameId     Int
+  date       DateTime
+  human      String
+  m          Int?
+  y          Int?
+  status     GReleaseDateStatus? @relation(fields: [statusId], references: [id])
+  statusId   Int?
+  platform   GPlatform           @relation(fields: [platformId], references: [id])
+  platformId Int
+  region     Int
+  updatedAt  DateTime
+  checksum   String              @unique
+}
+
+model GScreenshot {
+  id           Int     @id
+  alphaChannel Boolean @default(false)
+  animated     Boolean @default(false)
+  imageId      String
+  width        Int?
+  height       Int?
+  game         Game    @relation(fields: [gameId], references: [id])
+  gameId       Int
+  checksum     String  @unique
+}
+
+model GVideo {
+  id       Int     @id
+  name     String?
+  game     Game    @relation(fields: [gameId], references: [id])
+  gameId   Int
+  checksum String  @unique
+}
+
+// 2nd-order tables
+model GCollection {
+  id             Int              @id
+  name           String
+  slug           String           @unique
+  type           GCollectionType? @relation(fields: [typeId], references: [id])
+  typeId         Int?
+  mainGames      Game[]
+  secondaryGames GameCollection[]
+  updatedAt      DateTime
+  checksum       String           @unique
+}
+
+model GCompany {
+  id                 Int                 @id
+  name               String
+  slug               String              @unique
+  startDate          DateTime?
+  startDateCategory  Int?
+  changeDate         DateTime?
+  changeDateCategory Int?
+  oldCompany         GCompany?           @relation("Change Company")
+  newCompany         GCompany?           @relation("Change Company", fields: [newCompanyId], references: [id])
+  newCompanyId       Int?                @unique
+  country            Int?
+  description        String?
+  developedGames     GameDeveloper[]
+  publishedGame      GamePublisher[]
+  logo               GCompanyLogo?       @relation(fields: [logoId], references: [id])
+  logoId             Int?
+  childCompanies     GCompany[]          @relation("Parent Company")
+  parentCompany      GCompany?           @relation("Parent Company", fields: [parentCompanyId], references: [id])
+  parentCompanyId    Int?
+  engines            GameEngineCompany[]
+  updatedAt          DateTime
+  checksum           String              @unique
+}
+
+model GEngine {
+  id          Int                  @id
+  name        String
+  slug        String               @unique
+  description String?
+  games       GameEngine[]
+  companies   GameEngineCompany[]
+  logo        GEngineLogo?         @relation(fields: [logoId], references: [id])
+  logoId      Int?
+  platforms   GameEnginePlatform[]
+  updatedAt   DateTime
+  checksum    String               @unique
+}
+
+model GPlatform {
+  id               Int                  @id
+  abbreviation     String?
+  alternativeName  String?
+  name             String
+  slug             String               @unique
+  category         Int?
+  generation       Int?
+  family           GPlatformFamily?     @relation(fields: [familyId], references: [id])
+  familyId         Int?
+  logo             GPlatformLogo?       @relation(fields: [logoId], references: [id])
+  logoId           Int?
+  summary          String?
+  games            GamePlatform[]
+  releases         GReleaseDate[]
+  externalServices GExternalService[]
+  engines          GameEnginePlatform[]
+  updatedAt        DateTime
+  checksum         String               @unique
+}
+
+model GWebsite {
+  id       Int     @id
+  category Int
+  url      String
+  trusted  Boolean
+  game     Game    @relation(fields: [gameId], references: [id])
+  gameId   Int
+  checksum String  @unique
+}
+
+// Join tables
+model GameCollection {
+  game         Game        @relation(fields: [gameId], references: [id])
+  gameId       Int
+  collection   GCollection @relation(fields: [collectionId], references: [id])
+  collectionId Int
+
+  @@id([gameId, collectionId])
+}
+
+model GameFranchise {
+  game        Game       @relation(fields: [gameId], references: [id])
+  gameId      Int
+  franchise   GFranchise @relation(fields: [franchiseId], references: [id])
+  franchiseId Int
+
+  @@id([gameId, franchiseId])
+}
+
+model GameDeveloper {
+  game        Game     @relation(fields: [gameId], references: [id])
+  gameId      Int
+  developer   GCompany @relation(fields: [developerId], references: [id])
+  developerId Int
+
+  @@id([gameId, developerId])
+}
+
+model GamePublisher {
+  game        Game     @relation(fields: [gameId], references: [id])
+  gameId      Int
+  publisher   GCompany @relation(fields: [publisherId], references: [id])
+  publisherId Int
+
+  @@id([gameId, publisherId])
+}
+
+model GameEngineCompany {
+  engine    GEngine  @relation(fields: [engineId], references: [id])
+  engineId  Int
+  company   GCompany @relation(fields: [companyId], references: [id])
+  companyId Int
+
+  @@id([engineId, companyId])
 }
 
 model GameEngine {
-  id         Int    @id
-  name       String
-  slug       String
-  updated_at Int
-  checksum   String @unique
+  game     Game    @relation(fields: [gameId], references: [id])
+  gameId   Int
+  engine   GEngine @relation(fields: [engineId], references: [id])
+  engineId Int
+
+  @@id([gameId, engineId])
 }
 
-model GameRegion {
-  id         Int    @id
-  name       String
-  identifier String
-  category   String
-  updated_at Int
-  checksum   String @unique
+model GamePlatform {
+  game       Game      @relation(fields: [gameId], references: [id])
+  gameId     Int
+  platform   GPlatform @relation(fields: [platformId], references: [id])
+  platformId Int
+
+  @@id([gameId, platformId])
+}
+
+model GameEnginePlatform {
+  engine     GEngine   @relation(fields: [engineId], references: [id])
+  engineId   Int
+  platform   GPlatform @relation(fields: [platformId], references: [id])
+  platformId Int
+
+  @@id([engineId, platformId])
+}
+
+model GameMode {
+  game   Game  @relation(fields: [gameId], references: [id])
+  gameId Int
+  mode   GMode @relation(fields: [modeId], references: [id])
+  modeId Int
+
+  @@id([gameId, modeId])
 }
 
 model GameGenre {
-  id         Int    @id
-  name       String
-  slug       String
-  updated_at Int
-  checksum   String @unique
+  game    Game   @relation(fields: [gameId], references: [id])
+  gameId  Int
+  genre   GGenre @relation(fields: [genreId], references: [id])
+  genreId Int
+
+  @@id([gameId, genreId])
 }
 
 model GamePlayerPerspective {
-  id         Int    @id
-  name       String
-  slug       String
-  updated_at Int
-  checksum   String @unique
+  game          Game               @relation(fields: [gameId], references: [id])
+  gameId        Int
+  perspective   GPlayerPerspective @relation(fields: [perspectiveId], references: [id])
+  perspectiveId Int
+
+  @@id([gameId, perspectiveId])
 }
 
-model GameReleaseDateStatus {
-  id          Int    @id
-  name        String
-  description String
-  updated_at  Int
-  checksum    String @unique
+model GameSimilarGame {
+  game      Game @relation("Similar Game", fields: [gameId], references: [id])
+  gameId    Int
+  similar   Game @relation(fields: [similarId], references: [id])
+  similarId Int
+
+  @@id([gameId, similarId])
+}
+
+model GameTheme {
+  game    Game   @relation(fields: [gameId], references: [id])
+  gameId  Int
+  theme   GTheme @relation(fields: [themeId], references: [id])
+  themeId Int
+
+  @@id([gameId, themeId])
 }
