@@ -9,6 +9,11 @@ const config: Config = {
   theme: {
     extend: {
       keyframes: {
+        shimmer: {
+          "100%": {
+            transform: "translateX(100%)",
+          },
+        },
         animatedgradient: {
           "0%": { backgroundPosition: "0% 50%" },
           "50%": { backgroundPosition: "100% 50%" },

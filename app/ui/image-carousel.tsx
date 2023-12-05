@@ -15,16 +15,13 @@ import "swiper/css/navigation";
 // import required modules
 import { Pagination, Keyboard, A11y } from "swiper/modules";
 
+import { GScreenshot } from "@prisma/client";
+
 export function ImageCarousel({
   images,
   altBase,
 }: {
-  images: {
-    imageUrl: string;
-    blurUrl: string;
-    width: number;
-    height: number;
-  }[];
+  images: GScreenshot[];
   altBase: string;
 }) {
   return (
@@ -45,7 +42,7 @@ export function ImageCarousel({
         <SwiperSlide key={i + 1}>
           <img
             className="object-cover"
-            src={slide.imageUrl}
+            src={`https://images.igdb.com/igdb/image/upload/t_720p/${slide.imageId}.jpg`}
             alt={`${altBase}'s Screenshot ${i + 1}`}
           />
         </SwiperSlide>

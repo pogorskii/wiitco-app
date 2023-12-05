@@ -5,6 +5,8 @@ import { Button } from "@/components/ui/button";
 import { useSwiper } from "swiper/react";
 import { GoChevronLeft, GoChevronRight } from "react-icons/go";
 
+import { Game, GCover } from "@prisma/client";
+
 // Import Swiper React components
 import { Swiper, SwiperSlide } from "swiper/react";
 
@@ -19,16 +21,7 @@ import { Pagination, A11y } from "swiper/modules";
 export function SimilarItemsCarousel({
   games,
 }: {
-  games: {
-    name: string;
-    slug: string;
-    cover?: {
-      imageUrl?: string;
-      blurUrl?: string;
-      width?: number;
-      height?: number;
-    };
-  }[];
+  games: (Game & { cover: GCover })[];
 }) {
   return (
     <Swiper
@@ -52,10 +45,17 @@ export function SimilarItemsCarousel({
     >
       {games.map((slide, i) => (
         <SwiperSlide className="mb-8 max-w-fit" key={i + 1}>
-          <Link href={slide.slug} className="block h-full">
+          <Link
+            href={`/video-games/games/${slide.slug}`}
+            className="block h-full"
+          >
             <img
               className="h-[150px] sm:h-[300px]"
-              src={slide.cover?.imageUrl || "/game-placeholder.webp"}
+              src={
+                slide.cover
+                  ? `https://images.igdb.com/igdb/image/upload/t_cover_big/${slide.cover?.imageId}.jpg`
+                  : "/game-placeholder.webp"
+              }
               alt={slide.name}
             />
           </Link>

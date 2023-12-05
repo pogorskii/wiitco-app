@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { FormattedLanguage } from "@/app/lib/zod-schemas";
 import { Button } from "@/components/ui/button";
 import {
   Table,
@@ -20,16 +19,94 @@ import {
 
 import { FaCheck } from "react-icons/fa";
 
+type LanguageSupports = {
+  language: {
+    id: number;
+    name: string;
+    nativeName: string;
+    locale: string;
+    updatedAt: Date;
+    checksum: string;
+  };
+  supportType: {
+    id: number;
+    name: string;
+    updatedAt: Date;
+    checksum: string;
+  };
+}[];
+
 export function LanguagesTable({
-  languages,
+  languageSupports,
 }: {
-  languages: FormattedLanguage[];
+  languageSupports: LanguageSupports;
 }) {
   const [isOpen, setIsOpen] = useState(false);
 
   function handleClick() {
     setIsOpen(!isOpen);
   }
+
+  const languages: {
+    id: number;
+    name: string;
+    nativeName: string;
+    locale: string;
+    updatedAt: Date;
+    checksum: string;
+  }[] = [];
+
+  for (const languageSupport of languageSupports) {
+    if (!languages.find((l) => l.id === languageSupport.language.id)) {
+      languages.push(languageSupport.language);
+    }
+  }
+
+  const tableRows = Array.from(languages).map((language, i) => {
+    if (isOpen || (!isOpen && i < 3))
+      return (
+        <TableRow key={i}>
+          <TableCell className="px-0 py-2 font-medium">
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger>
+                  {" "}
+                  <img
+                    className="max-w-[35px]"
+                    src={`/flags/${language.id}.svg`}
+                    alt={`${language.name} (${language.nativeName})`}
+                  />
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>{language.name}</p>
+                  <p>{language.nativeName}</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          </TableCell>
+          <TableCell className="px-0 py-2">
+            {languageSupports.some(
+              (e) =>
+                e.language.id === language.id && e.supportType.name === "Audio"
+            ) && <FaCheck className="mx-auto" />}
+          </TableCell>
+          <TableCell className="px-0 py-2">
+            {languageSupports.some(
+              (e) =>
+                e.language.id === language.id &&
+                e.supportType.name === "Subtitles"
+            ) && <FaCheck className="mx-auto" />}
+          </TableCell>
+          <TableCell className="px-0 py-2">
+            {languageSupports.some(
+              (e) =>
+                e.language.id === language.id &&
+                e.supportType.name === "Interface"
+            ) && <FaCheck className="mx-auto" />}
+          </TableCell>
+        </TableRow>
+      );
+  });
 
   return (
     <div className="mb-8 self-start w-full">
@@ -45,48 +122,7 @@ export function LanguagesTable({
             <TableHead className="text-start h-8 px-1">UI</TableHead>
           </TableRow>
         </TableHeader>
-        <TableBody>
-          {languages.map((l, i) => {
-            if (isOpen || (!isOpen && i < 3))
-              return (
-                <TableRow key={i}>
-                  <TableCell className="px-0 py-2 font-medium">
-                    <TooltipProvider>
-                      <Tooltip>
-                        <TooltipTrigger>
-                          {" "}
-                          <img
-                            className="max-w-[35px]"
-                            src={`/flags/${l.id}.svg`}
-                            alt={`${l.name} (${l.nativeName})`}
-                          />
-                        </TooltipTrigger>
-                        <TooltipContent>
-                          <p>{l.name}</p>
-                          <p>{l.nativeName}</p>
-                        </TooltipContent>
-                      </Tooltip>
-                    </TooltipProvider>
-                  </TableCell>
-                  <TableCell className="px-0 py-2">
-                    {l.supportType.some((obj) => obj.id === 1) && (
-                      <FaCheck className="mx-auto" />
-                    )}
-                  </TableCell>
-                  <TableCell className="px-0 py-2">
-                    {l.supportType.some((obj) => obj.id === 2) && (
-                      <FaCheck className="mx-auto" />
-                    )}
-                  </TableCell>
-                  <TableCell className="px-0 py-2">
-                    {l.supportType.some((obj) => obj.id === 3) && (
-                      <FaCheck className="mx-auto" />
-                    )}
-                  </TableCell>
-                </TableRow>
-              );
-          })}
-        </TableBody>
+        <TableBody>{tableRows}</TableBody>
       </Table>
       {languages.length > 3 && (
         <Button variant="link" onClick={handleClick} className="px-0 py-1">

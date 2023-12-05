@@ -34,16 +34,6 @@ export default async function Page({
     filterUnknown,
   });
 
-  const gameTest = await prisma.game.findMany({
-    where: {
-      name: {
-        search: "fallout & dust",
-      },
-    },
-  });
-
-  console.log(gameTest);
-
   if (
     gameReleasesPerDayRaw === undefined ||
     gameReleasesPerDayRaw.length === 0

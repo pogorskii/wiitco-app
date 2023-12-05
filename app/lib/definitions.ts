@@ -1,9 +1,5 @@
 import { z } from "zod";
 
-// Game info page
-import { gameSchema } from "./zod-schemas";
-export type Game = z.infer<typeof gameSchema>;
-
 // Games Search page
 import { gameSearchSchema } from "./zod-schemas";
 export type GameSearch = z.infer<typeof gameSearchSchema>;

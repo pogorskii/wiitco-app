@@ -17,17 +17,17 @@ model GCollectionType {
   description String
   collections GCollection[]
   updatedAt   DateTime
-  checksum    String        @unique
+  checksum    String
 }
 
 model GFranchise {
-  id            Int             @id
-  name          String
-  slug          String          @unique
-  mainGames     Game[]
-  secondaryGame GameFranchise[]
-  updatedAt     DateTime
-  checksum      String          @unique
+  id             Int             @id
+  name           String
+  slug           String          @unique
+  mainGames      Game[]
+  secondaryGames GameFranchise[]
+  updatedAt      DateTime
+  checksum       String
 }
 
 model GRegion {
@@ -48,7 +48,7 @@ model GCompanyLogo {
   width        Int?
   height       Int?
   companies    GCompany[]
-  checksum     String     @unique
+  checksum     String
 }
 
 model GEngineLogo {
@@ -59,7 +59,7 @@ model GEngineLogo {
   width        Int?
   height       Int?
   engines      GEngine[]
-  checksum     String    @unique
+  checksum     String
 }
 
 model GPlatformLogo {
@@ -70,7 +70,7 @@ model GPlatformLogo {
   width        Int?
   height       Int?
   platforms    GPlatform[]
-  checksum     String      @unique
+  checksum     String
 }
 
 model GPlatformFamily {
@@ -78,7 +78,7 @@ model GPlatformFamily {
   name      String
   slug      String      @unique
   platforms GPlatform[]
-  checksum  String      @unique
+  checksum  String
 }
 
 model GMode {
@@ -87,7 +87,7 @@ model GMode {
   slug      String     @unique
   games     GameMode[]
   updatedAt DateTime
-  checksum  String     @unique
+  checksum  String
 }
 
 model GGenre {
@@ -96,7 +96,7 @@ model GGenre {
   slug      String      @unique
   games     GameGenre[]
   updatedAt DateTime
-  checksum  String      @unique
+  checksum  String
 }
 
 model GLanguage {
@@ -106,7 +106,7 @@ model GLanguage {
   locale     String
   supports   GLanguageSupport[]
   updatedAt  DateTime
-  checksum   String             @unique
+  checksum   String
 }
 
 model GLanguageSupportType {
@@ -114,7 +114,7 @@ model GLanguageSupportType {
   name      String
   supports  GLanguageSupport[]
   updatedAt DateTime
-  checksum  String             @unique
+  checksum  String
 }
 
 model GPlayerPerspective {
@@ -123,7 +123,7 @@ model GPlayerPerspective {
   slug      String                  @unique
   games     GamePlayerPerspective[]
   updatedAt DateTime
-  checksum  String                  @unique
+  checksum  String
 }
 
 model GReleaseDateStatus {
@@ -132,7 +132,7 @@ model GReleaseDateStatus {
   description String
   releases    GReleaseDate[]
   updatedAt   DateTime
-  checksum    String         @unique
+  checksum    String
 }
 
 model GTheme {
@@ -141,7 +141,7 @@ model GTheme {
   slug      String      @unique
   games     GameTheme[]
   updatedAt DateTime
-  checksum  String      @unique
+  checksum  String
 }
 
 // Main Table
@@ -149,27 +149,21 @@ model Game {
   id                 Int                     @id
   name               String
   slug               String                  @unique
-  ageRatings         GAgeRating[]
+  category           Int
+  firstReleaseDate   DateTime?
   rating             Float
   reviewsCount       Int
+  follows            Int
+  hypes              Int
+  status             Int?
+  summary            String?
   altNames           GAltName[]
-  category           Int
+  ageRatings         GAgeRating[]
   mainSeries         GCollection?            @relation(fields: [mainSeriesId], references: [id])
   mainSeriesId       Int?
   collections        GameCollection[]
   cover              GCover?
-  dlcs               Game[]                  @relation("DLC")
-  dlcOf              Game?                   @relation("DLC", fields: [dlcOfId], references: [id])
-  dlcOfId            Int?
-  expandedEditions   Game[]                  @relation("Expanded Edition")
-  expandedFrom       Game?                   @relation("Expanded Edition", fields: [expandedFromId], references: [id])
-  expandedFromId     Int?
-  expansions         Game[]                  @relation("Expansion")
-  expansionOf        Game?                   @relation("Expansion", fields: [expansionOfId], references: [id])
-  expansionOfId      Int?
-  firstReleaseDate   DateTime?
   localizations      GLocalization[]
-  follows            Int
   mainFranchise      GFranchise?             @relation(fields: [mainFranchiseId], references: [id])
   mainFranchiseId    Int?
   franchises         GameFranchise[]
@@ -179,38 +173,80 @@ model Game {
   externalServices   GExternalService[]
   modes              GameMode[]
   genres             GameGenre[]
-  hypes              Int
   languageSupports   GLanguageSupport[]
-  childGames         Game[]                  @relation("Child Game")
-  parentGame         Game?                   @relation("Child Game", fields: [parentGameId], references: [id])
-  parentGameId       Int?
   playerPerspectives GamePlayerPerspective[]
   platforms          GamePlatform[]
-  ports              Game[]                  @relation("Port")
-  portOf             Game?                   @relation("Port", fields: [portOfId], references: [id])
-  portOfId           Int?
   releaseDates       GReleaseDate[]
-  remakes            Game[]                  @relation("Remake")
-  remakeOf           Game?                   @relation("Remake", fields: [remakeOfId], references: [id])
-  remakeOfId         Int?
-  remasters          Game[]                  @relation("Remaster")
-  remasterOf         Game?                   @relation("Remaster", fields: [remasterOfId], references: [id])
-  remasterOfId       Int?
   screenshots        GScreenshot[]
   videos             GVideo[]
-  similarOf          GameSimilarGame[]       @relation("Similar Game")
-  similarTo          GameSimilarGame[]
-  standaloneDlcs     Game[]                  @relation("Standalone DLC")
-  standaloneDlcOf    Game?                   @relation("Standalone DLC", fields: [standaloneDlcOfId], references: [id])
-  standaloneDlcOfId  Int?
-  status             Int?
-  summary            String?
   themes             GameTheme[]
-  versions           Game[]                  @relation("Version")
-  versionOf          Game?                   @relation("Version", fields: [versionOfId], references: [id])
-  versionOfId        Int?
-  versionTitle       String?
   websites           GWebsite[]
+  updatedAt          DateTime
+  checksum           String
+
+  // Similar games
+  similarOf GameSimilarGame[] @relation("Similar Game")
+  similarTo GameSimilarGame[]
+
+  // Categories relations
+  // 1
+  dlcs              Game[] @relation("DLC")
+  dlcOf             Game?  @relation("DLC", fields: [dlcOfId], references: [id])
+  dlcOfId           Int?
+  // 2
+  expansions        Game[] @relation("Expansion")
+  expansionOf       Game?  @relation("Expansion", fields: [expansionOfId], references: [id])
+  expansionOfId     Int?
+  // 4
+  standaloneDlcs    Game[] @relation("Standalone DLC")
+  standaloneDlcOf   Game?  @relation("Standalone DLC", fields: [standaloneDlcOfId], references: [id])
+  standaloneDlcOfId Int?
+  // 5
+  mods              Game[] @relation("Mod")
+  modOf             Game?  @relation("Mod", fields: [modOfId], references: [id])
+  modOfId           Int?
+  //6
+  episodes          Game[] @relation("Episode")
+  episodeOf         Game?  @relation("Episode", fields: [episodeOfId], references: [id])
+  episodeOfId       Int?
+  //7
+  seasons           Game[] @relation("Season")
+  seasonOf          Game?  @relation("Season", fields: [seasonOfId], references: [id])
+  seasonOfId        Int?
+  // 8
+  remakes           Game[] @relation("Remake")
+  remakeOf          Game?  @relation("Remake", fields: [remakeOfId], references: [id])
+  remakeOfId        Int?
+  // 9
+  remasters         Game[] @relation("Remaster")
+  remasterOf        Game?  @relation("Remaster", fields: [remasterOfId], references: [id])
+  remasterOfId      Int?
+  // 10
+  expandedEditions  Game[] @relation("Expanded Edition")
+  expandedFrom      Game?  @relation("Expanded Edition", fields: [expandedFromId], references: [id])
+  expandedFromId    Int?
+  // 11
+  ports             Game[] @relation("Port")
+  portOf            Game?  @relation("Port", fields: [portOfId], references: [id])
+  portOfId          Int?
+  // 12
+  forks             Game[] @relation("Fork")
+  forkOf            Game?  @relation("Fork", fields: [forkOfId], references: [id])
+  forkOfId          Int?
+  // 13
+  packs             Game[] @relation("Pack")
+  packOf            Game?  @relation("Pack", fields: [packOfId], references: [id])
+  packOfId          Int?
+  // 14
+  updates           Game[] @relation("Update")
+  updateOf          Game?  @relation("Update", fields: [updateOfId], references: [id])
+  updateOfId        Int?
+
+  // vesion_parent
+  versions     Game[]  @relation("Version")
+  versionOf    Game?   @relation("Version", fields: [versionOfId], references: [id])
+  versionOfId  Int?
+  versionTitle String?
 }
 
 // Models for tables where rows unique to each Game
@@ -223,7 +259,7 @@ model GAgeRating {
   game           Game                    @relation(fields: [gameId], references: [id])
   gameId         Int
   descriptions   GAgeRatingDescription[]
-  checksum       String                  @unique
+  checksum       String
 }
 
 model GAgeRatingDescription {
@@ -232,7 +268,7 @@ model GAgeRatingDescription {
   description String
   ageRating   GAgeRating @relation(fields: [ageRatingId], references: [id])
   ageRatingId Int
-  checksum    String     @unique
+  checksum    String
 }
 
 model GAltName {
@@ -241,7 +277,7 @@ model GAltName {
   comment  String?
   game     Game    @relation(fields: [gameId], references: [id])
   gameId   Int
-  checksum String  @unique
+  checksum String
 }
 
 model GCover {
@@ -253,23 +289,23 @@ model GCover {
   height       Int?
   game         Game    @relation(fields: [gameId], references: [id])
   gameId       Int     @unique
-  checksum     String  @unique
+  checksum     String
 }
 
 model GLocalization {
   id        Int      @id
-  name      String
+  name      String?
   region    GRegion? @relation(fields: [regionId], references: [id])
   regionId  Int?
   game      Game     @relation(fields: [gameId], references: [id])
   gameId    Int
   updatedAt DateTime
-  checksum  String   @unique
+  checksum  String
 }
 
 model GExternalService {
   id         Int        @id
-  name       String
+  name       String?
   category   Int
   countries  Int[]
   media      Int?
@@ -279,12 +315,11 @@ model GExternalService {
   gameId     Int
   url        String?
   updatedAt  DateTime
-  checksum   String     @unique
+  checksum   String
 }
 
 model GLanguageSupport {
   id            Int                  @id
-  name          String
   game          Game                 @relation(fields: [gameId], references: [id])
   gameId        Int
   language      GLanguage            @relation(fields: [languageId], references: [id])
@@ -292,7 +327,7 @@ model GLanguageSupport {
   supportType   GLanguageSupportType @relation(fields: [supportTypeId], references: [id])
   supportTypeId Int
   updatedAt     DateTime
-  checksum      String               @unique
+  checksum      String
 }
 
 model GReleaseDate {
@@ -300,7 +335,7 @@ model GReleaseDate {
   category   Int
   game       Game                @relation(fields: [gameId], references: [id])
   gameId     Int
-  date       DateTime
+  date       DateTime?
   human      String
   m          Int?
   y          Int?
@@ -310,7 +345,7 @@ model GReleaseDate {
   platformId Int
   region     Int
   updatedAt  DateTime
-  checksum   String              @unique
+  checksum   String
 }
 
 model GScreenshot {
@@ -322,15 +357,16 @@ model GScreenshot {
   height       Int?
   game         Game    @relation(fields: [gameId], references: [id])
   gameId       Int
-  checksum     String  @unique
+  checksum     String
 }
 
 model GVideo {
   id       Int     @id
+  videoId  String
   name     String?
   game     Game    @relation(fields: [gameId], references: [id])
   gameId   Int
-  checksum String  @unique
+  checksum String
 }
 
 // 2nd-order tables
@@ -343,7 +379,7 @@ model GCollection {
   mainGames      Game[]
   secondaryGames GameCollection[]
   updatedAt      DateTime
-  checksum       String           @unique
+  checksum       String
 }
 
 model GCompany {
@@ -354,9 +390,9 @@ model GCompany {
   startDateCategory  Int?
   changeDate         DateTime?
   changeDateCategory Int?
-  oldCompany         GCompany?           @relation("Change Company")
+  oldCompany         GCompany[]          @relation("Change Company")
   newCompany         GCompany?           @relation("Change Company", fields: [newCompanyId], references: [id])
-  newCompanyId       Int?                @unique
+  newCompanyId       Int?
   country            Int?
   description        String?
   developedGames     GameDeveloper[]
@@ -368,7 +404,7 @@ model GCompany {
   parentCompanyId    Int?
   engines            GameEngineCompany[]
   updatedAt          DateTime
-  checksum           String              @unique
+  checksum           String
 }
 
 model GEngine {
@@ -382,7 +418,7 @@ model GEngine {
   logoId      Int?
   platforms   GameEnginePlatform[]
   updatedAt   DateTime
-  checksum    String               @unique
+  checksum    String
 }
 
 model GPlatform {
@@ -403,7 +439,7 @@ model GPlatform {
   externalServices GExternalService[]
   engines          GameEnginePlatform[]
   updatedAt        DateTime
-  checksum         String               @unique
+  checksum         String
 }
 
 model GWebsite {
@@ -413,7 +449,7 @@ model GWebsite {
   trusted  Boolean
   game     Game    @relation(fields: [gameId], references: [id])
   gameId   Int
-  checksum String  @unique
+  checksum String
 }
 
 // Join tables

@@ -1,7 +1,6 @@
 "use server";
 
 import { GameReleaseRaw } from "./definitions";
-import { gameSchema } from "./zod-schemas";
 
 // ENV export
 const API_SECRET = process.env.TWITCH_API_SECRET;
@@ -18,27 +17,6 @@ export async function fetchTwitchToken() {
     );
     const result = await data.json();
     console.log(result);
-  } catch (error) {
-    console.error("Database Error: ", error);
-  }
-}
-
-export async function fetchGameBySlug(slug: string) {
-  try {
-    const headers = new Headers();
-    headers.set("Accept", "application/json");
-    headers.set("Client-ID", `${CLIENT_ID}`);
-    headers.set("Authorization", `Bearer ${TWITCH_TOKEN}`);
-
-    const data = await fetch("https://api.igdb.com/v4/games/", {
-      method: "POST",
-      headers,
-      body: `fields id, name, slug, age_ratings.category, age_ratings.rating, aggregated_rating, aggregated_rating_count, category, cover.*, dlcs.*, dlcs.cover.*, expansions.*, expansions.cover.*, standalone_expansions.*, standalone_expansions.cover.*, first_release_date, franchises.*, franchises.games.*, franchises.games.cover.*, franchises.games.parent_game.name, franchises.games.parent_game.slug, collections.*, collections.games.*, collections.games.cover.*, collections.games.parent_game.name, collections.games.parent_game.slug, game_engines.*, genres.*, involved_companies.*, involved_companies.company.*, language_supports.*, language_supports.language.*, language_supports.language_support_type.*, parent_game.name, parent_game.slug, platforms.id, status, screenshots.*, storyline, summary, videos.*, similar_games.*, similar_games.cover.*, remakes.*, remakes.cover.*, remasters.*, remasters.cover.*, websites.category, websites.url;
-      where slug = "${slug}";`,
-    });
-    const result = await data.json();
-    const parsedGame = gameSchema.parse(result[0]);
-    return parsedGame;
   } catch (error) {
     console.error("Database Error: ", error);
   }
