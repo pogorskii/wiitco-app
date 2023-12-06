@@ -22,17 +22,15 @@ const fetchGames = async ({
       headers,
       body: `fields *, age_ratings.*, age_ratings.content_descriptions.*, alternative_names.*, cover.*, game_localizations.*, external_games.*, language_supports.*, release_dates.*, screenshots.*, videos.*, websites.*;
       where ${filter};
-      limit 50;
+      limit 100;
       sort updated_at desc;`,
       cache: "no-store",
     });
     const result = await data.json();
-    if (!result) throw new Error(`Couldn't fetch from games`);
-    if (result.length === 0) return [];
+    if (!result) throw new Error(`CRON JOB error: Couldn't fetch games`);
     return result;
   } catch (error) {
     console.error("IGDB Error: ", error);
-    return [];
   }
 };
 
@@ -40,46 +38,100 @@ const updateGames = async (games: Games) => {
   for (const e of games) {
     try {
       const gameId = e.id;
-      // Create base info
-      await prisma.game.upsert({
-        where: {
-          id: gameId,
-        },
-        update: {
-          category: e.category,
-          firstReleaseDate: e.first_release_date,
-          rating: e.aggregated_rating,
-          reviewsCount: e.aggregated_rating_count,
-          follows: e.follows,
-          hypes: e.hypes,
-          status: e.status,
-          summary: e.summary,
-          updatedAt: e.updated_at,
-          checksum: e.checksum,
-          versionTitle: e.version_title,
-        },
-        create: {
-          id: gameId,
-          name: e.name,
-          slug: e.slug,
-          category: e.category,
-          firstReleaseDate: e.first_release_date,
-          rating: e.aggregated_rating,
-          reviewsCount: e.aggregated_rating_count,
-          follows: e.follows,
-          hypes: e.hypes,
-          status: e.status,
-          summary: e.summary,
-          updatedAt: e.updated_at,
-          checksum: e.checksum,
-          versionTitle: e.version_title,
+      const existingGame = await prisma.game.findUnique({
+        where: { id: gameId },
+        select: {
+          altNames: {
+            select: {
+              id: true,
+            },
+          },
+          ageRatings: {
+            select: {
+              id: true,
+            },
+          },
+          mainFranchiseId: true,
+          mainSeriesId: true,
+          screenshots: {
+            select: {
+              id: true,
+            },
+          },
+          videos: {
+            select: {
+              id: true,
+            },
+          },
+          websites: {
+            select: {
+              id: true,
+            },
+          },
+          updatedAt: true,
         },
       });
 
+      if (existingGame && existingGame.updatedAt === e.updated_at) return;
+
+      if (existingGame && existingGame.updatedAt < e.updated_at) {
+        try {
+          await prisma.game.update({
+            where: {
+              id: gameId,
+            },
+            data: {
+              category: e.category,
+              firstReleaseDate: e.first_release_date,
+              rating: e.aggregated_rating,
+              reviewsCount: e.aggregated_rating_count,
+              follows: e.follows,
+              hypes: e.hypes,
+              status: e.status,
+              summary: e.summary,
+              updatedAt: e.updated_at,
+              checksum: e.checksum,
+              versionTitle: e.version_title,
+            },
+          });
+        } catch (error) {
+          console.error(`Error updating game id: ${gameId} (${error})`);
+        }
+      }
+
+      if (!existingGame) {
+        try {
+          console.log(`Creating game id: ${gameId}`);
+          await prisma.game.create({
+            data: {
+              id: gameId,
+              name: e.name,
+              slug: e.slug,
+              category: e.category,
+              firstReleaseDate: e.first_release_date,
+              rating: e.aggregated_rating,
+              reviewsCount: e.aggregated_rating_count,
+              follows: e.follows,
+              hypes: e.hypes,
+              status: e.status,
+              summary: e.summary,
+              updatedAt: e.updated_at,
+              checksum: e.checksum,
+              versionTitle: e.version_title,
+            },
+          });
+        } catch (error) {
+          console.error(`Error creating game id: ${gameId} (${error})`);
+        }
+      }
+
       // Link to Main Franchise and Main Collection if they exist
-      if (e.collection) {
+      if (e.collection && e.collection !== existingGame?.mainSeriesId) {
         const collection = await prisma.gCollection.findUnique({
           where: { id: e.collection },
+          select: {
+            id: true,
+          },
         });
         if (collection) {
           try {
@@ -92,13 +144,18 @@ const updateGames = async (games: Games) => {
               },
             });
           } catch (error) {
-            console.error(error, e.collection);
+            console.error(
+              `Error updating collection id: ${e.collection} (${error})`
+            );
           }
         }
       }
-      if (e.franchise) {
+      if (e.franchise && e.franchise !== existingGame?.mainFranchiseId) {
         const franchise = await prisma.gFranchise.findUnique({
           where: { id: e.franchise },
+          select: {
+            id: true,
+          },
         });
         if (franchise) {
           try {
@@ -111,7 +168,9 @@ const updateGames = async (games: Games) => {
               },
             });
           } catch (error) {
-            console.error(error, e.franchise);
+            console.error(
+              `Error updating franchise id: ${e.franchise} (${error})`
+            );
           }
         }
       }
@@ -121,22 +180,26 @@ const updateGames = async (games: Games) => {
       // Alternative names
       if (e.alternative_names) {
         for (const altName of e.alternative_names) {
-          try {
-            await prisma.gAltName.upsert({
-              where: {
-                id: altName.id,
-              },
-              update: {},
-              create: {
-                id: altName.id,
-                name: altName.name,
-                comment: altName.comment,
-                checksum: altName.checksum,
-                gameId,
-              },
-            });
-          } catch (error) {
-            console.error(error, altName);
+          if (
+            !existingGame?.altNames.some(
+              (existingAltName) => existingAltName.id === altName.id
+            )
+          ) {
+            try {
+              await prisma.gAltName.create({
+                data: {
+                  id: altName.id,
+                  name: altName.name,
+                  comment: altName.comment,
+                  checksum: altName.checksum,
+                  gameId,
+                },
+              });
+            } catch (error) {
+              console.error(
+                `Error creating altName id: ${altName.id} (${error})`
+              );
+            }
           }
         }
       }
@@ -144,108 +207,175 @@ const updateGames = async (games: Games) => {
       // Age Ratings
       if (e.age_ratings) {
         for (const ageRating of e.age_ratings) {
-          try {
-            await prisma.gAgeRating.upsert({
-              where: {
-                id: ageRating.id,
-              },
-              update: {},
-              create: {
-                id: ageRating.id,
-                category: ageRating.category,
-                rating: ageRating.rating,
-                synopsis: ageRating.synopsis,
-                ratingCoverUrl: ageRating.rating_cover_url,
-                checksum: ageRating.checksum,
-                gameId,
-              },
-            });
+          if (
+            !existingGame?.ageRatings.some(
+              (existingAgeRating) => existingAgeRating.id === ageRating.id
+            )
+          ) {
+            try {
+              await prisma.gAgeRating.create({
+                data: {
+                  id: ageRating.id,
+                  category: ageRating.category,
+                  rating: ageRating.rating,
+                  synopsis: ageRating.synopsis,
+                  ratingCoverUrl: ageRating.rating_cover_url,
+                  checksum: ageRating.checksum,
+                  gameId,
+                },
+              });
 
-            if (ageRating.content_descriptions) {
-              for (const contentDesc of ageRating.content_descriptions) {
-                try {
-                  await prisma.gAgeRatingDescription.upsert({
-                    where: {
-                      id: contentDesc.id,
-                    },
-                    update: {},
-                    create: {
-                      id: contentDesc.id,
-                      category: contentDesc.category,
-                      description: contentDesc.description,
-                      checksum: contentDesc.checksum,
-                      ageRatingId: ageRating.id,
-                    },
-                  });
-                } catch (error) {
-                  console.error(error, contentDesc);
+              if (ageRating.content_descriptions) {
+                for (const contentDesc of ageRating.content_descriptions) {
+                  const existingContentDesc =
+                    prisma.gAgeRatingDescription.findUnique({
+                      where: {
+                        id: contentDesc.id,
+                      },
+                      select: {
+                        id: true,
+                      },
+                    });
+
+                  if (!existingContentDesc) {
+                    try {
+                      await prisma.gAgeRatingDescription.create({
+                        data: {
+                          id: contentDesc.id,
+                          category: contentDesc.category,
+                          description: contentDesc.description,
+                          checksum: contentDesc.checksum,
+                          ageRatingId: ageRating.id,
+                        },
+                      });
+                    } catch (error) {
+                      console.error(
+                        `Error creating ageRatingDescription id: ${contentDesc.id} (${error})`
+                      );
+                    }
+                  }
                 }
               }
+            } catch (error) {
+              console.error(
+                `Error creating ageRating id: ${ageRating.id} (${error})`
+              );
             }
-          } catch (error) {
-            console.error(error, ageRating);
           }
         }
       }
 
       // Cover
       if (e.cover) {
-        try {
-          await prisma.gCover.upsert({
-            where: {
-              gameId,
-            },
-            update: {
-              aplhaChannel: e.cover.alpha_channel,
-              animated: e.cover.animated,
-              imageId: e.cover.image_id,
-              width: e.cover.width,
-              height: e.cover.height,
-              checksum: e.cover.checksum,
-              gameId,
-            },
-            create: {
-              id: e.cover.id,
-              aplhaChannel: e.cover.alpha_channel,
-              animated: e.cover.animated,
-              imageId: e.cover.image_id,
-              width: e.cover.width,
-              height: e.cover.height,
-              checksum: e.cover.checksum,
-              gameId,
-            },
-          });
-        } catch (error) {
-          console.error(error, e.cover);
+        const existingCover = existingGame
+          ? await prisma.gCover.findUnique({
+              where: {
+                gameId,
+              },
+              select: {
+                imageId: true,
+              },
+            })
+          : null;
+
+        if (existingCover && existingCover.imageId !== e.cover.image_id) {
+          try {
+            await prisma.gCover.update({
+              where: {
+                gameId,
+              },
+              data: {
+                id: e.cover.id,
+                aplhaChannel: e.cover.alpha_channel,
+                animated: e.cover.animated,
+                imageId: e.cover.image_id,
+                width: e.cover.width,
+                height: e.cover.height,
+                checksum: e.cover.checksum,
+                gameId,
+              },
+            });
+          } catch (error) {
+            console.error(
+              `Error updating game cover id: ${e.cover.id} (${error})`
+            );
+          }
+        }
+
+        if (!existingCover) {
+          try {
+            await prisma.gCover.create({
+              data: {
+                id: e.cover.id,
+                aplhaChannel: e.cover.alpha_channel,
+                animated: e.cover.animated,
+                imageId: e.cover.image_id,
+                width: e.cover.width,
+                height: e.cover.height,
+                checksum: e.cover.checksum,
+                gameId,
+              },
+            });
+          } catch (error) {
+            console.error(
+              `Error creating game cover id: ${e.cover.id} (${error})`
+            );
+          }
         }
       }
 
       // Localizations
       if (e.game_localizations) {
         for (const loc of e.game_localizations) {
-          try {
-            await prisma.gLocalization.upsert({
-              where: {
-                id: loc.id,
-              },
-              update: {
-                name: loc.name,
-                regionId: loc.region,
-                updatedAt: loc.updated_at,
-                checksum: loc.checksum,
-                gameId,
-              },
-              create: {
-                id: loc.id,
-                name: loc.name,
-                regionId: loc.region,
-                updatedAt: loc.updated_at,
-                checksum: loc.checksum,
-                gameId,
-              },
-            });
-          } catch (error) {
-            console.error(error, loc);
+          const existingLoc = existingGame
+            ? await prisma.gLocalization.findUnique({
+                where: {
+                  id: loc.id,
+                },
+                select: {
+                  updatedAt: true,
+                },
+              })
+            : null;
+
+          if (existingLoc && existingLoc.updatedAt < loc.updated_at) {
+            try {
+              await prisma.gLocalization.update({
+                where: {
+                  id: loc.id,
+                },
+                data: {
+                  name: loc.name,
+                  regionId: loc.region,
+                  updatedAt: loc.updated_at,
+                  checksum: loc.checksum,
+                  gameId,
+                },
+              });
+            } catch (error) {
+              console.error(
+                `Error updating game localization id: ${loc.id} (${error})`
+              );
+            }
+          }
+
+          if (!existingLoc) {
+            try {
+              await prisma.gLocalization.create({
+                data: {
+                  id: loc.id,
+                  name: loc.name,
+                  regionId: loc.region,
+                  updatedAt: loc.updated_at,
+                  checksum: loc.checksum,
+                  gameId,
+                },
+              });
+            } catch (error) {
+              console.error(
+                `Error creating game localization id: ${loc.id} (${error})`
+              );
+            }
           }
         }
       }
@@ -253,36 +383,62 @@ const updateGames = async (games: Games) => {
       // External services
       if (e.external_games) {
         for (const ext of e.external_games) {
-          try {
-            await prisma.gExternalService.upsert({
-              where: {
-                id: ext.id,
-              },
-              update: {
-                name: ext.name,
-                category: ext.category,
-                countries: ext.countries,
-                media: ext.media,
-                platformId: ext.platform,
-                url: ext.url,
-                updatedAt: ext.updated_at,
-                checksum: ext.checksum,
-              },
-              create: {
-                id: ext.id,
-                name: ext.name,
-                category: ext.category,
-                countries: ext.countries,
-                media: ext.media,
-                platformId: ext.platform,
-                url: ext.url,
-                updatedAt: ext.updated_at,
-                checksum: ext.checksum,
-                gameId,
-              },
-            });
-          } catch (error) {
-            console.error(error, ext);
+          const existingExt = existingGame
+            ? await prisma.gExternalService.findUnique({
+                where: {
+                  id: ext.id,
+                },
+                select: {
+                  updatedAt: true,
+                },
+              })
+            : null;
+
+          if (existingExt && existingExt.updatedAt < ext.updated_at) {
+            try {
+              await prisma.gExternalService.update({
+                where: {
+                  id: ext.id,
+                },
+                data: {
+                  name: ext.name,
+                  category: ext.category,
+                  countries: ext.countries,
+                  media: ext.media,
+                  platformId: ext.platform,
+                  url: ext.url,
+                  updatedAt: ext.updated_at,
+                  checksum: ext.checksum,
+                },
+              });
+            } catch (error) {
+              console.error(
+                `Error updating external game id: ${ext.id} (${error})`
+              );
+            }
+          }
+
+          if (!existingExt) {
+            try {
+              await prisma.gExternalService.create({
+                data: {
+                  id: ext.id,
+                  name: ext.name,
+                  category: ext.category,
+                  countries: ext.countries,
+                  media: ext.media,
+                  platformId: ext.platform,
+                  url: ext.url,
+                  updatedAt: ext.updated_at,
+                  checksum: ext.checksum,
+                  gameId,
+                },
+              });
+            } catch (error) {
+              console.error(
+                `Error creating external game id: ${ext.id} (${error})`
+              );
+            }
           }
         }
       }
@@ -290,28 +446,57 @@ const updateGames = async (games: Games) => {
       // Language support
       if (e.language_supports) {
         for (const langSup of e.language_supports) {
-          try {
-            await prisma.gLanguageSupport.upsert({
-              where: {
-                id: langSup.id,
-              },
-              update: {
-                languageId: langSup.language,
-                supportTypeId: langSup.language_support_type,
-                updatedAt: langSup.updated_at,
-                checksum: langSup.checksum,
-              },
-              create: {
-                id: langSup.id,
-                languageId: langSup.language,
-                supportTypeId: langSup.language_support_type,
-                updatedAt: langSup.updated_at,
-                checksum: langSup.checksum,
-                gameId,
-              },
-            });
-          } catch (error) {
-            console.error(error, langSup);
+          const existingLangSup = existingGame
+            ? await prisma.gLanguageSupport.findUnique({
+                where: {
+                  id: langSup.id,
+                },
+                select: {
+                  updatedAt: true,
+                },
+              })
+            : null;
+
+          if (
+            existingLangSup &&
+            existingLangSup.updatedAt < langSup.updated_at
+          ) {
+            try {
+              await prisma.gLanguageSupport.update({
+                where: {
+                  id: langSup.id,
+                },
+                data: {
+                  languageId: langSup.language,
+                  supportTypeId: langSup.language_support_type,
+                  updatedAt: langSup.updated_at,
+                  checksum: langSup.checksum,
+                },
+              });
+            } catch (error) {
+              console.error(
+                `Error updating language support id: ${langSup.id} (${error})`
+              );
+            }
+          }
+
+          if (!existingLangSup) {
+            try {
+              await prisma.gLanguageSupport.create({
+                data: {
+                  id: langSup.id,
+                  languageId: langSup.language,
+                  supportTypeId: langSup.language_support_type,
+                  updatedAt: langSup.updated_at,
+                  checksum: langSup.checksum,
+                  gameId,
+                },
+              });
+            } catch (error) {
+              console.error(
+                `Error creating language support id: ${langSup.id} (${error})`
+              );
+            }
           }
         }
       }
@@ -319,40 +504,71 @@ const updateGames = async (games: Games) => {
       // Release dates
       if (e.release_dates) {
         for (const relDate of e.release_dates) {
-          try {
-            await prisma.gReleaseDate.upsert({
-              where: {
-                id: relDate.id,
-              },
-              update: {
-                category: relDate.category,
-                date: relDate.date,
-                human: relDate.human,
-                m: relDate.m,
-                y: relDate.y,
-                statusId: relDate.status,
-                platformId: relDate.platform,
-                region: relDate.region,
-                updatedAt: relDate.updated_at,
-                checksum: relDate.checksum,
-              },
-              create: {
-                id: relDate.id,
-                category: relDate.category,
-                date: relDate.date,
-                human: relDate.human,
-                m: relDate.m,
-                y: relDate.y,
-                statusId: relDate.status,
-                platformId: relDate.platform,
-                region: relDate.region,
-                updatedAt: relDate.updated_at,
-                checksum: relDate.checksum,
-                gameId,
-              },
-            });
-          } catch (error) {
-            console.error(error, relDate);
+          const existingRelDate = existingGame
+            ? await prisma.gReleaseDate.findUnique({
+                where: {
+                  id: relDate.id,
+                },
+                select: {
+                  updatedAt: true,
+                },
+              })
+            : null;
+
+          if (
+            existingRelDate &&
+            existingRelDate.updatedAt < relDate.updated_at
+          ) {
+            try {
+              await prisma.gReleaseDate.update({
+                where: {
+                  id: relDate.id,
+                },
+                data: {
+                  id: relDate.id,
+                  category: relDate.category,
+                  date: relDate.date,
+                  human: relDate.human,
+                  m: relDate.m,
+                  y: relDate.y,
+                  statusId: relDate.status,
+                  platformId: relDate.platform,
+                  region: relDate.region,
+                  updatedAt: relDate.updated_at,
+                  checksum: relDate.checksum,
+                  gameId,
+                },
+              });
+            } catch (error) {
+              console.error(
+                `Error updating release date id: ${relDate.id} (${error})`
+              );
+            }
+          }
+
+          if (!existingRelDate) {
+            try {
+              await prisma.gReleaseDate.create({
+                data: {
+                  id: relDate.id,
+                  category: relDate.category,
+                  date: relDate.date,
+                  human: relDate.human,
+                  m: relDate.m,
+                  y: relDate.y,
+                  statusId: relDate.status,
+                  platformId: relDate.platform,
+                  region: relDate.region,
+                  updatedAt: relDate.updated_at,
+                  checksum: relDate.checksum,
+                  gameId,
+                },
+              });
+            } catch (error) {
+              console.error(
+                `Error creating release date id: ${relDate.id} (${error})`
+              );
+            }
           }
         }
       }
@@ -360,25 +576,29 @@ const updateGames = async (games: Games) => {
       // Screenshots
       if (e.screenshots) {
         for (const shot of e.screenshots) {
-          try {
-            await prisma.gScreenshot.upsert({
-              where: {
-                id: shot.id,
-              },
-              update: {},
-              create: {
-                id: shot.id,
-                alphaChannel: shot.alpha_channel,
-                animated: shot.animated,
-                imageId: shot.image_id,
-                width: shot.width,
-                height: shot.height,
-                checksum: shot.checksum,
-                gameId,
-              },
-            });
-          } catch (error) {
-            console.error(error, shot);
+          if (
+            !existingGame?.screenshots.some(
+              (existingShot) => existingShot.id === shot.id
+            )
+          ) {
+            try {
+              await prisma.gScreenshot.create({
+                data: {
+                  id: shot.id,
+                  alphaChannel: shot.alpha_channel,
+                  animated: shot.animated,
+                  imageId: shot.image_id,
+                  width: shot.width,
+                  height: shot.height,
+                  checksum: shot.checksum,
+                  gameId,
+                },
+              });
+            } catch (error) {
+              console.error(
+                `Error creating screenshot id: ${shot.id} (${error})`
+              );
+            }
           }
         }
       }
@@ -386,22 +606,24 @@ const updateGames = async (games: Games) => {
       // Videos
       if (e.videos) {
         for (const video of e.videos) {
-          try {
-            await prisma.gVideo.upsert({
-              where: {
-                id: video.id,
-              },
-              update: {},
-              create: {
-                id: video.id,
-                name: video.name,
-                videoId: video.video_id,
-                checksum: video.checksum,
-                gameId,
-              },
-            });
-          } catch (error) {
-            console.error(error, video);
+          if (
+            !existingGame?.videos.some(
+              (existingVideo) => existingVideo.id === video.id
+            )
+          ) {
+            try {
+              await prisma.gVideo.create({
+                data: {
+                  id: video.id,
+                  name: video.name,
+                  videoId: video.video_id,
+                  checksum: video.checksum,
+                  gameId,
+                },
+              });
+            } catch (error) {
+              console.error(`Error creating video id: ${video.id} (${error})`);
+            }
           }
         }
       }
@@ -409,23 +631,25 @@ const updateGames = async (games: Games) => {
       // Websites
       if (e.websites) {
         for (const site of e.websites) {
-          try {
-            await prisma.gWebsite.upsert({
-              where: {
-                id: site.id,
-              },
-              update: {},
-              create: {
-                id: site.id,
-                category: site.category,
-                url: site.url,
-                trusted: site.trusted,
-                checksum: site.checksum,
-                gameId,
-              },
-            });
-          } catch (error) {
-            console.error(error, site);
+          if (
+            !existingGame?.websites.some(
+              (existingSite) => existingSite.id === site.id
+            )
+          ) {
+            try {
+              await prisma.gWebsite.create({
+                data: {
+                  id: site.id,
+                  category: site.category,
+                  url: site.url,
+                  trusted: site.trusted,
+                  checksum: site.checksum,
+                  gameId,
+                },
+              });
+            } catch (error) {
+              console.error(`Error creating website id: ${site.id} (${error})`);
+            }
           }
         }
       }
@@ -436,17 +660,32 @@ const updateGames = async (games: Games) => {
       // GameCollection
       if (e.collections) {
         for (const collectionId of e.collections) {
-          try {
-            await prisma.gameCollection.upsert({
-              where: { gameId_collectionId: { gameId, collectionId } },
-              update: {},
-              create: {
-                collectionId,
-                gameId,
+          const existingGamecollection = existingGame
+            ? await prisma.gameCollection.findUnique({
+                where: { gameId_collectionId: { gameId, collectionId } },
+              })
+            : null;
+
+          if (!existingGamecollection) {
+            const existingCollection = await prisma.gCollection.findUnique({
+              where: {
+                id: collectionId,
               },
             });
-          } catch (error) {
-            console.error(error, collectionId);
+
+            if (existingCollection)
+              try {
+                await prisma.gameCollection.create({
+                  data: {
+                    gameId,
+                    collectionId,
+                  },
+                });
+              } catch (error) {
+                console.error(
+                  `Error creating GameCollection with collectionId: ${collectionId} and gameId: ${gameId} (${error})`
+                );
+              }
           }
         }
       }
@@ -454,17 +693,33 @@ const updateGames = async (games: Games) => {
       // GameFranchise
       if (e.franchises) {
         for (const franchiseId of e.franchises) {
-          try {
-            await prisma.gameFranchise.upsert({
-              where: { gameId_franchiseId: { gameId, franchiseId } },
-              update: {},
-              create: {
-                franchiseId,
-                gameId,
+          const existingGameFranchise = existingGame
+            ? await prisma.gameFranchise.findUnique({
+                where: { gameId_franchiseId: { gameId, franchiseId } },
+              })
+            : null;
+
+          if (!existingGameFranchise) {
+            const existingFranchise = await prisma.gFranchise.findUnique({
+              where: {
+                id: franchiseId,
               },
             });
-          } catch (error) {
-            console.error(error, franchiseId);
+
+            if (existingFranchise) {
+              try {
+                await prisma.gameFranchise.create({
+                  data: {
+                    franchiseId,
+                    gameId,
+                  },
+                });
+              } catch (error) {
+                console.error(
+                  `Error creating GameFranchise with franchiseId: ${franchiseId} and gameId: ${gameId} (${error})`
+                );
+              }
+            }
           }
         }
       }
@@ -472,17 +727,25 @@ const updateGames = async (games: Games) => {
       // GameEngine
       if (e.game_engines) {
         for (const engineId of e.game_engines) {
-          try {
-            await prisma.gameEngine.upsert({
-              where: { gameId_engineId: { gameId, engineId } },
-              update: {},
-              create: {
-                engineId,
-                gameId,
-              },
-            });
-          } catch (error) {
-            console.error(error, engineId);
+          const existingGameEngine = existingGame
+            ? await prisma.gameEngine.findUnique({
+                where: { gameId_engineId: { gameId, engineId } },
+              })
+            : null;
+
+          if (!existingGameEngine) {
+            try {
+              await prisma.gameEngine.create({
+                data: {
+                  engineId,
+                  gameId,
+                },
+              });
+            } catch (error) {
+              console.error(
+                `Error creating GameEngine with engineId: ${engineId} and gameId: ${gameId} (${error})`
+              );
+            }
           }
         }
       }
@@ -490,17 +753,25 @@ const updateGames = async (games: Games) => {
       // GameMode
       if (e.game_modes) {
         for (const modeId of e.game_modes) {
-          try {
-            await prisma.gameMode.upsert({
-              where: { gameId_modeId: { gameId, modeId } },
-              update: {},
-              create: {
-                modeId,
-                gameId,
-              },
-            });
-          } catch (error) {
-            console.error(error, modeId);
+          const existingGameMode = existingGame
+            ? await prisma.gameMode.findUnique({
+                where: { gameId_modeId: { gameId, modeId } },
+              })
+            : null;
+
+          if (!existingGameMode) {
+            try {
+              await prisma.gameMode.create({
+                data: {
+                  modeId,
+                  gameId,
+                },
+              });
+            } catch (error) {
+              console.error(
+                `Error creating GameEngine with modeId: ${modeId} and gameId: ${gameId} (${error})`
+              );
+            }
           }
         }
       }
@@ -508,17 +779,25 @@ const updateGames = async (games: Games) => {
       // GameGenre
       if (e.genres) {
         for (const genreId of e.genres) {
-          try {
-            await prisma.gameGenre.upsert({
-              where: { gameId_genreId: { gameId, genreId } },
-              update: {},
-              create: {
-                genreId,
-                gameId,
-              },
-            });
-          } catch (error) {
-            console.error(error, genreId);
+          const existingGameGenre = existingGame
+            ? await prisma.gameGenre.findUnique({
+                where: { gameId_genreId: { gameId, genreId } },
+              })
+            : null;
+
+          if (!existingGameGenre) {
+            try {
+              await prisma.gameGenre.create({
+                data: {
+                  genreId,
+                  gameId,
+                },
+              });
+            } catch (error) {
+              console.error(
+                `Error creating GameGenre with genreId: ${genreId} and gameId: ${gameId} (${error})`
+              );
+            }
           }
         }
       }
@@ -526,17 +805,25 @@ const updateGames = async (games: Games) => {
       // GamePlayerPerspective
       if (e.player_perspectives) {
         for (const perspectiveId of e.player_perspectives) {
-          try {
-            await prisma.gamePlayerPerspective.upsert({
-              where: { gameId_perspectiveId: { gameId, perspectiveId } },
-              update: {},
-              create: {
-                perspectiveId,
-                gameId,
-              },
-            });
-          } catch (error) {
-            console.error(error, perspectiveId);
+          const existingGamePerspective = existingGame
+            ? await prisma.gamePlayerPerspective.findUnique({
+                where: { gameId_perspectiveId: { gameId, perspectiveId } },
+              })
+            : null;
+
+          if (!existingGamePerspective) {
+            try {
+              await prisma.gamePlayerPerspective.create({
+                data: {
+                  perspectiveId,
+                  gameId,
+                },
+              });
+            } catch (error) {
+              console.error(
+                `Error creating GamePlayerPerspective with perspectiveId: ${perspectiveId} and gameId: ${gameId} (${error})`
+              );
+            }
           }
         }
       }
@@ -544,17 +831,25 @@ const updateGames = async (games: Games) => {
       // GamePlatform
       if (e.platforms) {
         for (const platformId of e.platforms) {
-          try {
-            await prisma.gamePlatform.upsert({
-              where: { gameId_platformId: { gameId, platformId } },
-              update: {},
-              create: {
-                platformId,
-                gameId,
-              },
-            });
-          } catch (error) {
-            console.error(error, platformId);
+          const existingGamePlatform = existingGame
+            ? await prisma.gamePlatform.findUnique({
+                where: { gameId_platformId: { gameId, platformId } },
+              })
+            : null;
+
+          if (!existingGamePlatform) {
+            try {
+              await prisma.gamePlatform.create({
+                data: {
+                  platformId,
+                  gameId,
+                },
+              });
+            } catch (error) {
+              console.error(
+                `Error creating GamePlatform with platformId: ${platformId} and gameId: ${gameId} (${error})`
+              );
+            }
           }
         }
       }
@@ -562,17 +857,27 @@ const updateGames = async (games: Games) => {
       // GameTheme
       if (e.themes) {
         for (const themeId of e.themes) {
-          try {
-            await prisma.gameTheme.upsert({
-              where: { gameId_themeId: { gameId, themeId } },
-              update: {},
-              create: {
-                themeId,
-                gameId,
-              },
-            });
-          } catch (error) {
-            console.error(error, themeId);
+          const existingGameTheme = existingGame
+            ? await prisma.gameTheme.findUnique({
+                where: { gameId_themeId: { gameId, themeId } },
+              })
+            : null;
+
+          if (!existingGameTheme) {
+            try {
+              await prisma.gameTheme.upsert({
+                where: { gameId_themeId: { gameId, themeId } },
+                update: {},
+                create: {
+                  themeId,
+                  gameId,
+                },
+              });
+            } catch (error) {
+              console.error(
+                `Error creating GameTheme with themeId: ${themeId} and gameId: ${gameId} (${error})`
+              );
+            }
           }
         }
       }

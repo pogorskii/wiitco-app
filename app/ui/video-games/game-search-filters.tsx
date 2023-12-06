@@ -268,11 +268,11 @@ export function SortingSelector() {
   const { replace } = useRouter();
 
   // Initial states based on URL params
-  const filter = searchParams.get("sort") || "popularity";
+  const filter = searchParams.get("sort") || "relevance";
   const rules = [
     {
-      value: "popularity",
-      label: "Popularity",
+      value: "relevance",
+      label: "Relevance",
     },
     {
       value: "date-newer",

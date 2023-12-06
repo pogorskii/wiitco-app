@@ -1,24 +1,5 @@
 import { z } from "zod";
 
-const transformAgeRating = (r: number): string => {
-  const ratingsEnum: { [key: number]: string } = {
-    1: "Three",
-    2: "Seven",
-    3: "Twelve",
-    4: "Sixteen",
-    5: "Eighteen",
-    6: "RP",
-    7: "EC",
-    8: "E",
-    9: "E10",
-    10: "T",
-    11: "M",
-    12: "AO",
-  };
-  const ratingString = ratingsEnum[r] || "Not supported";
-  return ratingString;
-};
-
 const transformGameCategory = (c: number): string => {
   const categoriesEnum: { [key: number]: string } = {
     0: "Main Game",
@@ -53,40 +34,6 @@ export type FormattedLanguage = {
   }[];
 };
 
-const transformLanguages = (langArrRaw: Languages): FormattedLanguage[] => {
-  const languagesMap = new Map<number, any>();
-  const mergeProp = "supportType" as any;
-
-  for (const langObj of langArrRaw) {
-    const id = langObj.language.id;
-    const mergedLangObj = languagesMap.get(id) || ({} as any);
-
-    for (const property in langObj) {
-      if (property === mergeProp) {
-        if (!Array.isArray(mergedLangObj[mergeProp])) {
-          mergedLangObj[mergeProp] = [];
-        }
-        mergedLangObj[mergeProp].push((langObj as any)[mergeProp]);
-      } else {
-        (mergedLangObj as any)[property] = (langObj as any)[property];
-      }
-    }
-
-    languagesMap.set(id, mergedLangObj);
-  }
-
-  const result = [];
-  for (const [id, mergedLangObj] of Array.from(languagesMap)) {
-    const obj = {
-      ...mergedLangObj.language,
-      supportType: mergedLangObj.supportType,
-    };
-    result.push(obj);
-  }
-
-  return result;
-};
-
 const coverSchema = z
   .object({
     url: z.string().transform((url) => "https:" + url),
@@ -99,12 +46,6 @@ const coverSchema = z
     ...rest,
   }))
   .optional();
-
-const gameBaseSchema = z.object({
-  name: z.string(),
-  slug: z.string(),
-  cover: coverSchema.optional(),
-});
 
 const languageSupportsSchema = z.array(
   z

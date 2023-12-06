@@ -1,8 +1,9 @@
 import { v4 as uuid } from "uuid";
 import { SectionNav } from "@/app/ui/video-games/section-nav";
-import { fetchGamesSearch } from "../../actions";
+import { fetchGamesSearchDB } from "../../actions";
 import InfiniteGamesSearch from "../../infinite-games-search";
 import { Breadcrumbs } from "@/app/ui/breadcrumbs";
+import { GameSearch } from "@/app/lib/definitions";
 
 export default async function Page({
   params,
@@ -28,7 +29,7 @@ export default async function Page({
     .map((w) => w.slice(0, 1).toLocaleUpperCase() + w.slice(1))
     .join(" ");
 
-  const games = await fetchGamesSearch({
+  const games = await fetchGamesSearchDB({
     genre,
     search,
     categories,
@@ -55,7 +56,7 @@ export default async function Page({
       <SectionNav />
       <div key={uuid()} className="grid grid-cols-1 md:grid-cols-2 sm:gap-6">
         <InfiniteGamesSearch
-          initialGames={games}
+          initialGames={games as GameSearch}
           genre={genre}
           search={search}
           categories={categories}

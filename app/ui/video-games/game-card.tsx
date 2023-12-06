@@ -160,13 +160,36 @@ type ArrayElement<T extends Array<any>> = T[number];
 type SingleGameSearch = ArrayElement<GameSearch>;
 
 export function GameSearchCard({ game }: { game: SingleGameSearch }) {
-  const releaseYear = game.releaseDate?.getFullYear();
-  const parentReleaseYear = game.parentGame?.releaseDate?.getFullYear();
+  // const releaseYear = game.releaseDate?.getFullYear();
+  // const parentReleaseYear = game.parentGame?.releaseDate?.getFullYear();
+  const coverUrl = game.cover
+    ? `https://images.igdb.com/igdb/image/upload/t_cover_big/${game.cover.imageId}.jpg`
+    : "/game-placeholder.webp";
+
+  const categoryEnum: { [key: number]: string } = {
+    0: "Main Game",
+    1: "DLC",
+    2: "Expansion",
+    3: "Bundle",
+    4: "Standalone",
+    5: "Mod",
+    6: "Episode",
+    7: "Season",
+    8: "Remake",
+    9: "Remaster",
+    10: "Expanded Ed",
+    11: "Port",
+    12: "Fork",
+    13: "Pack",
+    14: "Update",
+  };
+
+  const categoryName = categoryEnum[game.category];
 
   return (
     <>
       {/* Desktop version */}
-      <Card className="col-span-2 md:col-span-1 hidden sm:grid min-h-60 grid-cols-3 shadow-md overflow-hidden">
+      <Card className="col-span-2 md:col-span-1 hidden sm:grid min-h-[212px] grid-cols-3 shadow-md overflow-hidden">
         <CardContent className="pt-6 col-span-2 h-full flex flex-col items-start justify-between">
           <CardHeader className="p-0">
             <Link
@@ -177,17 +200,17 @@ export function GameSearchCard({ game }: { game: SingleGameSearch }) {
                 {game.name}
               </CardTitle>
             </Link>
-            {game.platforms && <GamePlatforms platforms={game.platforms} />}
+            {game.platforms && (
+              <GamePlatforms
+                platforms={game.platforms.map((p) => p.platformId)}
+              />
+            )}
           </CardHeader>
           <CardFooter className="flex flex-col items-start mt-auto p-0 text-base">
-            <p className="mt-2 mb-1">{game.releaseDate?.toDateString()}</p>
+            <p className="mt-2 mb-1">{game.firstReleaseDate?.toDateString()}</p>
             <div>
-              <Badge>
-                {game.category === "Standalone DLC"
-                  ? "Standalone"
-                  : game.category}
-              </Badge>
-              {game.parentGame && (
+              <Badge>{categoryName}</Badge>
+              {/* {game.parentGame && (
                 <span>
                   {" "}
                   of{" "}
@@ -199,7 +222,7 @@ export function GameSearchCard({ game }: { game: SingleGameSearch }) {
                     {parentReleaseYear && ` (${parentReleaseYear})`}
                   </Link>
                 </span>
-              )}
+              )} */}
             </div>
           </CardFooter>
         </CardContent>
@@ -208,7 +231,7 @@ export function GameSearchCard({ game }: { game: SingleGameSearch }) {
             <div className="overflow-hidden ms-auto w-fit h-full">
               <Image
                 className="hover:scale-105 duration-200 ease-in-out"
-                src={game.cover?.imageUrl || "/game-placeholder.webp"}
+                src={coverUrl}
                 width={game.cover?.width || 1080}
                 height={game.cover?.height || 1920}
                 alt={`${game.name} game cover`}
@@ -230,7 +253,7 @@ export function GameSearchCard({ game }: { game: SingleGameSearch }) {
             <div className="overflow-hidden ms-auto w-fit">
               <Image
                 className="hover:scale-105 duration-200 ease-in-out"
-                src={game.cover?.imageUrl || "/game-placeholder.webp"}
+                src={coverUrl}
                 width={game.cover?.width || 1080}
                 height={game.cover?.height || 1920}
                 alt={`${game.name} game cover`}
@@ -250,15 +273,18 @@ export function GameSearchCard({ game }: { game: SingleGameSearch }) {
           >
             <h2 className="text-base font-semibold">{game.name}</h2>
           </Link>
-          {game.platforms && <GamePlatforms platforms={game.platforms} />}
+          {game.platforms && (
+            <GamePlatforms
+              platforms={game.platforms.map((p) => p.platformId)}
+            />
+          )}
           <div className="mt-auto p-0 text-xs">
-            <p className="mb-1">{game.releaseDate?.toDateString()}</p>
+            <p className="mb-1">{game.firstReleaseDate?.toDateString()}</p>
+
             <Badge className="p-0.5 font-normal leading-none rounded-sm">
-              {game.category === "Standalone DLC"
-                ? "Standalone"
-                : game.category}
+              {categoryName}
             </Badge>
-            {game.parentGame && (
+            {/* {game.parentGame && (
               <span>
                 {" "}
                 of{" "}
@@ -270,7 +296,7 @@ export function GameSearchCard({ game }: { game: SingleGameSearch }) {
                   {parentReleaseYear && ` (${parentReleaseYear})`}
                 </Link>
               </span>
-            )}
+            )} */}
           </div>
         </div>
       </div>

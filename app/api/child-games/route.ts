@@ -22,17 +22,15 @@ const fetchGames = async ({
       headers,
       body: `fields *, age_ratings.*, age_ratings.content_descriptions.*, alternative_names.*, cover.*, game_localizations.*, external_games.*, language_supports.*, release_dates.*, screenshots.*, videos.*, websites.*;
       where ${filter};
-      limit 50;
+      limit 100;
       sort updated_at desc;`,
       cache: "no-store",
     });
     const result = await data.json();
     if (!result) throw new Error(`Couldn't fetch from games`);
-    if (result.length === 0) return [];
     return result;
   } catch (error) {
     console.error("IGDB Error: ", error);
-    return [];
   }
 };
 
@@ -40,157 +38,235 @@ const updateChildRelationsGames = async (games: Games) => {
   // Handle child self-reference Game relations, if there are any present
   for (const e of games) {
     const gameId = e.id;
-    try {
-      if (e.parent_game) {
-        switch (e.category) {
-          // DLC
-          case 1:
-            await prisma.game.update({
-              where: {
-                id: gameId,
-              },
-              data: {
-                dlcOfId: e.parent_game,
-              },
-            });
-            break;
-          // Expansion
-          case 2:
-            await prisma.game.update({
-              where: {
-                id: gameId,
-              },
-              data: {
-                expansionOfId: e.parent_game,
-              },
-            });
-            break;
-          // Standalone DLC/Expansion
-          case 4:
-            await prisma.game.update({
-              where: {
-                id: gameId,
-              },
-              data: {
-                standaloneDlcOfId: e.parent_game,
-              },
-            });
-            break;
-          // Mod
-          case 5:
-            await prisma.game.update({
-              where: {
-                id: gameId,
-              },
-              data: {
-                modOfId: e.parent_game,
-              },
-            });
-            break;
-          // Episode
-          case 6:
-            await prisma.game.update({
-              where: {
-                id: gameId,
-              },
-              data: {
-                episodeOfId: e.parent_game,
-              },
-            });
-            break;
-          // Season
-          case 7:
-            await prisma.game.update({
-              where: {
-                id: gameId,
-              },
-              data: {
-                seasonOfId: e.parent_game,
-              },
-            });
-            break;
-          // Remake
-          case 8:
-            await prisma.game.update({
-              where: {
-                id: gameId,
-              },
-              data: {
-                remakeOfId: e.parent_game,
-              },
-            });
-            break;
-          // Remaster
-          case 9:
-            await prisma.game.update({
-              where: {
-                id: gameId,
-              },
-              data: {
-                remasterOfId: e.parent_game,
-              },
-            });
-            break;
-          // Expanded Edition
-          case 10:
-            await prisma.game.update({
-              where: {
-                id: gameId,
-              },
-              data: {
-                expandedFromId: e.parent_game,
-              },
-            });
-            break;
-          // Port
-          case 11:
-            await prisma.game.update({
-              where: {
-                id: gameId,
-              },
-              data: {
-                portOfId: e.parent_game,
-              },
-            });
-            break;
-          // Fork
-          case 12:
-            await prisma.game.update({
-              where: {
-                id: gameId,
-              },
-              data: {
-                forkOfId: e.parent_game,
-              },
-            });
-            break;
-          // Pack
-          case 13:
-            await prisma.game.update({
-              where: {
-                id: gameId,
-              },
-              data: {
-                packOfId: e.parent_game,
-              },
-            });
-            break;
-          // Update
-          case 14:
-            await prisma.game.update({
-              where: {
-                id: gameId,
-              },
-              data: {
-                updateOfId: e.parent_game,
-              },
-            });
-            break;
-          default:
-            break;
+    const existingGame = await prisma.game.findUnique({
+      where: {
+        id: gameId,
+      },
+      select: {
+        id: true,
+        dlcOfId: true,
+        expansionOfId: true,
+        standaloneDlcOfId: true,
+        modOfId: true,
+        episodeOfId: true,
+        seasonOfId: true,
+        remakeOfId: true,
+        remasterOfId: true,
+        expandedFromId: true,
+        portOfId: true,
+        forkOfId: true,
+        packOfId: true,
+        updateOfId: true,
+        versionOfId: true,
+      },
+    });
+
+    if (existingGame && e.parent_game) {
+      const existingParentGame = await prisma.game.findUnique({
+        where: {
+          id: e.parent_game,
+        },
+        select: { id: true },
+      });
+
+      if (existingParentGame) {
+        try {
+          switch (e.category) {
+            // DLC
+            case 1:
+              if (existingGame.dlcOfId !== e.parent_game) {
+                await prisma.game.update({
+                  where: {
+                    id: gameId,
+                  },
+                  data: {
+                    dlcOfId: e.parent_game,
+                  },
+                });
+              }
+              break;
+            // Expansion
+            case 2:
+              if (existingGame.expansionOfId !== e.parent_game) {
+                await prisma.game.update({
+                  where: {
+                    id: gameId,
+                  },
+                  data: {
+                    expansionOfId: e.parent_game,
+                  },
+                });
+              }
+              break;
+            // Standalone DLC/Expansion
+            case 4:
+              if (existingGame.standaloneDlcOfId !== e.parent_game) {
+                await prisma.game.update({
+                  where: {
+                    id: gameId,
+                  },
+                  data: {
+                    standaloneDlcOfId: e.parent_game,
+                  },
+                });
+              }
+              break;
+            // Mod
+            case 5:
+              if (existingGame.modOfId !== e.parent_game) {
+                await prisma.game.update({
+                  where: {
+                    id: gameId,
+                  },
+                  data: {
+                    modOfId: e.parent_game,
+                  },
+                });
+              }
+              break;
+            // Episode
+            case 6:
+              if (existingGame.episodeOfId !== e.parent_game) {
+                await prisma.game.update({
+                  where: {
+                    id: gameId,
+                  },
+                  data: {
+                    episodeOfId: e.parent_game,
+                  },
+                });
+              }
+              break;
+            // Season
+            case 7:
+              if (existingGame.seasonOfId !== e.parent_game) {
+                await prisma.game.update({
+                  where: {
+                    id: gameId,
+                  },
+                  data: {
+                    seasonOfId: e.parent_game,
+                  },
+                });
+              }
+              break;
+            // Remake
+            case 8:
+              if (existingGame.remakeOfId !== e.parent_game) {
+                await prisma.game.update({
+                  where: {
+                    id: gameId,
+                  },
+                  data: {
+                    remakeOfId: e.parent_game,
+                  },
+                });
+              }
+              break;
+            // Remaster
+            case 9:
+              if (existingGame.remasterOfId !== e.parent_game) {
+                await prisma.game.update({
+                  where: {
+                    id: gameId,
+                  },
+                  data: {
+                    remasterOfId: e.parent_game,
+                  },
+                });
+              }
+              break;
+            // Expanded Edition
+            case 10:
+              if (existingGame.expandedFromId !== e.parent_game) {
+                await prisma.game.update({
+                  where: {
+                    id: gameId,
+                  },
+                  data: {
+                    expandedFromId: e.parent_game,
+                  },
+                });
+              }
+              break;
+            // Port
+            case 11:
+              if (existingGame.portOfId !== e.parent_game) {
+                await prisma.game.update({
+                  where: {
+                    id: gameId,
+                  },
+                  data: {
+                    portOfId: e.parent_game,
+                  },
+                });
+              }
+              break;
+            // Fork
+            case 12:
+              if (existingGame.forkOfId !== e.parent_game) {
+                await prisma.game.update({
+                  where: {
+                    id: gameId,
+                  },
+                  data: {
+                    forkOfId: e.parent_game,
+                  },
+                });
+              }
+              break;
+            // Pack
+            case 13:
+              if (existingGame.packOfId !== e.parent_game) {
+                await prisma.game.update({
+                  where: {
+                    id: gameId,
+                  },
+                  data: {
+                    packOfId: e.parent_game,
+                  },
+                });
+              }
+              break;
+            // Update
+            case 14:
+              if (existingGame.updateOfId !== e.parent_game) {
+                await prisma.game.update({
+                  where: {
+                    id: gameId,
+                  },
+                  data: {
+                    updateOfId: e.parent_game,
+                  },
+                });
+              }
+              break;
+            default:
+              break;
+          }
+        } catch (error) {
+          console.error(
+            `Coudldn't update child game relation for gameId: ${gameId} with category: ${e.category} (${error})`
+          );
         }
       }
-      if (e.version_parent) {
+    }
+
+    if (
+      existingGame &&
+      e.version_parent &&
+      existingGame.versionOfId !== e.version_parent
+    ) {
+      const existingParentGame = await prisma.game.findUnique({
+        where: {
+          id: e.version_parent,
+        },
+        select: {
+          id: true,
+        },
+      });
+
+      if (existingParentGame) {
         try {
           await prisma.game.update({
             where: {
@@ -201,11 +277,11 @@ const updateChildRelationsGames = async (games: Games) => {
             },
           });
         } catch (error) {
-          console.error("Coudldn't update version_parent for gameId:", gameId);
+          console.error(
+            `Coudldn't update version_parent for gameId: ${gameId} and versionOfId: ${e.version_parent} (${error})`
+          );
         }
       }
-    } catch (error) {
-      console.error(`Error updating game: ${gameId}`, error);
     }
   }
 };
@@ -227,8 +303,8 @@ export async function GET() {
   try {
     await fetchAndUpdateChildGames();
     console.log("Completed updating Child Games");
-    return Response.json({ result: "Completed updating Games" });
+    return Response.json({ result: "Completed updating Child Games" });
   } catch (error) {
-    console.error("CRON JOB error: Couldn't update Games ", error);
+    console.error("CRON JOB error: Couldn't update Child Games ", error);
   }
 }

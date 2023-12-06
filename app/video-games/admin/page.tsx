@@ -6,19 +6,10 @@ import { Button } from "@/components/ui/button";
 import {
   drop,
   fetchTest,
-  fetchAndCreateRegions,
-  fetchAndCreateLanguages,
-  fetchAndCreateLanguageSupportTypes,
-  fetchAndCreateReleaseDateStatuses,
-  fetchAndCreateCollectionTypes,
+  fetchAndUpdateBaseGameInfo,
   fetchAndCreateFranchises,
   fetchAndCreateCompanyLogos,
-  fetchAndCreateGenres,
-  fetchAndCreateModes,
-  fetchAndCreatePlayerPerspectives,
   fetchAndCreateEngineLogos,
-  fetchAndCreateThemes,
-  fetchAndCreatePlatformFamilies,
   fetchAndCreatePlatformLogos,
   fetchAndCreateCollections,
   fetchAndCreateParentCompanies,
@@ -26,8 +17,6 @@ import {
   fetchAndCreateEngines,
   fetchAndCreatePlatforms,
   fetchAndJoinEngines,
-  fetchAndCreateParentGames,
-  fetchAndCreateChildGames,
   fetchAndConnectCompanyGame,
   fetchAndConnectSimilarGames,
   fetchAndUpdateParentGames,
@@ -37,94 +26,12 @@ import {
 export default function Page() {
   const [iterationOffset, setIterationOffset] = useState(0);
 
-  const createRegions = async () => {
-    let result = await fetchAndCreateRegions();
-    let iteration = 1 + iterationOffset;
+  // Base Info
+  const updateBaseGameInfo = async () => {
+    await fetchAndUpdateBaseGameInfo();
     setTimeout(() => {
-      console.log(`First iteration (${iteration}) finished`);
+      console.log(`Finished updating base info`);
     }, 0);
-
-    while (result === "OK") {
-      result = await fetchAndCreateRegions(iteration);
-      setTimeout(() => {
-        console.log(`Iteration ${iteration} finished`);
-      }, 0);
-      iteration++;
-
-      if (result === "EMPTY") console.log("Finished updating");
-    }
-  };
-
-  const createLanguages = async () => {
-    let result = await fetchAndCreateLanguages();
-    let iteration = 1 + iterationOffset;
-    setTimeout(() => {
-      console.log(`First iteration (${iteration}) finished`);
-    }, 0);
-
-    while (result === "OK") {
-      result = await fetchAndCreateLanguages(iteration);
-      setTimeout(() => {
-        console.log(`Iteration ${iteration} finished`);
-      }, 0);
-      iteration++;
-
-      if (result === "EMPTY") console.log("Finished updating");
-    }
-  };
-
-  const createLanguageSupportTypes = async () => {
-    let result = await fetchAndCreateLanguageSupportTypes();
-    let iteration = 1 + iterationOffset;
-    setTimeout(() => {
-      console.log(`First iteration (${iteration}) finished`);
-    }, 0);
-
-    while (result === "OK") {
-      result = await fetchAndCreateLanguageSupportTypes(iteration);
-      setTimeout(() => {
-        console.log(`Iteration ${iteration} finished`);
-      }, 0);
-      iteration++;
-
-      if (result === "EMPTY") console.log("Finished updating");
-    }
-  };
-
-  const createReleaseDateStatuses = async () => {
-    let result = await fetchAndCreateReleaseDateStatuses();
-    let iteration = 1 + iterationOffset;
-    setTimeout(() => {
-      console.log(`First iteration (${iteration}) finished`);
-    }, 0);
-
-    while (result === "OK") {
-      result = await fetchAndCreateReleaseDateStatuses(iteration);
-      setTimeout(() => {
-        console.log(`Iteration ${iteration} finished`);
-      }, 0);
-      iteration++;
-
-      if (result === "EMPTY") console.log("Finished updating");
-    }
-  };
-
-  const createCollectionTypes = async () => {
-    let result = await fetchAndCreateCollectionTypes();
-    let iteration = 1 + iterationOffset;
-    setTimeout(() => {
-      console.log(`First iteration (${iteration}) finished`);
-    }, 0);
-
-    while (result === "OK") {
-      result = await fetchAndCreateCollectionTypes(iteration);
-      setTimeout(() => {
-        console.log(`Iteration ${iteration} finished`);
-      }, 0);
-      iteration++;
-
-      if (result === "EMPTY") console.log("Finished updating");
-    }
   };
 
   const createFranchises = async () => {
@@ -163,60 +70,6 @@ export default function Page() {
     }
   };
 
-  const createGenres = async () => {
-    let result = await fetchAndCreateGenres();
-    let iteration = 1 + iterationOffset;
-    setTimeout(() => {
-      console.log(`First iteration (${iteration}) finished`);
-    }, 0);
-
-    while (result === "OK") {
-      result = await fetchAndCreateGenres(iteration);
-      setTimeout(() => {
-        console.log(`Iteration ${iteration} finished`);
-      }, 0);
-      iteration++;
-
-      if (result === "EMPTY") console.log("Finished updating");
-    }
-  };
-
-  const createModes = async () => {
-    let result = await fetchAndCreateModes();
-    let iteration = 1 + iterationOffset;
-    setTimeout(() => {
-      console.log(`First iteration (${iteration}) finished`);
-    }, 0);
-
-    while (result === "OK") {
-      result = await fetchAndCreateModes(iteration);
-      setTimeout(() => {
-        console.log(`Iteration ${iteration} finished`);
-      }, 0);
-      iteration++;
-
-      if (result === "EMPTY") console.log("Finished updating");
-    }
-  };
-
-  const createPlayerPerspectives = async () => {
-    let result = await fetchAndCreatePlayerPerspectives();
-    let iteration = 1 + iterationOffset;
-    setTimeout(() => {
-      console.log(`First iteration (${iteration}) finished`);
-    }, 0);
-
-    while (result === "OK") {
-      result = await fetchAndCreatePlayerPerspectives(iteration);
-      setTimeout(() => {
-        console.log(`Iteration ${iteration} finished`);
-      }, 0);
-      iteration++;
-
-      if (result === "EMPTY") console.log("Finished updating");
-    }
-  };
-
   const createEngineLogos = async () => {
     let result = await fetchAndCreateEngineLogos();
     let iteration = 1 + iterationOffset;
@@ -226,42 +79,6 @@ export default function Page() {
 
     while (result === "OK") {
       result = await fetchAndCreateEngineLogos(iteration);
-      setTimeout(() => {
-        console.log(`Iteration ${iteration} finished`);
-      }, 0);
-      iteration++;
-
-      if (result === "EMPTY") console.log("Finished updating");
-    }
-  };
-
-  const createThemes = async () => {
-    let result = await fetchAndCreateThemes();
-    let iteration = 1 + iterationOffset;
-    setTimeout(() => {
-      console.log(`First iteration (${iteration}) finished`);
-    }, 0);
-
-    while (result === "OK") {
-      result = await fetchAndCreateThemes(iteration);
-      setTimeout(() => {
-        console.log(`Iteration ${iteration} finished`);
-      }, 0);
-      iteration++;
-
-      if (result === "EMPTY") console.log("Finished updating");
-    }
-  };
-
-  const createPlatformFamilies = async () => {
-    let result = await fetchAndCreatePlatformFamilies();
-    let iteration = 1 + iterationOffset;
-    setTimeout(() => {
-      console.log(`First iteration (${iteration}) finished`);
-    }, 0);
-
-    while (result === "OK") {
-      result = await fetchAndCreatePlatformFamilies(iteration);
       setTimeout(() => {
         console.log(`Iteration ${iteration} finished`);
       }, 0);
@@ -399,42 +216,6 @@ export default function Page() {
     }
   };
 
-  const createParentGames = async () => {
-    let result = await fetchAndCreateParentGames();
-    let iteration = 1 + iterationOffset;
-    setTimeout(() => {
-      console.log(`First iteration (${iteration}) finished`);
-    }, 0);
-
-    while (result === "OK") {
-      result = await fetchAndCreateParentGames(iteration);
-      setTimeout(() => {
-        console.log(`Iteration ${iteration} finished`);
-      }, 0);
-      iteration++;
-
-      if (result === "EMPTY") console.log("Finished updating");
-    }
-  };
-
-  const createChildGames = async () => {
-    let result = await fetchAndCreateChildGames();
-    let iteration = 1 + iterationOffset;
-    setTimeout(() => {
-      console.log(`First iteration (${iteration}) finished`);
-    }, 0);
-
-    while (result === "OK") {
-      result = await fetchAndCreateChildGames(iteration);
-      setTimeout(() => {
-        console.log(`Iteration ${iteration} finished`);
-      }, 0);
-      iteration++;
-
-      if (result === "EMPTY") console.log("Finished updating");
-    }
-  };
-
   const connectCompanyGame = async () => {
     let result = await fetchAndConnectCompanyGame();
     let iteration = 1 + iterationOffset;
@@ -523,29 +304,12 @@ export default function Page() {
           placeholder={iterationOffset.toString()}
         ></Input>
         <div className="flex flex-wrap gap-2">
-          <Button onClick={createRegions}>CREATE Regions</Button>
-          <Button onClick={createLanguages}>CREATE Languages</Button>
-          <Button onClick={createLanguageSupportTypes}>
-            CREATE LanguageSupportTypes
-          </Button>
-          <Button onClick={createReleaseDateStatuses}>
-            CREATE ReleaseDateStatuses
-          </Button>
-          <Button onClick={createCollectionTypes}>
-            CREATE CollectionTypes
+          <Button onClick={updateBaseGameInfo}>
+            UPDATE/CREATE Game Base Info
           </Button>
           <Button onClick={createFranchises}>CREATE Franchises</Button>
           <Button onClick={createCompanyLogos}>CREATE CompanyLogos</Button>
-          <Button onClick={createGenres}>CREATE Genres</Button>
-          <Button onClick={createModes}>CREATE Modes</Button>
-          <Button onClick={createPlayerPerspectives}>
-            CREATE PlayerPerspectives
-          </Button>
           <Button onClick={createEngineLogos}>CREATE EngineLogos</Button>
-          <Button onClick={createThemes}>CREATE Themes</Button>
-          <Button onClick={createPlatformFamilies}>
-            CREATE PlatformFamilies
-          </Button>
           <Button onClick={createPlatformLogos}>CREATE PlatformLogos</Button>
         </div>
         <h2>Second Order</h2>
@@ -563,16 +327,12 @@ export default function Page() {
         </div>
         <h2>Games!</h2>
         <div className="flex flex-wrap gap-2">
-          <Button onClick={createParentGames}>CREATE ParentGames</Button>
-          <Button onClick={createChildGames}>CREATE ChildGames</Button>
+          <Button onClick={updateParentGames}>UPDATE/CREATE ParentGames</Button>
+          <Button onClick={updateChildGames}>UPDATE/CREATE ChildGames</Button>
         </div>
         <div className="flex flex-wrap gap-2">
           <Button onClick={connectCompanyGame}>CONNECT CompanyGame</Button>
           <Button onClick={connectSimilarGames}>CONNECT SimilarGames</Button>
-        </div>
-        <div className="flex flex-wrap gap-2">
-          <Button onClick={updateParentGames}>UPDATE ParentGames</Button>
-          <Button onClick={updateChildGames}>UPDATE ChildGames</Button>
         </div>
         <Button onClick={() => fetchTest()}>TEST</Button>
         <Button variant="destructive" onClick={handleDelete}>

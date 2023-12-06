@@ -2,7 +2,22 @@ import { z } from "zod";
 
 // Games Search page
 import { gameSearchSchema } from "./zod-schemas";
-export type GameSearch = z.infer<typeof gameSearchSchema>;
+// export type GameSearch = z.infer<typeof gameSearchSchema>;
+
+export type GameSearch = {
+  name: string;
+  slug: string;
+  category: number;
+  firstReleaseDate: Date | null;
+  cover: {
+    imageId: string;
+    width: number | null;
+    height: number | null;
+  };
+  platforms: {
+    platformId: number;
+  }[];
+}[];
 
 // Games Search page
 import { hltbSchema } from "../video-games/games/[slug]/schemas";

@@ -3,7 +3,7 @@
 import { GameSearch } from "@/app/lib/definitions";
 import { useEffect, useState } from "react";
 import { useInView } from "react-intersection-observer";
-import { fetchGamesSearch } from "./actions";
+import { fetchGamesSearchDB } from "./actions";
 import { GameSearchCard } from "@/app/ui/video-games/game-card";
 import { Spinner } from "@/app/ui/spinner";
 
@@ -35,7 +35,7 @@ export default function InfiniteGamesSearch({
 
   async function loadMoreGames() {
     const next = page + 1;
-    const games = await fetchGamesSearch({
+    const games = await fetchGamesSearchDB({
       page: next,
       search,
       engine,
@@ -48,7 +48,10 @@ export default function InfiniteGamesSearch({
     });
     if (games?.length) {
       setPage(next);
-      setGames((prev) => [...(prev?.length ? prev : []), ...games]);
+      setGames((prev) => [
+        ...(prev?.length ? prev : []),
+        ...(games as GameSearch),
+      ]);
       if (games.length < itemsPerPage) setLoadingActive(false);
     } else {
       setLoadingActive(false);

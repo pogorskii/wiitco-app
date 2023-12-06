@@ -1,13 +1,90 @@
 "use server";
 
-import { gameSearchSchema } from "@/app/lib/zod-schemas";
+import prisma from "../lib/prisma";
+type RomanNumeral = keyof typeof romanNumerals;
 
-// ENV export
-const CLIENT_ID = process.env.TWITCH_CLIENT_ID;
-const TWITCH_TOKEN = process.env.TWITCH_TOKEN;
+const romanNumerals: Record<string, number> = {
+  I: 1,
+  II: 2,
+  III: 3,
+  IV: 4,
+  V: 5,
+  VI: 6,
+  VII: 7,
+  VIII: 8,
+  IX: 9,
+  X: 10,
+  XI: 11,
+  XII: 12,
+  XIII: 13,
+  XIV: 14,
+  XV: 15,
+  XVI: 16,
+  XVII: 17,
+  XVIII: 18,
+  XIX: 19,
+  XX: 20,
+  XXI: 21,
+  XXII: 22,
+  XXIII: 23,
+  XXIV: 24,
+  XXV: 25,
+  XXVI: 26,
+  XXVII: 27,
+  XXVIII: 28,
+  XXIX: 29,
+  XXX: 30,
+  C: 100,
+  CC: 200,
+  CCC: 300,
+  CD: 400,
+  D: 500,
+  DC: 600,
+  DCC: 700,
+  DCCC: 800,
+  CM: 900,
+  M: 1000,
+  MM: 2000,
+  MMM: 3000,
+};
 
-export async function fetchGamesSearch({
-  search = "",
+const romanToArabic = (romanString: RomanNumeral): number => {
+  if (!romanNumerals.hasOwnProperty(romanString)) {
+    throw new Error("Invalid Roman numeral");
+  }
+
+  let result = 0;
+  for (let i = romanString.length - 1; i >= 0; i--) {
+    const currentNumeral = romanNumerals[romanString[i]];
+    const nextNumeral =
+      i < romanString.length - 1 ? romanNumerals[romanString[i + 1]] : 0;
+
+    if (currentNumeral < nextNumeral) {
+      result -= currentNumeral;
+    } else {
+      result += currentNumeral;
+    }
+  }
+
+  return result;
+};
+
+const arabicToRoman = (arabicNumber: number): string => {
+  if (arabicNumber < 1 || arabicNumber > 3999) {
+    throw new Error("Arabic number must be between 1 and 3999");
+  }
+  let result = "";
+  for (const key in romanNumerals) {
+    while (arabicNumber >= romanNumerals[key]) {
+      result += key;
+      arabicNumber -= romanNumerals[key];
+    }
+  }
+  return result;
+};
+
+export const fetchGamesSearchDB = async ({
+  search,
   engine,
   company,
   genre,
@@ -15,7 +92,7 @@ export async function fetchGamesSearch({
   page = 1,
   categories = "main,dlc,expansion",
   platforms,
-  sort = "popularity",
+  sort = "relevance",
 }: {
   search?: string;
   engine?: string;
@@ -26,17 +103,51 @@ export async function fetchGamesSearch({
   categories?: string;
   platforms?: string;
   sort?: string;
-}) {
+}) => {
   try {
-    // Fetch params
-    const REQ_URL = "https://api.igdb.com/v4/games";
-    const REQ_SIZE = itemsPerPage; // NOTE: Max allowed size is 500
+    // Custom fuzzy search for text quiery
+    const searchQuery = search
+      ? search
+          ?.replace(/\s+/g, " ")
+          .trim()
+          .replaceAll(":", "")
+          .replaceAll("-", "")
+          .split(" ")
+          .map((word) => {
+            const romanNumeralRegex =
+              /^M{0,3}(CM|CD|DCCC|CCCLX|CC|XC|L|XL|X|IX|VIII|VII|VI|V|IV|III|II|I)$/i;
+            let convertedWord = "";
+            if (/^[0-9]+/.test(word)) {
+              const romanNumeral = arabicToRoman(Number(word));
+              convertedWord = `( ${word} | ${romanNumeral} )`;
+            }
+            if (romanNumeralRegex.test(word)) {
+              const arabicNumeral = romanToArabic(
+                word.toUpperCase()
+              ).toString();
+              convertedWord = `( ${word} | ${arabicNumeral})`;
+            } else {
+              convertedWord = word;
+            }
+            return convertedWord;
+          })
+          .map((word) => {
+            let result;
+            if (/.{2,}s$/.test(word)) {
+              const wordWithApostrophe = word.replace(
+                /s$/,
+                (match) => "'" + match
+              );
+              result = `( ${word} | ${wordWithApostrophe})`;
+            } else {
+              result = word;
+            }
+            return result;
+          })
+          .join(" & ")
+      : undefined;
 
-    const headers = new Headers();
-    headers.set("Accept", "application/json");
-    headers.set("Client-ID", `${CLIENT_ID}`);
-    headers.set("Authorization", `Bearer ${TWITCH_TOKEN}`);
-
+    // Convert 'categories' search param
     const categoriesEnum: { [key: string]: number } = {
       main: 0,
       dlc: 1,
@@ -52,69 +163,205 @@ export async function fetchGamesSearch({
       port: 11,
       update: 14,
     };
-    const categoriesNums = categories
-      .split(",")
-      .map((x) => categoriesEnum[x])
-      .join(",");
+    const categoriesQuery = categories.split(",").map((x) => categoriesEnum[x]);
 
-    const sortingRules = [
-      {
-        rule: "popularity",
-        string: "follows desc",
-        filter: "& follows != null",
+    // Handle 'platforms' search param
+    const platformsQuery = platforms ? Number(platforms) : undefined;
+
+    // Additional rules for 'where' if it's not the main Games page
+    let categorySpecificQuery = {};
+    if (engine) {
+      categorySpecificQuery = {
+        engines: {
+          some: {
+            engine: {
+              slug: {
+                search: engine,
+              },
+            },
+          },
+        },
+      };
+    }
+    if (company) {
+      categorySpecificQuery = {
+        OR: [
+          {
+            developers: {
+              some: {
+                developer: {
+                  slug: company,
+                },
+              },
+            },
+          },
+          {
+            publishers: {
+              some: {
+                publisher: {
+                  slug: company,
+                },
+              },
+            },
+          },
+        ],
+      };
+    }
+    if (genre) {
+      categorySpecificQuery = {
+        genres: {
+          some: {
+            genre: {
+              slug: {
+                search: genre,
+              },
+            },
+          },
+        },
+      };
+    }
+
+    // Using shorthand property 'where' of Prisma query
+    const where = {
+      AND: [
+        {
+          OR: [
+            {
+              name: {
+                search: searchQuery,
+              },
+            },
+            {
+              altNames: {
+                some: {
+                  name: {
+                    search: searchQuery,
+                  },
+                },
+              },
+            },
+          ],
+        },
+        {
+          platforms: {
+            some: {
+              platformId: platformsQuery,
+            },
+          },
+        },
+        {
+          category: {
+            in: categoriesQuery,
+          },
+        },
+        categorySpecificQuery,
+      ],
+    };
+
+    // Using shorthand property 'select' of Prisma query
+    const select = {
+      name: true,
+      slug: true,
+      category: true,
+      firstReleaseDate: true,
+      cover: {
+        select: {
+          imageId: true,
+          width: true,
+          height: true,
+        },
       },
-      {
-        rule: "date-newer",
-        string: "first_release_date desc",
-        filter: "& first_release_date != null",
+      platforms: {
+        select: {
+          platformId: true,
+        },
       },
-      {
-        rule: "date-older",
-        string: "first_release_date asc",
-        filter: "& first_release_date != null",
+      altNames: {
+        select: {
+          name: true,
+        },
       },
-      {
-        rule: "title-a-z",
-        string: "name asc",
-        filter: "",
-      },
-      {
-        rule: "title-z-a",
-        string: "name desc",
-        filter: "",
-      },
-    ];
-    const sortString =
-      sortingRules.find((r) => r.rule === sort)?.string || "rating_count desc";
-    const sortFilterString =
-      sortingRules.find((r) => r.rule === sort)?.filter || "";
+    };
 
-    // Composite Parts of the query's Body string;
-    const platformsQuery = platforms ? `platforms = (${platforms}) & ` : "";
-    const engineQuery = engine ? `game_engines.slug = "${engine}" & ` : "";
-    const companyQuery = company
-      ? `involved_companies.company.slug = "${company}" & `
-      : "";
-    const genreQuery = genre ? `genres.slug = "${genre}" & ` : "";
+    // Handle sorting rules (relevance is default)
+    let results;
+    if (sort === "relevance") {
+      if (searchQuery) {
+        results = await prisma.game.findMany({
+          skip: (page - 1) * itemsPerPage,
+          take: itemsPerPage,
+          where,
+          orderBy: [
+            { follows: "desc" },
+            {
+              _relevance: {
+                fields: ["name"],
+                search: searchQuery,
+                sort: "desc",
+              },
+            },
+          ],
+          select,
+        });
+      } else {
+        results = await prisma.game.findMany({
+          skip: (page - 1) * itemsPerPage,
+          take: itemsPerPage,
+          where,
+          orderBy: {
+            follows: "desc",
+          },
+          select,
+        });
+      }
+    }
+    if (sort === "date-newer") {
+      results = await prisma.game.findMany({
+        skip: (page - 1) * itemsPerPage,
+        take: itemsPerPage,
+        where,
+        orderBy: {
+          firstReleaseDate: { sort: "desc", nulls: "last" },
+        },
+        select,
+      });
+    }
+    if (sort === "date-older") {
+      results = await prisma.game.findMany({
+        skip: (page - 1) * itemsPerPage,
+        take: itemsPerPage,
+        where,
+        orderBy: {
+          firstReleaseDate: { sort: "asc", nulls: "last" },
+        },
+        select,
+      });
+    }
+    if (sort === "title-a-z") {
+      results = await prisma.game.findMany({
+        skip: (page - 1) * itemsPerPage,
+        take: itemsPerPage,
+        where,
+        orderBy: {
+          name: "asc",
+        },
+        select,
+      });
+    }
+    if (sort === "title-z-a") {
+      results = await prisma.game.findMany({
+        skip: (page - 1) * itemsPerPage,
+        take: itemsPerPage,
+        where,
+        orderBy: {
+          name: "desc",
+        },
+        select,
+      });
+    }
 
-    const response = await fetch(REQ_URL, {
-      method: "POST",
-      headers,
-      body: `fields id, name, slug, category, cover.*, alternative_names.name, aggregated_rating, first_release_date, franchises.name, franchises.slug, game_engines.name, game_engines.slug, genres.name, genres.slug, language_supports.language.name, involved_companies.company.name, involved_companies.company.slug, parent_game.name, parent_game.slug, parent_game.first_release_date, platforms.*;
-           where (name ~ *"${search}"* | alternative_names.name ~ *"${search}"*) & ${platformsQuery}${engineQuery}${companyQuery}${genreQuery}category = (${categoriesNums}) & themes != (42) ${sortFilterString};
-           sort ${sortString};
-           limit ${REQ_SIZE};
-           offset ${REQ_SIZE * (page - 1)};
-           `,
-    });
-
-    if (!response) throw new Error(`Couldn't fetch data from API.`);
-
-    const result = await response.json();
-    const parsedGames = gameSearchSchema.parse(result);
-
-    return parsedGames;
+    return results;
   } catch (error) {
-    console.error("Database Error: ", error);
+    console.error("Search error: ", error);
   }
-}
+};
