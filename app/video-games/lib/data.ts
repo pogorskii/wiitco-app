@@ -50,7 +50,6 @@ import {
   EnginesJoin,
   Games,
 } from "./zod-schemas";
-import { count } from "console";
 
 // Headers for all requests
 const headers = new Headers();

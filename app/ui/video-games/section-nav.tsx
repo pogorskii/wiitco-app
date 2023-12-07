@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
-
 import { Button } from "@/components/ui/button";
 import { Search } from "@/app/ui/search";
 import { GamesSearchFilters } from "@/app/ui/video-games/game-search-filters";
@@ -11,7 +10,6 @@ import {
   GameCategoryFilter,
   SortingSelector,
 } from "@/app/ui/video-games/game-search-filters";
-
 import { FaChevronDown, FaChevronUp } from "react-icons/fa";
 
 export function SectionNav() {

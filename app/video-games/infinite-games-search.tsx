@@ -1,9 +1,9 @@
 "use client";
 
-import { GameSearch } from "@/app/lib/definitions";
-import { useEffect, useState } from "react";
+import { GameSearch } from "./lib/definitions";
+import { useEffect, useState, useCallback, useRef } from "react";
 import { useInView } from "react-intersection-observer";
-import { fetchGamesSearchDB } from "./actions";
+import { fetchGamesSearchDB } from "./lib/actions";
 import { GameSearchCard } from "@/app/ui/video-games/game-card";
 import { Spinner } from "@/app/ui/spinner";
 
@@ -27,14 +27,13 @@ export default function InfiniteGamesSearch({
   sort?: string;
 }) {
   const [games, setGames] = useState(initialGames);
-  const [page, setPage] = useState(1);
+  const page = useRef(1);
   const [loadingActive, setLoadingActive] = useState(true);
   const [ref, inView] = useInView({ rootMargin: "1000px" });
-
   const itemsPerPage = 20;
 
-  async function loadMoreGames() {
-    const next = page + 1;
+  const loadMoreGames = useCallback(async () => {
+    const next = page.current + 1;
     const games = await fetchGamesSearchDB({
       page: next,
       search,
@@ -47,7 +46,7 @@ export default function InfiniteGamesSearch({
       sort,
     });
     if (games?.length) {
-      setPage(next);
+      page.current = next;
       setGames((prev) => [
         ...(prev?.length ? prev : []),
         ...(games as GameSearch),
@@ -56,13 +55,13 @@ export default function InfiniteGamesSearch({
     } else {
       setLoadingActive(false);
     }
-  }
+  }, [search, engine, company, genre, categories, platforms, sort]);
 
   useEffect(() => {
     if (inView) {
       loadMoreGames();
     }
-  }, [inView]);
+  }, [inView, loadMoreGames]);
 
   return (
     <>

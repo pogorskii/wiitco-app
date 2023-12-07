@@ -1,7 +1,6 @@
 import { Suspense } from "react";
-
 import { formatDistanceToNow } from "date-fns";
-import { fetchHLTBInfo } from "./actions";
+import { fetchHLTBInfo } from "../../lib/actions";
 import Image from "next/image";
 import { GamePlatforms } from "@/app/ui/video-games/game-platforms";
 import { TagsRow } from "@/app/ui/tags-row";
@@ -807,6 +806,7 @@ async function RelatedTab({
                     ? `https://images.igdb.com/igdb/image/upload/t_cover_big/${g.cover?.imageId}.png`
                     : "/game-placeholder.webp"
                 }
+                alt={`${g.name} game cover`}
               />
               <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-transparent to-black"></div>
               <h3 className="absolute bottom-0 p-2 scroll-m-20 text-base font-semibold tracking-tight">
@@ -1141,7 +1141,7 @@ async function SeriesModalContent({
                         ? `https://images.igdb.com/igdb/image/upload/t_cover_big/${game.cover?.imageId}.png`
                         : "/game-placeholder.webp"
                     }
-                    alt={game.name}
+                    alt={`${game.name} game cover`}
                   />
                 </Link>
               </div>

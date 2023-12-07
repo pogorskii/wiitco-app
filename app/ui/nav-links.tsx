@@ -2,16 +2,6 @@
 
 import { usePathname } from "next/navigation";
 import clsx from "clsx";
-
-// Map of links to display in the side navigation.
-const links = [
-  { name: "Movies", href: "/movies" },
-  {
-    name: "Video Games",
-    href: "/video-games",
-  },
-];
-
 import * as React from "react";
 import { cn } from "@/lib/utils";
 import {
@@ -21,8 +11,16 @@ import {
   NavigationMenuLink,
   NavigationMenuList,
   NavigationMenuTrigger,
-  navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu";
+
+// Map of links to display in the side navigation.
+const links = [
+  { name: "Movies", href: "/movies" },
+  {
+    name: "Video Games",
+    href: "/video-games",
+  },
+];
 
 const moviesLinks: { title: string; href: string; description: string }[] = [
   {

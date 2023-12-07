@@ -1,9 +1,22 @@
 "use server";
 
 import { DayHeader, DayHeaderMobile } from "./day-header";
-import { GameCardHorizontal, GameCardVertical } from "./game-card";
-import { FormattedGameRelease, GameId } from "@/app/lib/definitions";
+import { GameCardCalendar } from "./game-card";
 import { getShortDayMonthName } from "@/app/lib/utils";
+
+type GameRelease = {
+  id: number;
+  name: string;
+  slug: string;
+  category: number;
+  follows: number;
+  cover: {
+    imageId: string;
+    width: number | null;
+    height: number | null;
+  } | null;
+  platforms: number[];
+};
 
 export async function GamesDay({
   day,
@@ -14,20 +27,18 @@ export async function GamesDay({
   day: number;
   month: string;
   year: string;
-  games: Map<GameId, FormattedGameRelease>;
+  games: GameRelease[];
 }) {
   const displayDate = getShortDayMonthName(day, month, year);
-
-  const gameCards = Array.from(games).map(([gameId, game]) => (
-    <GameCardVertical
-      key={game.releaseId}
-      id={game.releaseId}
-      title={game.title}
+  const gameCards = games.map((game, i) => (
+    <GameCardCalendar
+      key={i}
+      id={i}
+      title={game.name}
       slug={game.slug}
-      imageUrl={game.coverUrl}
-      blurUrl={game.blurUrl}
+      imageId={game.cover?.imageId}
       platforms={game.platforms}
-      gameType={game.gameType}
+      category={game.category}
     />
   ));
 

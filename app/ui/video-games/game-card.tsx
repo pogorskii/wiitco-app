@@ -1,8 +1,7 @@
 import Image from "next/image";
-import { GamePlatforms } from "./game-platforms";
-import { GameType, GameSearch } from "@/app/lib/definitions";
-import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
+import { GamePlatforms } from "./game-platforms";
+import { GameSearch } from "@/app/video-games/lib/definitions";
 
 // shadcn
 import {
@@ -12,24 +11,47 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 
-export function GameCardVertical({
+export function GameCardCalendar({
   id,
   title,
   slug,
-  imageUrl,
-  blurUrl,
+  imageId,
   platforms,
-  gameType,
+  category,
 }: {
   id: number;
   title: string;
   slug: string;
-  imageUrl: string;
-  blurUrl: string;
+  imageId?: string;
   platforms: number[];
-  gameType: GameType;
+  category: number;
 }) {
+  const coverUrl = imageId
+    ? `https://images.igdb.com/igdb/image/upload/t_original/${imageId}.jpg`
+    : "/game-placeholder.webp";
+
+  const categoryEnum: { [key: number]: string } = {
+    0: "Main Game",
+    1: "DLC",
+    2: "Expansion",
+    3: "Bundle",
+    4: "Standalone",
+    5: "Mod",
+    6: "Episode",
+    7: "Season",
+    8: "Remake",
+    9: "Remaster",
+    10: "Expanded Ed",
+    11: "Port",
+    12: "Fork",
+    13: "Pack",
+    14: "Update",
+  };
+
+  const categoryName = categoryEnum[category];
+
   return (
     <>
       <Card
@@ -38,20 +60,18 @@ export function GameCardVertical({
       >
         <Link href={`/video-games/games/${slug}`}>
           <div className="grow-0 relative overflow-hidden">
-            {gameType !== GameType.Game && (
+            {categoryName !== "Main Game" && (
               <Badge variant="secondary" className="absolute z-10 top-2 left-2">
-                {gameType}
+                {categoryName}
               </Badge>
             )}
             <Image
               className="hover:scale-105 duration-200 ease-in-out"
-              src={imageUrl}
+              src={coverUrl}
               alt={title}
               width={600}
               height={900}
               style={{ objectFit: "cover" }}
-              placeholder="blur"
-              blurDataURL={blurUrl}
             />
           </div>
           <CardHeader>
@@ -70,7 +90,7 @@ export function GameCardVertical({
             <div className="overflow-hidden ms-auto w-fit">
               <Image
                 className="hover:scale-105 duration-200 ease-in-out"
-                src={imageUrl}
+                src={coverUrl}
                 width={600}
                 height={900}
                 alt={`${title} game cover`}
@@ -93,7 +113,7 @@ export function GameCardVertical({
           {platforms && <GamePlatforms platforms={platforms} />}
           <div className="mt-auto p-0 text-xs">
             <Badge className="p-0.5 font-normal leading-none rounded-sm">
-              {gameType === "Standalone DLC" ? "Standalone" : gameType}
+              {categoryName}
             </Badge>
             {/* {parentGame && (
               <span>
@@ -115,52 +135,10 @@ export function GameCardVertical({
   );
 }
 
-export function GameCardHorizontal({
-  id,
-  title,
-  imageUrl,
-  blurUrl,
-  platforms,
-}: {
-  id: number;
-  title: string;
-  imageUrl: string;
-  blurUrl: string;
-  platforms: number[];
-}) {
-  return (
-    <div
-      key={id}
-      className="mb-5 relative shadow border border-gray-200 dark:border-gray-800 grid grid-cols-2 overflow-hidden h-auto max-h-[250px] max-w-full rounded-lg"
-    >
-      <div className="relative col-span-1 flex flex-col justify-start p-5 pt-0 pb-6">
-        <div className="absolute z-0 inset-x-0 m-auto h-full max-w-lg bg-gradient-to-r from-rose-50/50 to-teal-50/50 dark:bg-[radial-gradient(ellipse_at_bottom_right,_var(--tw-gradient-stops))] dark:from-sky-500 dark:to-indigo-900"></div>
-        <h3 className="relative pt-5 mb-3 text-xl font-bold text-gray-900 dark:text-white">
-          {title}
-        </h3>
-        <div className="z-10">
-          <GamePlatforms platforms={platforms} />
-        </div>
-      </div>
-      <div className="relative col-span-1 overflow-hidden max-w-full">
-        <Image
-          className="hover:scale-105 duration-200 ease-in-out"
-          src={imageUrl}
-          alt={title}
-          width={500}
-          height={900}
-          style={{ objectFit: "contain" }}
-        />
-      </div>
-    </div>
-  );
-}
-
 type ArrayElement<T extends Array<any>> = T[number];
 type SingleGameSearch = ArrayElement<GameSearch>;
 
 export function GameSearchCard({ game }: { game: SingleGameSearch }) {
-  // const releaseYear = game.releaseDate?.getFullYear();
   // const parentReleaseYear = game.parentGame?.releaseDate?.getFullYear();
   const coverUrl = game.cover
     ? `https://images.igdb.com/igdb/image/upload/t_cover_big/${game.cover.imageId}.jpg`

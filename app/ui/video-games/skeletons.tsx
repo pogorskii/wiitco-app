@@ -12,16 +12,3 @@ export function GameCardHorizontalSkeleton() {
     </div>
   );
 }
-
-export function GamesTableSkeleton() {
-  return (
-    <div className="grid grid-cols-2 gap-6">
-      <GameCardHorizontalSkeleton />
-      <GameCardHorizontalSkeleton />
-      <GameCardHorizontalSkeleton />
-      <GameCardHorizontalSkeleton />
-      <GameCardHorizontalSkeleton />
-      <GameCardHorizontalSkeleton />
-    </div>
-  );
-}

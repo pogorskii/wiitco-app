@@ -1,217 +1,134 @@
-import {
-  GameReleaseRaw,
-  GameReleaseRawWithPlatformArray,
-  FormattedGameRelease,
-  DayNumber,
-  GameId,
-  GameType,
-  DateType,
-  ReleaseRegion,
-} from "./definitions";
+//////////////////
+// Fuzzy search //
+//////////////////
 
-// Get Day Number from Human Date string
-export const checkStringAndReturnDayNumber = (dateString: string): number => {
-  // Split the date string into an array of components.
-  const dateComponents = dateString.split(" ");
-
-  // If the array has more than two elements, then the date string includes a day number.
-  if (dateComponents.length > 2) {
-    // Remove the leading 0 from the day number, if it exists.
-    const dayNumberWithoutLeadingZero = dateComponents[1]
-      .replace(/^0+/, "")
-      .replaceAll(",", "");
-
-    // Return the day number.
-    return Number(dayNumberWithoutLeadingZero);
-  } else {
-    // The date string does not include a day number 50 is a placehloder value for TBD.
-    return 50;
-  }
+type RomanNumeral = keyof typeof romanNumerals;
+const romanNumerals: Record<string, number> = {
+  I: 1,
+  II: 2,
+  III: 3,
+  IV: 4,
+  V: 5,
+  VI: 6,
+  VII: 7,
+  VIII: 8,
+  IX: 9,
+  X: 10,
+  XI: 11,
+  XII: 12,
+  XIII: 13,
+  XIV: 14,
+  XV: 15,
+  XVI: 16,
+  XVII: 17,
+  XVIII: 18,
+  XIX: 19,
+  XX: 20,
+  XXI: 21,
+  XXII: 22,
+  XXIII: 23,
+  XXIV: 24,
+  XXV: 25,
+  XXVI: 26,
+  XXVII: 27,
+  XXVIII: 28,
+  XXIX: 29,
+  XXX: 30,
+  C: 100,
+  CC: 200,
+  CCC: 300,
+  CD: 400,
+  D: 500,
+  DC: 600,
+  DCC: 700,
+  DCCC: 800,
+  CM: 900,
+  M: 1000,
+  MM: 2000,
+  MMM: 3000,
 };
 
-// 1. Map fetched GameReleases by Day of release
-export const groupGameReleasesByDay = (
-  data: GameReleaseRaw[]
-): Map<DayNumber, GameReleaseRaw[]> => {
-  const groupedByDay = new Map<DayNumber, GameReleaseRaw[]>();
-
-  for (const gameRelease of data) {
-    const dayNumber = checkStringAndReturnDayNumber(gameRelease.human);
-    const bucket = groupedByDay.get(dayNumber) || [];
-    bucket.push(gameRelease);
-
-    groupedByDay.set(dayNumber, bucket);
+const romanToArabic = (romanString: RomanNumeral): number => {
+  if (!romanNumerals.hasOwnProperty(romanString)) {
+    throw new Error("Invalid Roman numeral");
   }
 
-  return groupedByDay;
-};
+  let result = 0;
+  for (let i = romanString.length - 1; i >= 0; i--) {
+    const currentNumeral = romanNumerals[romanString[i]];
+    const nextNumeral =
+      i < romanString.length - 1 ? romanNumerals[romanString[i + 1]] : 0;
 
-// 2. Map GameReleases by GameId
-export const mergeGameReleasesByGameId = (
-  gameReleaseObjects: GameReleaseRaw[]
-): Map<GameId, GameReleaseRawWithPlatformArray> => {
-  const hashTable = new Map<GameId, GameReleaseRawWithPlatformArray>();
-
-  for (const gameObject of gameReleaseObjects) {
-    const gameId = gameObject.game.id;
-    const mergedGameObject =
-      hashTable.get(gameId) || ({} as GameReleaseRawWithPlatformArray);
-
-    for (const property in gameObject) {
-      if (property === "platform") {
-        if (!Array.isArray(mergedGameObject.platform)) {
-          mergedGameObject.platform = [];
-        }
-        mergedGameObject.platform.push(gameObject.platform);
-      } else {
-        (mergedGameObject as any)[property] = (gameObject as any)[property];
-      }
+    if (currentNumeral < nextNumeral) {
+      result -= currentNumeral;
+    } else {
+      result += currentNumeral;
     }
-
-    hashTable.set(gameId, mergedGameObject);
   }
 
-  return hashTable;
+  return result;
 };
 
-// 3.
-export const formatGameReleases = (
-  inputGameReleasesMap: Map<
-    number,
-    Map<number, GameReleaseRawWithPlatformArray>
-  >
-): Map<DayNumber, Map<GameId, FormattedGameRelease>> => {
-  const dateCategoryEnum: { [key: number]: DateType } = {
-    0: DateType.WithDay,
-    1: DateType.WithMonth,
-    2: DateType.YearOnly,
-    3: DateType.Q1,
-    4: DateType.Q2,
-    5: DateType.Q3,
-    6: DateType.Q4,
-    7: DateType.TBD,
-  };
-  const gameCategoryEnum: { [key: number]: GameType } = {
-    0: GameType.Game,
-    1: GameType.Dlc,
-    2: GameType.Exp,
-    3: GameType.Bundle,
-    4: GameType.StandaloneDLC,
-    5: GameType.Mod,
-    6: GameType.Ep,
-    7: GameType.Season,
-    8: GameType.Remake,
-    9: GameType.Remaster,
-    10: GameType.ExpGame,
-    11: GameType.Port,
-    12: GameType.Fork,
-    13: GameType.Pack,
-    14: GameType.Upd,
-  };
-  const releaseRegionEnum: { [key: number]: ReleaseRegion } = {
-    1: ReleaseRegion.EU,
-    2: ReleaseRegion.NA,
-    3: ReleaseRegion.AU,
-    4: ReleaseRegion.NZ,
-    5: ReleaseRegion.JP,
-    6: ReleaseRegion.CN,
-    7: ReleaseRegion.AS,
-    8: ReleaseRegion.WW,
-    9: ReleaseRegion.KR,
-    10: ReleaseRegion.BR,
-  };
-  const formattedGameReleasesMap = new Map<
-    DayNumber,
-    Map<GameId, FormattedGameRelease>
-  >();
-
-  for (const [date, games] of Array.from(inputGameReleasesMap.entries())) {
-    const formattedGamesReleases = new Map<GameId, FormattedGameRelease>();
-
-    for (const [gameId, gameData] of Array.from(games.entries())) {
-      const dayNumber = checkStringAndReturnDayNumber(gameData.human);
-
-      const formattedGameRelease: FormattedGameRelease = {
-        releaseId: gameData.id,
-        gameId: gameData.game.id,
-        title: gameData.game.name,
-        slug: gameData.game.slug,
-        gameType: gameCategoryEnum[gameData.game.category],
-        dateType: dateCategoryEnum[gameData.category],
-        date: gameData.date,
-        day: dayNumber === null ? 50 : dayNumber,
-        month: gameData.m,
-        year: gameData.y,
-        dateString: gameData.human,
-        releaseRegion: releaseRegionEnum[gameData.region],
-        platforms: gameData.platform.map(
-          (platform: { id: number }) => platform.id
-        ),
-        // TODO: Change placeholder img
-        coverUrl: gameData.game.cover?.url
-          ? `https:${gameData.game.cover.url}`.replace("t_thumb", "t_original")
-          : "/game-placeholder.webp",
-        blurUrl: gameData.game.cover?.url
-          ? `https:${gameData.game.cover.url}`
-          : "/game-placeholder.webp",
-        dateUpdated: gameData.updated_at,
-      };
-
-      formattedGamesReleases.set(gameId, formattedGameRelease);
+const arabicToRoman = (arabicNumber: number): string => {
+  if (arabicNumber < 1 || arabicNumber > 3999) {
+    throw new Error("Arabic number must be between 1 and 3999");
+  }
+  let result = "";
+  for (const key in romanNumerals) {
+    while (arabicNumber >= romanNumerals[key]) {
+      result += key;
+      arabicNumber -= romanNumerals[key];
     }
-
-    formattedGameReleasesMap.set(date, formattedGamesReleases);
   }
-
-  return formattedGameReleasesMap;
+  return result;
 };
 
-// 4.
-export const sortMapByDayNumber = (
-  mappedData: Map<DayNumber, Map<GameId, FormattedGameRelease>>
-): Map<DayNumber, Map<GameId, FormattedGameRelease>> => {
-  const sortedKeys = Array.from(mappedData.keys()).sort((a, b) => a - b);
-  const sortedMap = new Map<DayNumber, Map<GameId, FormattedGameRelease>>();
-  for (const key of sortedKeys) {
-    const assignedGameReleaseMap = mappedData.get(key);
-    if (assignedGameReleaseMap !== undefined)
-      sortedMap.set(key, assignedGameReleaseMap);
-  }
+export const createFuzzySearchQuery = (query?: string) => {
+  const fuzzyQuery = query
+    ? query
+        .replace(/\s+/g, " ")
+        .trim()
+        .replaceAll(":", "")
+        .replaceAll("-", "")
+        .split(" ")
+        .map((word) => {
+          const romanNumeralRegex =
+            /^M{0,3}(CM|CD|DCCC|CCCLX|CC|XC|L|XL|X|IX|VIII|VII|VI|V|IV|III|II|I)$/i;
+          let convertedWord = "";
+          if (/^[0-9]+/.test(word)) {
+            const romanNumeral = arabicToRoman(Number(word));
+            convertedWord = `( ${word} | ${romanNumeral} )`;
+          }
+          if (romanNumeralRegex.test(word)) {
+            const arabicNumeral = romanToArabic(word.toUpperCase()).toString();
+            convertedWord = `( ${word} | ${arabicNumeral})`;
+          } else {
+            convertedWord = word;
+          }
+          return convertedWord;
+        })
+        .map((word) => {
+          let result;
+          if (/.{2,}s$/.test(word)) {
+            const wordWithApostrophe = word.replace(
+              /s$/,
+              (match) => "'" + match
+            );
+            result = `( ${word} | ${wordWithApostrophe})`;
+          } else {
+            result = word;
+          }
+          return result;
+        })
+        .join(" & ")
+    : undefined;
 
-  return sortedMap;
+  return fuzzyQuery;
 };
 
-/**
- * High-order function that takes raw Game Releases data from API and formats it into a hastable
- * @param rawData
- * @returns
- */
-export const formatGameReleasesToMap = (
-  gameReleasesRaw: GameReleaseRaw[]
-): Map<DayNumber, Map<GameId, FormattedGameRelease>> => {
-  // 1. Group all Game Releases by Release Day
-  const mappedByDay: Map<DayNumber, GameReleaseRaw[]> =
-    groupGameReleasesByDay(gameReleasesRaw);
-
-  // 2. Merge Game Releases of the same Game on different Platforms
-  const mappedByDayByGameId = new Map<
-    DayNumber,
-    Map<GameId, GameReleaseRawWithPlatformArray>
-  >();
-
-  for (const [dayNumber, gameReleases] of Array.from(mappedByDay.entries())) {
-    const mergedGameReleases = mergeGameReleasesByGameId(gameReleases);
-    mappedByDayByGameId.set(dayNumber, mergedGameReleases);
-  }
-
-  // 3. Format each GameRelease into usable data
-  const formattedGameReleasesMap = formatGameReleases(mappedByDayByGameId);
-
-  // 4. Sort formatted GameReleases
-  const sortedMap = sortMapByDayNumber(formattedGameReleasesMap);
-
-  return sortedMap;
-};
+/////////////////////////
+// Calendar navigation //
+/////////////////////////
 
 // Links for Section Navigation
 export const getPrevMonthURL = (
@@ -229,7 +146,6 @@ export const getPrevMonthURL = (
 
   return prevPagePath;
 };
-
 export const getNextMonthURL = (
   currentURL: string,
   year: string,
@@ -273,32 +189,4 @@ export const getMonthYearName = (
     month: "long",
     year: "numeric",
   });
-};
-
-export const generatePagination = (currentPage: number, totalPages: number) => {
-  // If the total number of pages is 7 or less, display all pages without any ellipsis.
-  if (totalPages <= 7) {
-    return Array.from({ length: totalPages }, (_, i) => i + 1);
-  }
-
-  // If the current page is among the first 3 pages, show the first 3, an ellipsis, and the last 2 pages.
-  if (currentPage <= 3) {
-    return [1, 2, 3, "...", totalPages - 1, totalPages];
-  }
-
-  // If the current page is among the last 3 pages, show the first 2, an ellipsis, and the last 3 pages.
-  if (currentPage >= totalPages - 2) {
-    return [1, 2, "...", totalPages - 2, totalPages - 1, totalPages];
-  }
-
-  // If the current page is somewhere in the middle, show the first page, an ellipsis, the current page and its neighbors, another ellipsis, and the last page.
-  return [
-    1,
-    "...",
-    currentPage - 1,
-    currentPage,
-    currentPage + 1,
-    "...",
-    totalPages,
-  ];
 };

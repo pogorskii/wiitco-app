@@ -1,9 +1,9 @@
 import { v4 as uuid } from "uuid";
 import { SectionNav } from "@/app/ui/video-games/section-nav";
-import { fetchGamesSearchDB } from "../../actions";
+import { fetchGamesSearchDB } from "../../lib/actions";
 import InfiniteGamesSearch from "../../infinite-games-search";
 import { Breadcrumbs } from "@/app/ui/breadcrumbs";
-import { GameSearch } from "@/app/lib/definitions";
+import { GameSearch } from "../../lib/definitions";
 
 export default async function Page({
   params,
