@@ -1,3 +1,5 @@
+"use server";
+
 import { v4 as uuid } from "uuid";
 import { fetchGamesSearchDB } from "../lib/actions";
 import InfiniteGamesSearch from "../infinite-games-search";
@@ -6,6 +8,20 @@ import { SectionNav } from "@/app/ui/video-games/section-nav";
 import { GameSearch } from "../lib/definitions";
 import { Suspense } from "react";
 import { GamesSearchBodySkeleton } from "@/app/ui/video-games/skeletons";
+import type { Metadata, ResolvingMetadata } from "next";
+
+export async function generateMetadata(
+  {
+    params,
+  }: {
+    params: { slug: string };
+  },
+  parent: ResolvingMetadata
+): Promise<Metadata> {
+  return {
+    title: `Games Search`,
+  };
+}
 
 export default async function Page({
   searchParams,

@@ -1,4 +1,5 @@
-import { Metadata } from "next";
+"use server";
+
 import { v4 as uuid } from "uuid";
 import { fetchGameReleaseDatesByMonth } from "@/app/video-games/lib/actions";
 import { InfiniteGamesCalendar } from "./infinite-games-calendar";
@@ -6,10 +7,23 @@ import { Breadcrumbs } from "@/app/ui/breadcrumbs";
 import { CalendarNav } from "@/app/ui/video-games/calendar-nav";
 import { Suspense } from "react";
 import { GamesCalendarBodySkeleton } from "@/app/ui/video-games/skeletons";
+import { getMonthYearName } from "@/app/lib/utils";
+import type { Metadata, ResolvingMetadata } from "next";
 
-export const metadata: Metadata = {
-  title: "Video Games Release Dates",
-};
+export async function generateMetadata(
+  {
+    params,
+  }: {
+    params: { year: string; month: string };
+  },
+  parent: ResolvingMetadata
+): Promise<Metadata> {
+  const displayDate = getMonthYearName(params.month, params.year);
+
+  return {
+    title: `Games Releasing in ${displayDate}`,
+  };
+}
 
 export default async function Page({
   params,
@@ -27,6 +41,7 @@ export default async function Page({
   const filterUnknown = searchParams?.filterunknown;
   const year = params.year;
   const month = params.month;
+  const displayDate = getMonthYearName(month, year);
 
   return (
     <>
@@ -42,7 +57,7 @@ export default async function Page({
         ]}
       />
       <h1 className="scroll-m-20 border-b pb-2 text-3xl font-semibold tracking-tight first:mt-0">
-        All Games Releasing in {month}/{year}
+        All Games Releasing in {displayDate}
       </h1>
       <CalendarNav year={year} month={month} />
       <Suspense fallback={<GamesCalendarBodySkeleton />}>

@@ -4,7 +4,6 @@ import { fetchMoviesByMonth } from "@/app/movies/lib/actions";
 import { InfiniteMoviesCalendar } from "./infinite-movies-calendar";
 import { Breadcrumbs } from "@/app/ui/breadcrumbs";
 import { CalendarNav } from "@/app/ui/movies/calendar-nav";
-import { groupMovieReleasesAndSortByDay } from "@/app/movies/lib/utils";
 
 export const metadata: Metadata = {
   title: "Movies Release Dates",

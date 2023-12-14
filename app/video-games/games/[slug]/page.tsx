@@ -1,3 +1,5 @@
+"use server";
+
 import { Suspense } from "react";
 import { formatDistanceToNow } from "date-fns";
 import { fetchHLTBInfo } from "../../lib/actions";
@@ -16,9 +18,28 @@ import { Button } from "@/components/ui/button";
 import { FaPlus } from "react-icons/fa";
 import { LanguagesTable } from "@/app/ui/video-games/languages-table";
 import { Separator } from "@/components/ui/separator";
-
 import prisma from "@/app/lib/prisma";
 import { Game, GCover } from "@prisma/client";
+import type { Metadata, ResolvingMetadata } from "next";
+
+export async function generateMetadata(
+  {
+    params,
+  }: {
+    params: { slug: string };
+  },
+  parent: ResolvingMetadata
+): Promise<Metadata> {
+  // read route params
+  const gameName = params.slug
+    .split("-")
+    .map((w) => w.slice(0, 1).toLocaleUpperCase() + w.slice(1))
+    .join(" ");
+
+  return {
+    title: `${gameName}`,
+  };
+}
 
 export default async function Page({ params }: { params: { slug: string } }) {
   const game = await prisma.game.findUnique({

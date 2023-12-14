@@ -1,3 +1,5 @@
+"use server";
+
 import { v4 as uuid } from "uuid";
 import { SectionNav } from "@/app/ui/video-games/section-nav";
 import { fetchGamesSearchDB } from "../../lib/actions";
@@ -6,6 +8,26 @@ import { Breadcrumbs } from "@/app/ui/breadcrumbs";
 import { GameSearch } from "../../lib/definitions";
 import { Suspense } from "react";
 import { GamesSearchBodySkeleton } from "@/app/ui/video-games/skeletons";
+import type { Metadata, ResolvingMetadata } from "next";
+
+export async function generateMetadata(
+  {
+    params,
+  }: {
+    params: { slug: string };
+  },
+  parent: ResolvingMetadata
+): Promise<Metadata> {
+  // read route params
+  const engineName = params.slug
+    .split("-")
+    .map((w) => w.slice(0, 1).toLocaleUpperCase() + w.slice(1))
+    .join(" ");
+
+  return {
+    title: `Games on ${engineName}`,
+  };
+}
 
 export default async function Page({
   params,
