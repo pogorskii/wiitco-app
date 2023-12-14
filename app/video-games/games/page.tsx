@@ -4,6 +4,8 @@ import InfiniteGamesSearch from "../infinite-games-search";
 import { Breadcrumbs } from "@/app/ui/breadcrumbs";
 import { SectionNav } from "@/app/ui/video-games/section-nav";
 import { GameSearch } from "../lib/definitions";
+import { Suspense } from "react";
+import { GamesSearchBodySkeleton } from "@/app/ui/video-games/skeletons";
 
 export default async function Page({
   searchParams,
@@ -15,20 +17,13 @@ export default async function Page({
     sort?: string;
   };
 }) {
-  const search = searchParams?.search || "";
+  const search = searchParams?.search;
   const categories = searchParams?.categories;
   const platforms = searchParams?.platforms;
   const sort = searchParams?.sort;
 
-  const games = await fetchGamesSearchDB({
-    search,
-    categories,
-    platforms,
-    sort,
-  });
-
   return (
-    <>
+    <div>
       <Breadcrumbs
         breadcrumbs={[
           { label: "Home", href: "/" },
@@ -39,15 +34,45 @@ export default async function Page({
         All Games
       </h1>
       <SectionNav />
-      <div key={uuid()} className="grid grid-cols-1 md:grid-cols-2 sm:gap-6">
-        <InfiniteGamesSearch
-          initialGames={games as GameSearch}
+      <Suspense fallback={<GamesSearchBodySkeleton />}>
+        <PageContent
           search={search}
           categories={categories}
           platforms={platforms}
           sort={sort}
         />
-      </div>
-    </>
+      </Suspense>
+    </div>
+  );
+}
+
+async function PageContent({
+  search,
+  categories,
+  platforms,
+  sort,
+}: {
+  search?: string;
+  categories?: string;
+  platforms?: string;
+  sort?: string;
+}) {
+  const games = await fetchGamesSearchDB({
+    search,
+    categories,
+    platforms,
+    sort,
+  });
+
+  return (
+    <div key={uuid()} className="grid grid-cols-1 md:grid-cols-2 sm:gap-6">
+      <InfiniteGamesSearch
+        initialGames={games as GameSearch}
+        search={search}
+        categories={categories}
+        platforms={platforms}
+        sort={sort}
+      />
+    </div>
   );
 }

@@ -25,7 +25,7 @@ const links = [
 const moviesLinks: { title: string; href: string; description: string }[] = [
   {
     title: "Calendar",
-    href: "/movies",
+    href: "/movies/calendar",
     description: "Check what movies are scheduled to release on any date.",
   },
   {

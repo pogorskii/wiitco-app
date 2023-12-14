@@ -8,7 +8,7 @@ import { GameSearchCard } from "@/app/ui/video-games/game-card";
 import { Spinner } from "@/app/ui/spinner";
 
 export default function InfiniteGamesSearch({
-  search = "",
+  search,
   engine,
   company,
   genre,
@@ -17,7 +17,7 @@ export default function InfiniteGamesSearch({
   platforms,
   sort,
 }: {
-  search: string;
+  search?: string;
   engine?: string;
   company?: string;
   genre?: string;
@@ -75,7 +75,7 @@ export default function InfiniteGamesSearch({
         <GameSearchCard key={game.slug} game={game} />
       ))}
       {/* Loading spinner */}
-      {loadingActive && (
+      {games && games?.length > 0 && loadingActive && (
         <div
           ref={ref}
           className="col-span-2 mt-16 mb-16 flex items-center justify-center"

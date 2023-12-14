@@ -72,6 +72,7 @@ export function GameCardCalendar({
               width={600}
               height={900}
               style={{ objectFit: "cover" }}
+              loading="eager"
             />
           </div>
           <CardHeader>
@@ -99,6 +100,7 @@ export function GameCardCalendar({
                   height: "auto",
                   objectFit: "cover",
                 }}
+                loading="eager"
               />
             </div>
           </Link>
@@ -208,14 +210,12 @@ export function GameSearchCard({ game }: { game: SingleGameSearch }) {
           <Link href={`/video-games/games/${game.slug}`}>
             <div className="overflow-hidden ms-auto w-fit h-full">
               <Image
-                className="hover:scale-105 duration-200 ease-in-out"
+                className="hover:scale-105 duration-200 ease-in-out h-full"
                 src={coverUrl}
                 width={game.cover?.width || 1080}
                 height={game.cover?.height || 1920}
                 alt={`${game.name} game cover`}
                 style={{
-                  width: "auto",
-                  height: "100%",
                   objectFit: "cover",
                 }}
               />
@@ -232,8 +232,8 @@ export function GameSearchCard({ game }: { game: SingleGameSearch }) {
               <Image
                 className="hover:scale-105 duration-200 ease-in-out"
                 src={coverUrl}
-                width={game.cover?.width || 1080}
-                height={game.cover?.height || 1920}
+                width={game.cover?.width || 540}
+                height={game.cover?.height || 960}
                 alt={`${game.name} game cover`}
                 style={{
                   width: "100%",

@@ -1,24 +1,11 @@
-"use server";
+"use client";
 
-import { DayHeader, DayHeaderMobile } from "./day-header";
+import { DayHeader, DayHeaderMobile } from "../day-headers";
 import { GameCardCalendar } from "./game-card";
 import { getShortDayMonthName } from "@/app/lib/utils";
+import { GameRelease } from "@/app/video-games/lib/definitions";
 
-type GameRelease = {
-  id: number;
-  name: string;
-  slug: string;
-  category: number;
-  follows: number;
-  cover: {
-    imageId: string;
-    width: number | null;
-    height: number | null;
-  } | null;
-  platforms: number[];
-};
-
-export async function GamesDay({
+export function GamesDay({
   day,
   month,
   year,

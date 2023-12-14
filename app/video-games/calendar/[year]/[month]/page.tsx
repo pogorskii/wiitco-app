@@ -1,7 +1,11 @@
 import { Metadata } from "next";
-import { fetchGamesByMonth } from "@/app/video-games/lib/actions";
+import { v4 as uuid } from "uuid";
+import { fetchGameReleaseDatesByMonth } from "@/app/video-games/lib/actions";
+import { InfiniteGamesCalendar } from "./infinite-games-calendar";
+import { Breadcrumbs } from "@/app/ui/breadcrumbs";
 import { CalendarNav } from "@/app/ui/video-games/calendar-nav";
-import { GamesDay } from "@/app/ui/video-games/game-day";
+import { Suspense } from "react";
+import { GamesCalendarBodySkeleton } from "@/app/ui/video-games/skeletons";
 
 export const metadata: Metadata = {
   title: "Video Games Release Dates",
@@ -23,7 +27,51 @@ export default async function Page({
   const filterUnknown = searchParams?.filterunknown;
   const year = params.year;
   const month = params.month;
-  const releasesPerMonth = await fetchGamesByMonth({
+
+  return (
+    <>
+      <Breadcrumbs
+        breadcrumbs={[
+          { label: "Home", href: "/" },
+          { label: "Games", href: "/video-games/games" },
+          {
+            label: "Calendar",
+            href: `/video-games/calendar/${year}/${month}`,
+            active: true,
+          },
+        ]}
+      />
+      <h1 className="scroll-m-20 border-b pb-2 text-3xl font-semibold tracking-tight first:mt-0">
+        All Games Releasing in {month}/{year}
+      </h1>
+      <CalendarNav year={year} month={month} />
+      <Suspense fallback={<GamesCalendarBodySkeleton />}>
+        <GamesCalendarBody
+          year={year}
+          month={month}
+          categories={categories}
+          platforms={platforms}
+          filterUnknown={filterUnknown}
+        />
+      </Suspense>
+    </>
+  );
+}
+
+async function GamesCalendarBody({
+  year,
+  month,
+  categories,
+  platforms,
+  filterUnknown,
+}: {
+  year: string;
+  month: string;
+  categories?: string;
+  platforms?: string;
+  filterUnknown?: string;
+}) {
+  const games = await fetchGameReleaseDatesByMonth({
     year,
     month,
     categories,
@@ -31,84 +79,19 @@ export default async function Page({
     filterUnknown,
   });
 
-  if (!releasesPerMonth.length)
-    return (
-      <>
-        <CalendarNav year={year} month={month} />
-        <h2>No games currently scheduled for this month.</h2>
-      </>
-    );
-
-  type GameRelease = {
-    id: number;
-    name: string;
-    slug: string;
-    category: number;
-    follows: number;
-    cover: {
-      imageId: string;
-      width: number | null;
-      height: number | null;
-    } | null;
-    platforms: number[];
-  };
-
-  const groupedByDay = new Map<number, GameRelease[]>();
-  for (const game of releasesPerMonth) {
-    for (const releaseDate of game.releaseDates) {
-      // Day 50 is a placeholder for release dates that don't have a specific day set
-      const day =
-        releaseDate.category === 0 && releaseDate.date
-          ? releaseDate.date.getDate()
-          : 50;
-      const bucket = groupedByDay.get(day) || ([] as GameRelease[]);
-      const existingReleaseIndex = bucket.findIndex(
-        (release) => release.id === game.id
-      );
-      if (existingReleaseIndex !== -1) {
-        bucket[existingReleaseIndex].platforms.push(releaseDate.platformId);
-      } else {
-        bucket.push({
-          id: game.id,
-          name: game.name,
-          slug: game.slug,
-          category: game.category,
-          follows: game.follows,
-          cover: game.cover,
-          platforms: [releaseDate.platformId],
-        });
-      }
-      groupedByDay.set(day, bucket);
-    }
-  }
-
-  const sortGameReleasesMapByDayNumber = (
-    releasesMap: Map<number, GameRelease[]>
-  ) => {
-    const sortedDays = Array.from(releasesMap.keys()).sort((a, b) => a - b);
-    const sortedMap = new Map<number, GameRelease[]>();
-    for (const day of sortedDays) {
-      const releasesForDay = releasesMap.get(day);
-      if (releasesForDay !== undefined) {
-        sortedMap.set(day, releasesForDay);
-      }
-    }
-
-    return sortedMap;
-  };
-
-  const groupedAndSortedByDay = sortGameReleasesMapByDayNumber(groupedByDay);
-  const gamesCalendar = Array.from(groupedAndSortedByDay).map((calendarDay) => {
-    const [day, games] = calendarDay;
-    return (
-      <GamesDay key={day} day={day} month={month} year={year} games={games} />
-    );
-  });
+  if (!games.length)
+    return <h2>No games currently scheduled for this month.</h2>;
 
   return (
-    <main className="flex flex-col gap-6">
-      <CalendarNav year={year} month={month} />
-      {gamesCalendar}
-    </main>
+    <div key={uuid()} className="flex flex-col gap-6">
+      <InfiniteGamesCalendar
+        month={month}
+        year={year}
+        initialGames={games}
+        categories={categories}
+        platforms={platforms}
+        filterUnknown={filterUnknown}
+      />
+    </div>
   );
 }

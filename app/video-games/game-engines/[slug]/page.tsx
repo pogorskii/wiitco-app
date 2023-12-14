@@ -4,6 +4,8 @@ import { fetchGamesSearchDB } from "../../lib/actions";
 import InfiniteGamesSearch from "../../infinite-games-search";
 import { Breadcrumbs } from "@/app/ui/breadcrumbs";
 import { GameSearch } from "../../lib/definitions";
+import { Suspense } from "react";
+import { GamesSearchBodySkeleton } from "@/app/ui/video-games/skeletons";
 
 export default async function Page({
   params,
@@ -18,7 +20,7 @@ export default async function Page({
   };
 }) {
   const engine = params.slug;
-  const search = searchParams?.search || "";
+  const search = searchParams?.search;
   const categories = searchParams?.categories;
   const platforms = searchParams?.platforms;
   const sort = searchParams?.sort;
@@ -27,14 +29,6 @@ export default async function Page({
     .split("-")
     .map((w) => w.slice(0, 1).toLocaleUpperCase() + w.slice(1))
     .join(" ");
-
-  const games = await fetchGamesSearchDB({
-    engine,
-    search,
-    categories,
-    platforms,
-    sort,
-  });
 
   return (
     <>
@@ -53,16 +47,50 @@ export default async function Page({
         Games built with {label}
       </h1>
       <SectionNav />
-      <div key={uuid()} className="grid grid-cols-1 md:grid-cols-2 sm:gap-6">
-        <InfiniteGamesSearch
-          initialGames={games as GameSearch}
+      <Suspense fallback={<GamesSearchBodySkeleton />}>
+        <PageContent
           engine={engine}
           search={search}
           categories={categories}
           platforms={platforms}
           sort={sort}
         />
-      </div>
+      </Suspense>
     </>
+  );
+}
+
+async function PageContent({
+  engine,
+  search,
+  categories,
+  platforms,
+  sort,
+}: {
+  engine: string;
+  search?: string;
+  categories?: string;
+  platforms?: string;
+  sort?: string;
+}) {
+  const games = await fetchGamesSearchDB({
+    engine,
+    search,
+    categories,
+    platforms,
+    sort,
+  });
+
+  return (
+    <div key={uuid()} className="grid grid-cols-1 md:grid-cols-2 sm:gap-6">
+      <InfiniteGamesSearch
+        initialGames={games as GameSearch}
+        engine={engine}
+        search={search}
+        categories={categories}
+        platforms={platforms}
+        sort={sort}
+      />
+    </div>
   );
 }

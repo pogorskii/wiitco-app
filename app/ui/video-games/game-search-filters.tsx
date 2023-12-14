@@ -112,12 +112,12 @@ export function GameCategoryFilter() {
       <DropdownMenuTrigger asChild>
         <Button
           variant="outline"
-          className="px-3 sm:px-4 justify-start sm:justify-center w-full sm:w-auto bg-white font-normal dark:border-slate-800 dark:bg-slate-950 dark:ring-offset-slate-950 dark:placeholder:text-slate-400 dark:focus:ring-slate-300"
+          className="rounded-full px-3 sm:px-4 justify-start sm:justify-center w-full sm:w-auto bg-white font-normal dark:border-slate-800 dark:bg-slate-950 dark:ring-offset-slate-950 dark:placeholder:text-slate-400 dark:focus:ring-slate-300"
         >
           Categories {categoriesQuantity > 0 && `(${categoriesQuantity})`}
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="w-[86vw] sm:w-56 bg-white dark:bg-slate-950">
+      <DropdownMenuContent className="rounded-lg w-[86vw] sm:w-56 bg-white dark:bg-slate-950">
         <DropdownMenuLabel>Categories of games</DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuCheckboxItem
@@ -194,10 +194,10 @@ export function PlatformFilter() {
 
   return (
     <Select onValueChange={handleSelect} defaultValue={value}>
-      <SelectTrigger className="w-full sm:w-[280px]">
+      <SelectTrigger className="w-full sm:w-[280px] rounded-full">
         <SelectValue placeholder="Select Platform" />
       </SelectTrigger>
-      <SelectContent>
+      <SelectContent className="rounded-lg">
         <SelectItem value="all">All Platforms</SelectItem>
         <SelectGroup>
           <SelectLabel>Current Generation</SelectLabel>
@@ -301,10 +301,10 @@ export function SortingSelector() {
 
   return (
     <Select onValueChange={handleSelect} defaultValue={filter}>
-      <SelectTrigger>
+      <SelectTrigger className="rounded-full">
         <SelectValue placeholder="Sort by" />
       </SelectTrigger>
-      <SelectContent>
+      <SelectContent className="rounded-lg">
         <SelectGroup>
           <SelectLabel>Sort results by...</SelectLabel>
           {rules.map((rule) => (
@@ -352,10 +352,10 @@ export function FilterUnknownGames() {
 
   return (
     <Select onValueChange={handleSelect} defaultValue={filter}>
-      <SelectTrigger>
+      <SelectTrigger className="rounded-full">
         <SelectValue placeholder="Filter Releases" />
       </SelectTrigger>
-      <SelectContent>
+      <SelectContent className="rounded-lg">
         <SelectGroup>
           <SelectLabel>Filter Releases</SelectLabel>
           {rules.map((rule) => (

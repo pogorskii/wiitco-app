@@ -1,14 +1,4 @@
 {
-  "crons": [
-    {
-      "path": "/api/parent-games",
-      "schedule": "0 * * * *"
-    },
-    {
-      "path": "/api/child-games",
-      "schedule": "10 * * * *"
-    }
-  ],
   "functions": {
     "app/video-games/**/*": {
       "maxDuration": 300

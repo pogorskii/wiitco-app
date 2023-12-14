@@ -265,13 +265,15 @@ export const fetchGamesSearchDB = async ({
   }
 };
 
-export const fetchGamesByMonth = async ({
+export const fetchGameReleaseDatesByMonth = async ({
+  page = 1,
   year,
   month,
   categories = "main,dlc,expansion",
   platforms,
   filterUnknown = "true",
 }: {
+  page?: number;
   year: string;
   month: string;
   categories?: string;
@@ -303,48 +305,45 @@ export const fetchGamesByMonth = async ({
   // Handle 'filterUnknown' filter
   const follows = filterUnknown === "true" ? 0 : -1;
 
-  const games = await prisma.game.findMany({
+  const releaseDates = await prisma.gReleaseDate.findMany({
+    take: 40,
+    skip: 40 * (page - 1),
     where: {
-      follows: {
-        gt: follows,
-      },
-      category: {
-        in: categoriesQuery,
-      },
-      releaseDates: {
-        some: {
-          y: Number(year),
-          m: Number(month),
-          platformId,
+      y: Number(year),
+      m: Number(month),
+      platformId,
+      game: {
+        follows: {
+          gt: follows,
+        },
+        category: {
+          in: categoriesQuery,
         },
       },
     },
     select: {
-      id: true,
-      name: true,
-      slug: true,
       category: true,
-      follows: true,
-      cover: {
+      date: true,
+      platformId: true,
+      game: {
         select: {
-          imageId: true,
-          width: true,
-          height: true,
-        },
-      },
-      releaseDates: {
-        where: {
-          y: Number(year),
-          m: Number(month),
-        },
-        select: {
+          id: true,
+          name: true,
+          slug: true,
           category: true,
-          date: true,
-          platformId: true,
+          follows: true,
+          cover: {
+            select: {
+              imageId: true,
+              width: true,
+              height: true,
+            },
+          },
         },
       },
     },
+    orderBy: [{ category: "asc" }, { date: "asc" }],
   });
 
-  return games;
+  return releaseDates;
 };
