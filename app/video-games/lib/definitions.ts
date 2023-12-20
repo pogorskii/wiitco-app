@@ -27,24 +27,6 @@ export type GameRelease = {
   platforms: number[];
 };
 
-// export type GameReleasesByMonth = {
-//   id: number;
-//   name: string;
-//   slug: string;
-//   category: number;
-//   follows: number;
-//   cover: {
-//     imageId: string;
-//     width: number | null;
-//     height: number | null;
-//   } | null;
-//   releaseDates: {
-//     date: Date | null;
-//     category: number;
-//     platformId: number;
-//   }[];
-// }[];
-
 export type GameReleasesByMonth = {
   date: Date | null;
   category: number;

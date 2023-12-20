@@ -5,6 +5,7 @@ import { useState } from "react";
 import { FaChevronDown, FaChevronUp } from "react-icons/fa";
 import { Button } from "@/components/ui/button";
 
+import { MovieReleaseTypeFilter } from "./movie-filters";
 // import {
 //   PlatformFilter,
 //   GameCategoryFilter,
@@ -21,7 +22,9 @@ export function CalendarNav({ year, month }: { year: string; month: string }) {
       <MonthSwitcher year={year} month={month} />
       {/* Desktop filters */}
       <div className="hidden sm:flex justify-between">
-        <div className="me-2">{/* <PlatformFilter /> */}</div>
+        <div className="me-2">
+          <MovieReleaseTypeFilter />
+        </div>
         {/* <GameCategoryFilter /> */}
         <div className="ms-auto">{/* <FilterUnknownGames /> */}</div>
       </div>

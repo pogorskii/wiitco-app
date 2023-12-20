@@ -59,7 +59,7 @@ headers.set("Authorization", `Bearer ${process.env.TWITCH_TOKEN}`);
 
 // DROP
 export const drop = async () => {
-  await prisma.gEngine.deleteMany({});
+  // await prisma.gEngine.deleteMany({});
 };
 
 // Fetch function for testing purposes

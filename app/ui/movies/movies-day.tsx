@@ -1,10 +1,9 @@
+"use client";
+
 import { DayHeader, DayHeaderMobile } from "../day-headers";
-// import { GameCardCalendar } from "./game-card";
 import { MovieCardCalendar } from "./movie-cards";
 import { getShortDayMonthName } from "@/app/lib/utils";
-import { GameRelease } from "@/app/video-games/lib/definitions";
-
-import { MovieReleases } from "@/app/movies/lib/zod-schemas";
+import { MovieRelease } from "@/app/movies/lib/definitions";
 
 export function MoviesDay({
   day,
@@ -15,29 +14,21 @@ export function MoviesDay({
   day: number;
   month: string;
   year: string;
-  movies: MovieReleases;
+  movies: MovieRelease[];
 }) {
   const displayDate = getShortDayMonthName(day, month, year);
-  const moviesCards = movies.map((movie, i) => (
+  const gameCards = movies.map((movie, i) => (
     <MovieCardCalendar
-      key={movie.id}
-      id={movie.id}
-      title={movie.original_title}
-      slug={`${movie.id}-${movie.original_title.toLowerCase()}`}
-      imageId={movie.poster_path}
+      key={i}
+      id={i}
+      title={movie.title}
+      imageId={movie.posterPath}
+      types={movie.releaseTypes}
+      actors={movie.actors}
+      directors={movie.directors}
+      genres={movie.genres}
     />
   ));
-  // const gameCards = games.map((game, i) => (
-  //   <GameCardCalendar
-  //     key={i}
-  //     id={i}
-  //     title={game.name}
-  //     slug={game.slug}
-  //     imageId={game.cover?.imageId}
-  //     platforms={game.platforms}
-  //     category={game.category}
-  //   />
-  // ));
 
   return (
     <section id={`day-${day}`} className="relative grid grid-cols-4 gap-5">
@@ -47,8 +38,7 @@ export function MoviesDay({
       </div>
       <div className="col-span-4 sm:col-span-3">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 sm:gap-5">
-          {moviesCards}
-          {/* {gameCards} */}
+          {gameCards}
         </div>
       </div>
     </section>

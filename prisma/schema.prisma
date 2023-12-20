@@ -569,3 +569,189 @@ model GameTheme {
 
   @@id([gameId, themeId])
 }
+
+// Cinema tables
+// Reference tables
+model MGenre {
+  id     Int          @id
+  name   String
+  movies MovieGenre[]
+}
+
+model TVGenre {
+  id    Int           @id
+  name  String
+  shows TVShowGenre[]
+}
+
+model CinemaPerson {
+  id             Int             @id
+  name           String
+  actedMovies    MovieActor[]
+  directedMovies MovieDirector[]
+  createdShows   TVShowCreator[]
+}
+
+model CinemaCountry {
+  id          Int             @id @default(autoincrement())
+  iso31661    String          @unique
+  englishName String
+  nativeName  String
+  movies      MovieCountry[]
+  shows       TVShowCountry[]
+}
+
+model TVNetwork {
+  id       Int             @id
+  name     String
+  logoPath String?
+  shows    TVShowNetwork[]
+}
+
+// Movies tables
+model Movie {
+  id                  Int               @id
+  originalLanguage    String?
+  originaltitle       String?
+  title               String
+  posterPath          String?
+  popularity          Float
+  runtime             Int?
+  budget              Int?
+  primaryReleaseDate  DateTime
+  releaseCountries    MReleaseCountry[]
+  genres              MovieGenre[]
+  productionCountries MovieCountry[]
+  actors              MovieActor[]
+  directors           MovieDirector[]
+}
+
+// Child tables
+model MReleaseCountry {
+  id            Int             @id @default(autoincrement())
+  iso31661      String
+  localReleases MLocalRelease[]
+  movie         Movie           @relation(fields: [movieId], references: [id])
+  movieId       Int
+}
+
+model MLocalRelease {
+  id               Int             @id @default(autoincrement())
+  note             String?
+  releaseDate      DateTime
+  type             Int
+  releaseCountry   MReleaseCountry @relation(fields: [releaseCountryId], references: [id])
+  releaseCountryId Int
+}
+
+// Join tables
+model MovieGenre {
+  movie   Movie  @relation(fields: [movieId], references: [id])
+  movieId Int
+  genre   MGenre @relation(fields: [genreId], references: [id])
+  genreId Int
+
+  @@id([movieId, genreId])
+}
+
+model MovieActor {
+  movie   Movie        @relation(fields: [movieId], references: [id])
+  movieId Int
+  actor   CinemaPerson @relation(fields: [actorId], references: [id])
+  actorId Int
+
+  @@id([movieId, actorId])
+}
+
+model MovieDirector {
+  movie      Movie        @relation(fields: [movieId], references: [id])
+  movieId    Int
+  director   CinemaPerson @relation(fields: [directorId], references: [id])
+  directorId Int
+
+  @@id([movieId, directorId])
+}
+
+model MovieCountry {
+  movie      Movie         @relation(fields: [movieId], references: [id])
+  movieId    Int
+  country    CinemaCountry @relation(fields: [countryIso], references: [iso31661])
+  countryIso String
+
+  @@id([movieId, countryIso])
+}
+
+// TV Shows tables
+model TVShow {
+  id                  Int             @id
+  name                String
+  genres              TVShowGenre[]
+  episodeRunTimes     Int[]
+  firstAirDate        DateTime?
+  lastAirDate         DateTime?
+  inProduction        Boolean
+  languages           String[]
+  creators            TVShowCreator[]
+  networks            TVShowNetwork[]
+  originCountries     String[]
+  originalLanguage    String
+  originalName        String
+  popularity          Float
+  posterPath          String?
+  productionCountries TVShowCountry[]
+  seasons             TVSeason[]
+  status              String
+  type                String
+  voteAverage         Float
+}
+
+// Child tables
+
+model TVSeason {
+  id           Int       @id @default(autoincrement())
+  name         String
+  seasonNumber Int
+  posterPath   String?
+  airDate      DateTime?
+  episodeCount Int?
+  voteAverage  Float
+  show         TVShow    @relation(fields: [showId], references: [id])
+  showId       Int
+}
+
+// Join tables
+model TVShowGenre {
+  show    TVShow  @relation(fields: [showId], references: [id])
+  showId  Int
+  genre   TVGenre @relation(fields: [genreId], references: [id])
+  genreId Int
+
+  @@id([showId, genreId])
+}
+
+model TVShowCreator {
+  show      TVShow       @relation(fields: [showId], references: [id])
+  showId    Int
+  creator   CinemaPerson @relation(fields: [creatorId], references: [id])
+  creatorId Int
+
+  @@id([showId, creatorId])
+}
+
+model TVShowNetwork {
+  show      TVShow    @relation(fields: [showId], references: [id])
+  showId    Int
+  network   TVNetwork @relation(fields: [networkId], references: [id])
+  networkId Int
+
+  @@id([showId, networkId])
+}
+
+model TVShowCountry {
+  show       TVShow        @relation(fields: [showId], references: [id])
+  showId     Int
+  country    CinemaCountry @relation(fields: [countryIso], references: [iso31661])
+  countryIso String
+
+  @@id([showId, countryIso])
+}

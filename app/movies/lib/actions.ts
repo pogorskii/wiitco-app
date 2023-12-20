@@ -1,6 +1,6 @@
 "use server";
 
-import { movieReleasesSchema } from "./zod-schemas";
+import prisma from "@/app/lib/prisma";
 
 const headers = new Headers();
 headers.set("Accept", "application/json");
@@ -11,37 +11,95 @@ const options = {
   headers,
 };
 
-export const tmdbTest = async () => {
-  try {
-    const response = await fetch(
-      "https://api.themoviedb.org/3/authentication",
-      options
-    );
-    const result = await response.json();
-    console.log(result);
-  } catch (error) {
-    console.error(error);
-  }
-};
-
-export const fetchMoviesByMonth = async ({
-  page = "1",
+export const fetchMovieReleaseDatesByMonth = async ({
+  page = 1,
+  year,
+  month,
+  types = "theatrical_limited,theatrical",
 }: {
-  page?: string | number;
+  page?: number;
+  year: string;
+  month: string;
+  types?: string;
+  // categories?: string;
+  // platforms?: string;
+  // filterUnknown?: string;
 }) => {
-  try {
-    // fetch('https://api.themoviedb.org/3/discover/movie?include_adult=false&include_video=false&language=en-US&page=1&primary_release_date.gte=2023-11-01&primary_release_date.lte=2023-11-30&region=us&release_date.gte=2023-11-01&release_date.lte=2023-11-30&sort_by=primary_release_date.asc', options)
-    const response = await fetch(
-      `https://api.themoviedb.org/3/discover/movie?include_adult=false&include_video=false&language=en-US&page=${page}&release_date.gte=2023-11-01&release_date.lte=2023-11-02&sort_by=primary_release_date.asc`,
-      options
-    );
-    const fetchedData = await response.json();
+  const typesEnum: { [key: string]: number } = {
+    premiere: 1,
+    theatrical_limited: 2,
+    theatrical: 3,
+    digital: 4,
+    physical: 5,
+    tv: 6,
+  };
+  const typesQuery = types.split(",").map((x) => typesEnum[x]);
 
-    console.log(fetchedData);
-    const parsedData = movieReleasesSchema.parse(fetchedData.results);
-    // console.log(parsedData);
-    return parsedData;
-  } catch (error) {
-    console.error(`Error fetching movies from TMDB (${error})`);
-  }
+  // // Handle 'platforms' search param
+  // const platformId = platforms ? Number(platforms) : undefined;
+
+  // // Handle 'filterUnknown' filter
+  // const follows = filterUnknown === "true" ? 0 : -1;
+
+  const yearInt = Number(year);
+  const monthInt = Number(month);
+  const startDate = new Date(yearInt, monthInt - 1);
+  const endDate = new Date(yearInt, monthInt, 0);
+
+  const releaseDates = await prisma.mLocalRelease.findMany({
+    take: 40,
+    skip: 40 * (page - 1),
+    where: {
+      releaseDate: {
+        gte: startDate,
+        lte: endDate,
+      },
+      releaseCountry: {
+        iso31661: "US",
+        movie: {
+          runtime: { gte: 75 },
+        },
+      },
+      type: { in: typesQuery },
+    },
+    orderBy: [{ releaseDate: "asc" }, { id: "asc" }],
+    select: {
+      id: true,
+      note: true,
+      releaseDate: true,
+      type: true,
+      releaseCountryId: true,
+      releaseCountry: {
+        select: {
+          iso31661: true,
+          movie: {
+            include: {
+              genres: {
+                select: {
+                  genreId: true,
+                },
+              },
+              productionCountries: {
+                select: {
+                  countryIso: true,
+                },
+              },
+              actors: {
+                select: {
+                  actor: true,
+                },
+              },
+              directors: {
+                select: {
+                  director: true,
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  });
+
+  return releaseDates;
 };
