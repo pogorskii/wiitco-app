@@ -22,7 +22,7 @@ export function MonthSwitcher({
   const nextPagePath = getNextMonthURL(pathname, year, month);
 
   return (
-    <div className="relative sm:sticky top-[-1px] z-20 bg-background py-2">
+    <div className="py-2">
       <div className="flex justify-center">
         <div className="mb-4 flex items-center gap-2">
           <Link href={prevPagePath}>

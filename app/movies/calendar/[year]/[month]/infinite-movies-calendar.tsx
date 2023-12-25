@@ -14,14 +14,14 @@ export function InfiniteMoviesCalendar({
   initialMovies,
   types,
   platforms,
-  filterUnknown,
+  lengthFilter,
 }: {
   month: string;
   year: string;
   initialMovies?: MovieReleasesByMonth;
   types?: string;
   platforms?: string;
-  filterUnknown?: string;
+  lengthFilter?: string;
 }) {
   const [movies, setMovies] = useState(initialMovies);
   const page = useRef(1);
@@ -37,7 +37,7 @@ export function InfiniteMoviesCalendar({
       month,
       types,
       // platforms,
-      // filterUnknown,
+      lengthFilter,
     });
     if (movies?.length) {
       page.current = next;
@@ -46,7 +46,7 @@ export function InfiniteMoviesCalendar({
     } else {
       setLoadingActive(false);
     }
-  }, [month, year, initialMovies, types, platforms, filterUnknown]);
+  }, [month, year, initialMovies, types, platforms, lengthFilter]);
 
   useEffect(() => {
     if (inView) {

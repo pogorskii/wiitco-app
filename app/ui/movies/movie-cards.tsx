@@ -75,8 +75,10 @@ export function MovieCardCalendar({
         <Link className="flex flex-col grow" href={`/movies/${id}`}>
           <div className="relative overflow-hidden">
             <div className="absolute z-10 top-2 left-2">
-              {typeNames.map((type) => (
-                <Badge variant="secondary">{type}</Badge>
+              {typeNames.map((type, i) => (
+                <Badge key={i} variant="secondary">
+                  {type}
+                </Badge>
               ))}
             </div>
             <Image
@@ -95,9 +97,9 @@ export function MovieCardCalendar({
               <div className="mb-4 text-sm">
                 {actors.map((e, i, arr) => {
                   if (i < 2 && i < 1 && arr.length > 1) {
-                    return <>{e}, </>;
+                    return <span key={i}>{e}, </span>;
                   } else if (i < 2) {
-                    return e;
+                    return <span key={i}>{e}</span>;
                   }
                 })}
               </div>
@@ -106,7 +108,10 @@ export function MovieCardCalendar({
               {genreNames.map(
                 (e, i) =>
                   i < 2 && (
-                    <Badge className="inline-flex gap-1 items-center rounded-full py-0.5 text-xs font-normal transition duration-300 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2">
+                    <Badge
+                      key={i}
+                      className="inline-flex gap-1 items-center rounded-full py-0.5 text-xs font-normal transition duration-300 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+                    >
                       {e}
                     </Badge>
                   )
@@ -138,8 +143,9 @@ export function MovieCardCalendar({
         </div>
         <div className="ps-2 w-full flex flex-col justify-between">
           <div className="mb-2 p-0 text-xs">
-            {typeNames.map((type) => (
+            {typeNames.map((type, i) => (
               <Badge
+                key={i}
                 className="p-0.5 font-normal leading-none rounded-sm"
                 variant="outline"
               >
@@ -159,9 +165,9 @@ export function MovieCardCalendar({
               <span className="font-semibold">Directed by:</span>{" "}
               {directors.map((e, i, arr) => {
                 if (i < 2 && i < 1 && arr.length > 1) {
-                  return <>{e}, </>;
+                  return <span key={i}>{e}, </span>;
                 } else if (i < 2) {
-                  return e;
+                  return <span key={i}>{e}</span>;
                 }
               })}
             </div>
@@ -171,16 +177,19 @@ export function MovieCardCalendar({
               <span className="font-semibold">Starring:</span>{" "}
               {actors.map((e, i, arr) => {
                 if (i < 2 && i < 1 && arr.length > 1) {
-                  return <>{e}, </>;
+                  return <span key={i}>{e}, </span>;
                 } else if (i < 2) {
-                  return e;
+                  return <span key={i}>{e}</span>;
                 }
               })}
             </div>
           )}
           <div className="mt-auto inline-flex flex-wrap self-start gap-1.5">
-            {genreNames.map((e) => (
-              <Badge className="inline-flex gap-1 items-center rounded-sm sm:rounded-full px-1 py-0 sm:px-1.5 sm:py-0.5 text-xs font-normal transition duration-300 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2">
+            {genreNames.map((e, i) => (
+              <Badge
+                key={i}
+                className="inline-flex gap-1 items-center rounded-sm sm:rounded-full px-1 py-0 sm:px-1.5 sm:py-0.5 text-xs font-normal transition duration-300 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+              >
                 {e}
               </Badge>
             ))}

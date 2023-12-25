@@ -120,6 +120,70 @@ export function MovieReleaseTypeFilter() {
   );
 }
 
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+
+export function MovieLengthFilter() {
+  // Hooks
+  const searchParams = useSearchParams();
+  const pathname = usePathname();
+  const { replace } = useRouter();
+
+  // Initial states based on URL params
+  const filter = searchParams.get("lengthfilter") || "feature";
+  const rules = [
+    {
+      value: "short",
+      label: "Only Short Films",
+    },
+    {
+      value: "feature",
+      label: "Only Feature Films",
+    },
+    {
+      value: "all",
+      label: "All Movies",
+    },
+  ];
+
+  function handleSelect(currentValue: string) {
+    const params = new URLSearchParams(searchParams);
+
+    if (currentValue === "feature") {
+      params.delete("lengthfilter");
+    } else {
+      params.set("lengthfilter", currentValue);
+    }
+    replace(`${pathname}?${params.toString()}`);
+    return;
+  }
+
+  return (
+    <Select onValueChange={handleSelect} defaultValue={filter}>
+      <SelectTrigger className="rounded-full">
+        <SelectValue placeholder="Filter Releases" />
+      </SelectTrigger>
+      <SelectContent className="rounded-lg">
+        <SelectGroup>
+          <SelectLabel>Filter by Length</SelectLabel>
+          {rules.map((rule) => (
+            <SelectItem key={rule.value} value={rule.value}>
+              {rule.label}
+            </SelectItem>
+          ))}
+        </SelectGroup>
+      </SelectContent>
+    </Select>
+  );
+}
+
 /*
 // Platform filter
 import {

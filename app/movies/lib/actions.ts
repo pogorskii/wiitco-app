@@ -16,6 +16,7 @@ export const fetchMovieReleaseDatesByMonth = async ({
   year,
   month,
   types = "theatrical_limited,theatrical",
+  lengthFilter = "feature",
 }: {
   page?: number;
   year: string;
@@ -23,7 +24,7 @@ export const fetchMovieReleaseDatesByMonth = async ({
   types?: string;
   // categories?: string;
   // platforms?: string;
-  // filterUnknown?: string;
+  lengthFilter?: string;
 }) => {
   const typesEnum: { [key: string]: number } = {
     premiere: 1,
@@ -38,8 +39,8 @@ export const fetchMovieReleaseDatesByMonth = async ({
   // // Handle 'platforms' search param
   // const platformId = platforms ? Number(platforms) : undefined;
 
-  // // Handle 'filterUnknown' filter
-  // const follows = filterUnknown === "true" ? 0 : -1;
+  const lengthMin = lengthFilter === "feature" ? 41 : 0;
+  const lengthMax = lengthFilter === "short" ? 40 : 9000;
 
   const yearInt = Number(year);
   const monthInt = Number(month);
@@ -57,7 +58,7 @@ export const fetchMovieReleaseDatesByMonth = async ({
       releaseCountry: {
         iso31661: "US",
         movie: {
-          runtime: { gte: 75 },
+          runtime: { gte: lengthMin, lte: lengthMax },
         },
       },
       type: { in: typesQuery },

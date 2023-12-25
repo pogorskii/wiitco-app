@@ -593,12 +593,13 @@ model CinemaPerson {
 }
 
 model CinemaCountry {
-  id          Int             @id @default(autoincrement())
-  iso31661    String          @unique
-  englishName String
-  nativeName  String
-  movies      MovieCountry[]
-  shows       TVShowCountry[]
+  id              Int                 @id @default(autoincrement())
+  iso31661        String              @unique
+  englishName     String
+  nativeName      String
+  movies          MovieCountry[]
+  showsProduced   TVShowProdCountry[]
+  showsOriginated TVShowOrigCountry[]
 }
 
 model TVNetwork {
@@ -618,7 +619,7 @@ model Movie {
   popularity          Float
   runtime             Int?
   budget              Int?
-  primaryReleaseDate  DateTime
+  primaryReleaseDate  DateTime?
   releaseCountries    MReleaseCountry[]
   genres              MovieGenre[]
   productionCountries MovieCountry[]
@@ -683,7 +684,7 @@ model MovieCountry {
 
 // TV Shows tables
 model TVShow {
-  id                  Int             @id
+  id                  Int                 @id
   name                String
   genres              TVShowGenre[]
   episodeRunTimes     Int[]
@@ -693,12 +694,12 @@ model TVShow {
   languages           String[]
   creators            TVShowCreator[]
   networks            TVShowNetwork[]
-  originCountries     String[]
+  originCountries     TVShowOrigCountry[]
   originalLanguage    String
   originalName        String
   popularity          Float
   posterPath          String?
-  productionCountries TVShowCountry[]
+  productionCountries TVShowProdCountry[]
   seasons             TVSeason[]
   status              String
   type                String
@@ -747,7 +748,16 @@ model TVShowNetwork {
   @@id([showId, networkId])
 }
 
-model TVShowCountry {
+model TVShowOrigCountry {
+  show       TVShow        @relation(fields: [showId], references: [id])
+  showId     Int
+  country    CinemaCountry @relation(fields: [countryIso], references: [iso31661])
+  countryIso String
+
+  @@id([showId, countryIso])
+}
+
+model TVShowProdCountry {
   show       TVShow        @relation(fields: [showId], references: [id])
   showId     Int
   country    CinemaCountry @relation(fields: [countryIso], references: [iso31661])

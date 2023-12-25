@@ -5,12 +5,7 @@ import { useState } from "react";
 import { FaChevronDown, FaChevronUp } from "react-icons/fa";
 import { Button } from "@/components/ui/button";
 
-import { MovieReleaseTypeFilter } from "./movie-filters";
-// import {
-//   PlatformFilter,
-//   GameCategoryFilter,
-//   FilterUnknownGames,
-// } from "./game-search-filters";
+import { MovieLengthFilter, MovieReleaseTypeFilter } from "./movie-filters";
 
 import { MonthSwitcher } from "../month-switcher";
 
@@ -18,7 +13,7 @@ export function CalendarNav({ year, month }: { year: string; month: string }) {
   const [filtersOpen, setFiltersOpen] = useState(false);
 
   return (
-    <div className="relative sm:sticky top-[-1px] z-20 bg-background py-2">
+    <div className="relative sm:sticky top-[-1px] bg-background z-20 py-1 px-6 mx-[-24px] sm:px-10 sm:mx-[-40px] lg:px-20 lg:mx-[-80px]">
       <MonthSwitcher year={year} month={month} />
       {/* Desktop filters */}
       <div className="hidden sm:flex justify-between">
@@ -26,7 +21,9 @@ export function CalendarNav({ year, month }: { year: string; month: string }) {
           <MovieReleaseTypeFilter />
         </div>
         {/* <GameCategoryFilter /> */}
-        <div className="ms-auto">{/* <FilterUnknownGames /> */}</div>
+        <div className="ms-auto">
+          <MovieLengthFilter />
+        </div>
       </div>
       {/* Mobile filters */}
       <motion.div

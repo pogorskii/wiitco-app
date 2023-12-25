@@ -17,6 +17,9 @@ const nextConfig = {
     ],
   },
   staticPageGenerationTimeout: 300,
+  experimental: {
+    scrollRestoration: true,
+  },
 };
 
 module.exports = nextConfig;

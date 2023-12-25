@@ -17,7 +17,7 @@ export function CalendarNav({ year, month }: { year: string; month: string }) {
   const [filtersOpen, setFiltersOpen] = useState(false);
 
   return (
-    <div className="relative sm:sticky top-[-1px] z-20 bg-background py-2 mx-[-5px] px-[5px]">
+    <div className="relative sm:sticky top-[-1px] z-20 bg-background py-1 px-6 mx-[-24px] sm:px-10 sm:mx-[-40px] lg:px-20 lg:mx-[-80px]">
       <MonthSwitcher year={year} month={month} />
       {/* Desktop filters */}
       <div className="py-1 hidden sm:flex justify-between">

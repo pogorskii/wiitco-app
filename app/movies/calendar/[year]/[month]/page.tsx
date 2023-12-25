@@ -34,12 +34,12 @@ export default async function Page({
   searchParams?: {
     types?: string;
     platforms?: string;
-    filterunknown?: string;
+    lengthfilter?: string;
   };
 }) {
   const types = searchParams?.types;
   const platforms = searchParams?.platforms;
-  const filterUnknown = searchParams?.filterunknown;
+  const lengthFilter = searchParams?.lengthfilter;
   const year = params.year;
   const month = params.month;
   const displayDate = getMonthYearName(month, year);
@@ -67,7 +67,7 @@ export default async function Page({
           month={month}
           types={types}
           // platforms={platforms}
-          // filterUnknown={filterUnknown}
+          lengthFilter={lengthFilter}
         />
       </Suspense>
     </>
@@ -79,20 +79,20 @@ async function MoviesCalendarBody({
   month,
   types,
   platforms,
-  filterUnknown,
+  lengthFilter,
 }: {
   year: string;
   month: string;
   types?: string;
   platforms?: string;
-  filterUnknown?: string;
+  lengthFilter?: string;
 }) {
   const movies = await fetchMovieReleaseDatesByMonth({
     year,
     month,
     types,
     // platforms,
-    // filterUnknown,
+    lengthFilter,
   });
 
   if (!movies.length)
@@ -106,7 +106,7 @@ async function MoviesCalendarBody({
         initialMovies={movies}
         types={types}
         // platforms={platforms}
-        // filterUnknown={filterUnknown}
+        lengthFilter={lengthFilter}
       />
     </div>
   );
