@@ -59,6 +59,22 @@ headers.set("Authorization", `Bearer ${process.env.TWITCH_TOKEN}`);
 
 // DROP
 export const drop = async () => {
+  // await prisma.game.updateMany({
+  //   where: {
+  //     follows: null,
+  //   },
+  //   data: {
+  //     follows: 0,
+  //   },
+  // });
+  // await prisma.game.updateMany({
+  //   where: {
+  //     hypes: null,
+  //   },
+  //   data: {
+  //     hypes: 0,
+  //   },
+  // });
   // await prisma.gEngine.deleteMany({});
 };
 
@@ -69,13 +85,14 @@ export const fetchTest = async () => {
       method: "POST",
       headers,
       body: `fields *;
-      limit 50;
-      offset ${0 * 400};
+      limit 500;
+      offset ${8 * 500};
       sort updated_at desc;`,
       cache: "no-store",
     });
     const result = await data.json();
-    console.log(result);
+    // console.log(result);
+    console.log(new Date(result[0].updated_at * 1000));
     if (!result) throw new Error(`Couldn't fetch TEST`);
     if (result.length === 0) return [];
     return result;

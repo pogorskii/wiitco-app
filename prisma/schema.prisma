@@ -149,12 +149,12 @@ model Game {
   id                 Int                     @id
   name               String
   slug               String                  @unique
-  category           Int
+  category           Int                     @default(0)
   firstReleaseDate   DateTime?
-  rating             Float
-  reviewsCount       Int
-  follows            Int
-  hypes              Int
+  rating             Float                   @default(0.0)
+  reviewsCount       Int                     @default(0)
+  follows            Int                     @default(0)
+  hypes              Int                     @default(0)
   status             Int?
   summary            String?
   altNames           GAltName[]
