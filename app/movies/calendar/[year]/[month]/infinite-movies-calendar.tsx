@@ -41,7 +41,10 @@ export function InfiniteMoviesCalendar({
     });
     if (movies?.length) {
       page.current = next;
-      setMovies((prev) => [...(prev?.length ? prev : []), ...movies]);
+      setMovies((prev) => [
+        ...(prev?.length ? prev : []),
+        ...(movies as MovieReleasesByMonth),
+      ]);
       if (movies.length < itemsPerPage) setLoadingActive(false);
     } else {
       setLoadingActive(false);
