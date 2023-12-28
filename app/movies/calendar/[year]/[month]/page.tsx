@@ -103,7 +103,7 @@ async function MoviesCalendarBody({
       <InfiniteMoviesCalendar
         month={month}
         year={year}
-        initialMovies={movies}
+        initialMovies={movies as MovieReleasesByMonth}
         types={types}
         // platforms={platforms}
         lengthFilter={lengthFilter}
