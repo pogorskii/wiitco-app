@@ -1,11 +1,11 @@
 "use server";
 
 import { v4 as uuid } from "uuid";
-import { fetchMovieReleaseDatesByMonth } from "@/app/movies/lib/actions";
-import { MovieReleasesByMonth } from "@/app/movies/lib/definitions";
+import { fetchMovieReleaseDatesByMonth } from "@/app/cinema/lib/actions";
+import { MovieReleasesByMonth } from "@/app/cinema/lib/definitions";
 import { InfiniteMoviesCalendar } from "./infinite-movies-calendar";
 import { Breadcrumbs } from "@/app/ui/breadcrumbs";
-import { CalendarNav } from "@/app/ui/movies/calendar-nav";
+import { CalendarNav } from "@/app/ui/cinema/calendar-nav";
 import { Suspense } from "react";
 import { GamesCalendarBodySkeleton } from "@/app/ui/video-games/skeletons";
 import { getMonthYearName } from "@/app/lib/utils";
@@ -38,7 +38,6 @@ export default async function Page({
   };
 }) {
   const types = searchParams?.types;
-  const platforms = searchParams?.platforms;
   const lengthFilter = searchParams?.lengthfilter;
   const year = params.year;
   const month = params.month;
@@ -49,10 +48,10 @@ export default async function Page({
       <Breadcrumbs
         breadcrumbs={[
           { label: "Home", href: "/" },
-          { label: "Movies", href: "/movies/" },
+          { label: "Movies", href: "/cinema/" },
           {
             label: "Calendar",
-            href: `/movies/calendar/${year}/${month}`,
+            href: `/cinema/calendar/${year}/${month}`,
             active: true,
           },
         ]}
@@ -66,7 +65,6 @@ export default async function Page({
           year={year}
           month={month}
           types={types}
-          // platforms={platforms}
           lengthFilter={lengthFilter}
         />
       </Suspense>
@@ -78,20 +76,17 @@ async function MoviesCalendarBody({
   year,
   month,
   types,
-  platforms,
   lengthFilter,
 }: {
   year: string;
   month: string;
   types?: string;
-  platforms?: string;
   lengthFilter?: string;
 }) {
   const movies = await fetchMovieReleaseDatesByMonth({
     year,
     month,
     types,
-    // platforms,
     lengthFilter,
   });
 
@@ -105,7 +100,6 @@ async function MoviesCalendarBody({
         year={year}
         initialMovies={movies as MovieReleasesByMonth}
         types={types}
-        // platforms={platforms}
         lengthFilter={lengthFilter}
       />
     </div>

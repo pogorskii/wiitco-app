@@ -184,203 +184,104 @@ export function MovieLengthFilter() {
   );
 }
 
-/*
-// Platform filter
-import {
-  currentGen,
-  vrGen,
-  eighthGen,
-  seventhGen,
-  sixthGen,
-  fifthGen,
-  otherGen,
-} from "./game-platforms";
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-
-export function PlatformFilter() {
+export function MovieGenreFilter() {
   // Hooks
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const { replace } = useRouter();
 
   // Initial states based on URL params
-  const platforms = searchParams.get("platforms") || "all";
-  const [value, setValue] = useState(platforms);
-
-  function handleSelect(value: string) {
-    const params = new URLSearchParams(searchParams);
-    if (value === "all") {
-      params.delete("platforms");
-      setValue("");
-    } else {
-      params.set("platforms", value);
-      setValue(value);
-    }
-    replace(`${pathname}?${params.toString()}`);
-    return;
-  }
-
-  return (
-    <Select onValueChange={handleSelect} defaultValue={value}>
-      <SelectTrigger className="w-full sm:w-[280px] rounded-full">
-        <SelectValue placeholder="Select Platform" />
-      </SelectTrigger>
-      <SelectContent className="rounded-lg">
-        <SelectItem value="all">All Platforms</SelectItem>
-        <SelectGroup>
-          <SelectLabel>Current Generation</SelectLabel>
-          {currentGen.map((platform) => (
-            <SelectItem key={platform.value} value={platform.value.toString()}>
-              {platform.label}
-            </SelectItem>
-          ))}
-        </SelectGroup>
-        <SelectGroup>
-          <SelectLabel>VR Platforms</SelectLabel>
-          {vrGen.map((platform) => (
-            <SelectItem key={platform.value} value={platform.value.toString()}>
-              {platform.label}
-            </SelectItem>
-          ))}
-        </SelectGroup>
-        <SelectGroup>
-          <SelectLabel>8th Generation</SelectLabel>
-          {eighthGen.map((platform) => (
-            <SelectItem key={platform.value} value={platform.value.toString()}>
-              {platform.label}
-            </SelectItem>
-          ))}
-        </SelectGroup>
-        <SelectGroup>
-          <SelectLabel>7th Generation</SelectLabel>
-          {seventhGen.map((platform) => (
-            <SelectItem key={platform.value} value={platform.value.toString()}>
-              {platform.label}
-            </SelectItem>
-          ))}
-        </SelectGroup>
-        <SelectGroup>
-          <SelectLabel>6th Generation</SelectLabel>
-          {sixthGen.map((platform) => (
-            <SelectItem key={platform.value} value={platform.value.toString()}>
-              {platform.label}
-            </SelectItem>
-          ))}
-        </SelectGroup>
-        <SelectGroup>
-          <SelectLabel>5th Generation</SelectLabel>
-          {fifthGen.map((platform) => (
-            <SelectItem key={platform.value} value={platform.value.toString()}>
-              {platform.label}
-            </SelectItem>
-          ))}
-        </SelectGroup>
-        <SelectGroup>
-          <SelectLabel>Other Platforms</SelectLabel>
-          {otherGen.map((platform) => (
-            <SelectItem key={platform.value} value={platform.value.toString()}>
-              {platform.label}
-            </SelectItem>
-          ))}
-        </SelectGroup>
-      </SelectContent>
-    </Select>
-  );
-}
-
-// Sorting selector
-export function SortingSelector() {
-  // Hooks
-  const searchParams = useSearchParams();
-  const pathname = usePathname();
-  const { replace } = useRouter();
-
-  // Initial states based on URL params
-  const filter = searchParams.get("sort") || "relevance";
-  const rules = [
+  const filter = searchParams.get("genre") || "all";
+  const genres = [
     {
-      value: "relevance",
-      label: "Relevance",
+      value: "28",
+      label: "Action",
     },
     {
-      value: "date-newer",
-      label: "Newest Games",
+      value: "12",
+      label: "Adventrue",
     },
     {
-      value: "date-older",
-      label: "Oldest Games",
+      value: "16",
+      label: "Animation",
     },
     {
-      value: "title-a-z",
-      label: "Title (A to Z)",
+      value: "35",
+      label: "Comedy",
     },
     {
-      value: "title-z-a",
-      label: "Title (Z to A)",
-    },
-  ];
-
-  function handleSelect(currentValue: string) {
-    const params = new URLSearchParams(searchParams);
-    params.set("sort", currentValue);
-    replace(`${pathname}?${params.toString()}`);
-    return;
-  }
-
-  return (
-    <Select onValueChange={handleSelect} defaultValue={filter}>
-      <SelectTrigger className="rounded-full">
-        <SelectValue placeholder="Sort by" />
-      </SelectTrigger>
-      <SelectContent className="rounded-lg">
-        <SelectGroup>
-          <SelectLabel>Sort results by...</SelectLabel>
-          {rules.map((rule) => (
-            <SelectItem key={rule.value} value={rule.value}>
-              {rule.label}
-            </SelectItem>
-          ))}
-        </SelectGroup>
-      </SelectContent>
-    </Select>
-  );
-}
-
-// Filter Unknown Games (for calendar)
-export function FilterUnknownGames() {
-  // Hooks
-  const searchParams = useSearchParams();
-  const pathname = usePathname();
-  const { replace } = useRouter();
-
-  // Initial states based on URL params
-  const filter = searchParams.get("filterunknown") || "true";
-  const rules = [
-    {
-      value: "false",
-      label: "Show All Games",
+      value: "80",
+      label: "Crime",
     },
     {
-      value: "true",
-      label: "Hide Niche Games",
+      value: "99",
+      label: "Documentary",
+    },
+    {
+      value: "18",
+      label: "Drama",
+    },
+    {
+      value: "10751",
+      label: "Family",
+    },
+    {
+      value: "14",
+      label: "Fantasy",
+    },
+    {
+      value: "36",
+      label: "History",
+    },
+    {
+      value: "27",
+      label: "Horror",
+    },
+    {
+      value: "10402",
+      label: "Music",
+    },
+    {
+      value: "9648",
+      label: "Mystery",
+    },
+    {
+      value: "10749",
+      label: "Romance",
+    },
+    {
+      value: "878",
+      label: "Sci-Fi",
+    },
+    {
+      value: "10770",
+      label: "TV Movie",
+    },
+    {
+      value: "53",
+      label: "Thriller",
+    },
+    {
+      value: "10752",
+      label: "War",
+    },
+    {
+      value: "37",
+      label: "Western",
+    },
+    {
+      value: "all",
+      label: "All Genres",
     },
   ];
 
   function handleSelect(currentValue: string) {
     const params = new URLSearchParams(searchParams);
 
-    if (currentValue === "true") {
-      params.delete("filterunknown");
+    if (currentValue === "all") {
+      params.delete("genre");
     } else {
-      params.set("filterunknown", currentValue);
+      params.set("genre", currentValue);
     }
     replace(`${pathname}?${params.toString()}`);
     return;
@@ -389,14 +290,14 @@ export function FilterUnknownGames() {
   return (
     <Select onValueChange={handleSelect} defaultValue={filter}>
       <SelectTrigger className="rounded-full">
-        <SelectValue placeholder="Filter Releases" />
+        <SelectValue placeholder="Select Genre" />
       </SelectTrigger>
       <SelectContent className="rounded-lg">
         <SelectGroup>
-          <SelectLabel>Filter Releases</SelectLabel>
-          {rules.map((rule) => (
-            <SelectItem key={rule.value} value={rule.value}>
-              {rule.label}
+          <SelectLabel>Filter by Genre</SelectLabel>
+          {genres.map((genre) => (
+            <SelectItem key={genre.value} value={genre.value}>
+              {genre.label}
             </SelectItem>
           ))}
         </SelectGroup>
@@ -404,5 +305,3 @@ export function FilterUnknownGames() {
     </Select>
   );
 }
-
-*/

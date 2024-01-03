@@ -1,6 +1,8 @@
 "use server";
 
 import prisma from "@/app/lib/prisma";
+import { MoviesSearch } from "./zod-schemas";
+import { MovieDetails } from "./zod-schemas";
 
 const headers = new Headers();
 headers.set("Accept", "application/json");
@@ -9,6 +11,50 @@ headers.set("Authorization", `Bearer ${process.env.TMDB_ACCESS_TOKEN}`);
 const options = {
   method: "GET",
   headers,
+};
+
+export const fetchMovieDetails = async (id: string) => {
+  try {
+    const response = await fetch(
+      `https://api.themoviedb.org/3/movie/${id}?append_to_response=credits%2Cexternal_ids%2Crelease_dates%2Csimilar%2Cvideos%2Cwatch_providers&language=en-US`
+    );
+    const parsedData = MovieDetails.parse(response);
+    return parsedData;
+  } catch (err) {
+    console.error(err);
+  }
+};
+
+export const fetchMoviesSearch = async ({
+  search,
+  genre,
+  page = 1,
+}: {
+  search?: string;
+  genre?: string;
+  page?: number;
+}) => {
+  try {
+    // If search query is empty, fetch popular movies instead
+    const response = search
+      ? await fetch(
+          `https://api.themoviedb.org/3/search/movie?query=${search}%20&include_adult=false&language=en-US&page=${page}`,
+          options
+        )
+      : await fetch(
+          `https://api.themoviedb.org/3/movie/popular?language=en-US&page=${page}`,
+          options
+        );
+    const result = await response.json();
+    const parsedData = genre
+      ? MoviesSearch.parse(result.results).filter((e) =>
+          e.genre_ids?.includes(Number(genre))
+        )
+      : MoviesSearch.parse(result.results);
+    return parsedData;
+  } catch (err) {
+    console.error(err);
+  }
 };
 
 export const fetchMovieReleaseDatesByMonth = async ({
@@ -22,8 +68,6 @@ export const fetchMovieReleaseDatesByMonth = async ({
   year: string;
   month: string;
   types?: string;
-  // categories?: string;
-  // platforms?: string;
   lengthFilter?: string;
 }) => {
   const typesEnum: { [key: string]: number } = {
@@ -35,9 +79,6 @@ export const fetchMovieReleaseDatesByMonth = async ({
     tv: 6,
   };
   const typesQuery = types.split(",").map((x) => typesEnum[x]);
-
-  // // Handle 'platforms' search param
-  // const platformId = platforms ? Number(platforms) : undefined;
 
   const lengthMin = lengthFilter === "feature" ? 41 : 0;
   const lengthMax = lengthFilter === "short" ? 40 : 9000;

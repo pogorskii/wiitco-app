@@ -15,7 +15,7 @@ import {
 
 // Map of links to display in the side navigation.
 const links = [
-  { name: "Movies", href: "/movies" },
+  { name: "Movies", href: "/cinema" },
   {
     name: "Video Games",
     href: "/video-games",
@@ -25,12 +25,12 @@ const links = [
 const moviesLinks: { title: string; href: string; description: string }[] = [
   {
     title: "Calendar",
-    href: "/movies/calendar",
+    href: "/cinema/calendar",
     description: "Check what movies are scheduled to release on any date.",
   },
   {
     title: "Movies Database",
-    href: "/movies",
+    href: "/cinema/search",
     description: "Browse, search, and filter all movies.",
   },
 ];

@@ -1,10 +1,10 @@
 "use server";
 
 import { v4 as uuid } from "uuid";
-import { fetchMoviesSearch } from "./lib/actions";
-import InfiniteMoviesSearch from "./infinite-movies-search";
+import { fetchMoviesSearch } from "../lib/actions";
+import InfiniteMoviesSearch from "../infinite-movies-search";
 import { Breadcrumbs } from "@/app/ui/breadcrumbs";
-import { SectionNav } from "../ui/cinema/section-nav";
+import { SectionNav } from "../../ui/cinema/section-nav";
 import { Suspense } from "react";
 import { GamesSearchBodySkeleton } from "@/app/ui/video-games/skeletons";
 import type { Metadata, ResolvingMetadata } from "next";

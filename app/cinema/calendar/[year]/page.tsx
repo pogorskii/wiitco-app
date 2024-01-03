@@ -4,5 +4,5 @@ import { redirect } from "next/navigation";
 
 export default async function Page({ params }: { params: { year: string } }) {
   const year = params.year;
-  redirect(`/movies/calendar/${year}/1/`);
+  redirect(`/cinema/calendar/${year}/1/`);
 }

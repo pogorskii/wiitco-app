@@ -3,7 +3,7 @@
 import { DayHeader, DayHeaderMobile } from "../day-headers";
 import { MovieCardCalendar } from "./movie-cards";
 import { getShortDayMonthName } from "@/app/lib/utils";
-import { MovieRelease } from "@/app/movies/lib/definitions";
+import { MovieRelease } from "@/app/cinema/lib/definitions";
 
 export function MoviesDay({
   day,
