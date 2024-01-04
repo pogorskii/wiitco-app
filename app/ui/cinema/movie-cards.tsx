@@ -72,7 +72,7 @@ export function MovieCardCalendar({
         key={id}
         className="hidden sm:flex col-span-1 shadow border border-gray-200 dark:border-gray-800 flex-col overflow-hidden h-auto max-w-full rounded-lg"
       >
-        <Link className="flex flex-col grow" href={`/movies/${id}`}>
+        <Link className="flex flex-col grow" href={`/cinema/movies/${id}`}>
           <div className="relative overflow-hidden">
             <div className="absolute z-10 top-2 left-2">
               {typeNames.map((type, i) => (
@@ -124,7 +124,7 @@ export function MovieCardCalendar({
       {/* Mobile version */}
       <div className="flex sm:hidden py-4">
         <div className="w-24 grow-0 shrink-0">
-          <Link href={`/movies/${id}`}>
+          <Link href={`/cinema/movies/${id}`}>
             <div className="overflow-hidden ms-auto w-fit">
               <Image
                 className="hover:scale-105 duration-200 ease-in-out"
@@ -155,7 +155,7 @@ export function MovieCardCalendar({
           </div>
           <Link
             className="mb-1 hover:text-blue-400 hover:underline hover:underline-offset-2 hover:decoration-solid"
-            href={`/movies/${id}`}
+            href={`/cinema/movies/${id}`}
           >
             <h2 className="text-base font-semibold">{title}</h2>
           </Link>
@@ -246,7 +246,7 @@ export function MovieSearchCard({ movie }: { movie: MovieSearch }) {
           <CardHeader className="p-0">
             <Link
               className="hover:text-blue-400 hover:underline hover:underline-offset-2 hover:decoration-solid"
-              href={`/movies/${movie.id}`}
+              href={`/cinema/movies/${movie.id}`}
             >
               <CardTitle className="text-xl font-semibold">
                 {movie.title}
@@ -276,7 +276,7 @@ export function MovieSearchCard({ movie }: { movie: MovieSearch }) {
           </CardFooter>
         </CardContent>
         <div className="col-span-1 w-full">
-          <Link href={`/movies/${movie.id}`}>
+          <Link href={`/cinema/movies/${movie.id}`}>
             <div className="overflow-hidden ms-auto w-fit h-full">
               <Image
                 className="hover:scale-105 duration-200 ease-in-out h-full"
@@ -296,7 +296,7 @@ export function MovieSearchCard({ movie }: { movie: MovieSearch }) {
       {/* Mobile version */}
       <div className="col-span-2 md:col-span-1 flex sm:hidden py-4">
         <div className="w-24 grow-0 shrink-0">
-          <Link href={`/movies/${movie.id}`}>
+          <Link href={`/cinema/movies/${movie.id}`}>
             <div className="overflow-hidden ms-auto w-fit">
               <Image
                 className="hover:scale-105 duration-200 ease-in-out"
@@ -316,7 +316,7 @@ export function MovieSearchCard({ movie }: { movie: MovieSearch }) {
         <div className="ps-2 flex flex-col justify-between">
           <Link
             className="mb-2 hover:text-blue-400 hover:underline hover:underline-offset-2 hover:decoration-solid"
-            href={`/movies/${movie.id}`}
+            href={`/cinema/movies/${movie.id}`}
           >
             <h2 className="text-base font-semibold">{movie.title}</h2>
           </Link>

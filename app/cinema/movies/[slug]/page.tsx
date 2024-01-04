@@ -1,7 +1,7 @@
 "use server";
 
 import { Suspense } from "react";
-import { formatDistanceToNow } from "date-fns";
+import { formatDistanceToNow, parse } from "date-fns";
 import Image from "next/image";
 import { GamePlatforms } from "@/app/ui/video-games/game-platforms";
 import { TagsRow } from "@/app/ui/tags-row";
@@ -20,7 +20,7 @@ import { Separator } from "@/components/ui/separator";
 import prisma from "@/app/lib/prisma";
 import { Game, GCover } from "@prisma/client";
 import type { Metadata, ResolvingMetadata } from "next";
-import { fetchMovieDetails } from "../../lib/actions";
+import { fetchMovieDetails, fetchMovieCollection } from "../../lib/actions";
 
 export async function generateMetadata(
   {
@@ -42,22 +42,22 @@ export async function generateMetadata(
 }
 
 export default async function Page({ params }: { params: { slug: string } }) {
-  const movie = fetchMovieDetails(params.slug);
+  const movie = await fetchMovieDetails(params.slug);
   if (!movie) return <p>No game found.</p>;
 
-  const coverUrl = game.cover
-    ? `https://images.igdb.com/igdb/image/upload/t_original/${game.cover?.imageId}.png`
-    : "/game-placeholder.webp";
+  const coverUrl = movie.poster_path
+    ? `https://image.tmdb.org/t/p/w600_and_h900_bestv2${movie.poster_path}`
+    : "/movie-placeholder.webp";
 
   return (
     <>
       <Breadcrumbs
         breadcrumbs={[
           { label: "Home", href: "/" },
-          { label: "Games", href: "/video-games/games" },
+          { label: "Movies", href: "/cinema/movies" },
           {
-            label: game.name,
-            href: `/video-games/games/${params.slug}`,
+            label: movie.title,
+            href: `/cinema/movies/${params.slug}`,
             active: true,
           },
         ]}
@@ -70,9 +70,9 @@ export default async function Page({ params }: { params: { slug: string } }) {
           <Suspense fallback={<p>loading...</p>}>
             <Image
               src={coverUrl}
-              alt={`${game.name} game cover`}
-              width={game.cover?.width || 1200}
-              height={game.cover?.height || 1600}
+              alt={`${movie.title} poster`}
+              width={600}
+              height={900}
               style={{
                 width: "100%",
               }}
@@ -81,30 +81,30 @@ export default async function Page({ params }: { params: { slug: string } }) {
           </Suspense>
           {/* TODO: Change appearance if added */}
           <Button className="mt-4 mb-6 w-full">
-            <FaPlus className="me-1" /> Watch this game
+            <FaPlus className="me-1" /> Watch this movie
           </Button>
 
           <div className="flex col-span-1 lg:hidden flex-col items-center">
             {/* Reviews */}
             <RatingCircle
-              rating={game.rating}
-              reviewCount={game.reviewsCount}
+              rating={movie.vote_average * 10}
+              reviewCount={movie.vote_count}
             />
 
             {/* Age Ratings */}
-            {game.ageRatings.length > 0 && (
+            {/* {game.ageRatings.length > 0 && (
               <AgeRatings ageRatings={game.ageRatings} />
-            )}
+            )} */}
 
             {/* Languages Table */}
-            {game.languageSupports.length > 0 && (
+            {/* {game.languageSupports.length > 0 && (
               <LanguagesTable languageSupports={game.languageSupports} />
-            )}
+            )} */}
           </div>
 
-          <Suspense fallback={<p>Loading...</p>}>
-            <RelatedSeries gameSlug={game.slug} />
-          </Suspense>
+          {movie.belongs_to_collection && (
+            <RelatedSeries series={movie.belongs_to_collection} />
+          )}
         </div>
 
         {/* Second column */}
@@ -113,9 +113,9 @@ export default async function Page({ params }: { params: { slug: string } }) {
             <div className="col-span-2 block me-4 md:hidden">
               <Image
                 src={coverUrl}
-                alt={`${game.name} game cover`}
-                width={game.cover?.width || 1200}
-                height={game.cover?.height || 1600}
+                alt={`${movie.title} poster`}
+                width={600}
+                height={900}
                 style={{
                   width: "100%",
                 }}
@@ -124,18 +124,26 @@ export default async function Page({ params }: { params: { slug: string } }) {
             </div>
 
             <div className="col-span-3 md:col-span-1">
-              <Suspense fallback={<p>Loading...</p>}>
+              {/* <Suspense fallback={<p>Loading...</p>}>
                 <GameCategory category={game.category} slug={game.slug} />
-              </Suspense>
+              </Suspense> */}
               <h1 className="mb-2 scroll-m-20 text-xl md:text-2xl font-semibold first:mt-0">
-                {game.name}
+                {movie.title}
               </h1>
-              {game.firstReleaseDate && (
+              {movie.release_date && movie.release_date !== "" && (
                 <p>
-                  {game.firstReleaseDate.toDateString()} (
-                  {formatDistanceToNow(game.firstReleaseDate, {
-                    addSuffix: true,
-                  })}
+                  {parse(
+                    movie.release_date,
+                    "yyyy-MM-dd",
+                    new Date()
+                  ).toDateString()}{" "}
+                  (
+                  {formatDistanceToNow(
+                    parse(movie.release_date, "yyyy-MM-dd", new Date()),
+                    {
+                      addSuffix: true,
+                    }
+                  )}
                   )
                 </p>
               )}
@@ -143,7 +151,7 @@ export default async function Page({ params }: { params: { slug: string } }) {
           </div>
 
           <Button className="mb-2 mt-4 w-full md:hidden">
-            <FaPlus className="me-1" /> Watch this game
+            <FaPlus className="me-1" /> Watch this movie
           </Button>
 
           <Separator className="mt-1 mb-4" />
@@ -153,26 +161,26 @@ export default async function Page({ params }: { params: { slug: string } }) {
             <div className="flex md:hidden col-span-5 lg:hidden flex-col items-center">
               {/* Reviews */}
               <RatingCircle
-                rating={game.rating}
-                reviewCount={game.reviewsCount}
+                rating={movie.vote_average * 10}
+                reviewCount={movie.vote_count}
               />
 
               {/* Age Ratings */}
-              {game.ageRatings.length > 0 && (
+              {/* {game.ageRatings.length > 0 && (
                 <AgeRatings ageRatings={game.ageRatings} />
-              )}
+              )} */}
 
               {/* Languages Table */}
-              {game.languageSupports.length > 0 && (
+              {/* {game.languageSupports.length > 0 && (
                 <LanguagesTable languageSupports={game.languageSupports} />
-              )}
+              )} */}
             </div>
 
             {/* Below LG breakpoint changes into single column */}
             <div className="col-span-4 lg:col-span-3">
               {/* Main Info List */}
               <ul className="mb-4 [&>*+*]:mt-2">
-                {game.developers.length > 0 && (
+                {/* {game.developers.length > 0 && (
                   <li>
                     <span className="font-semibold">
                       {game.developers.length === 1
@@ -185,8 +193,8 @@ export default async function Page({ params }: { params: { slug: string } }) {
                       tags={game.developers.map((d) => d.developer)}
                     ></TagsRow>
                   </li>
-                )}
-                {game.publishers.length > 0 && (
+                )} */}
+                {/* {game.publishers.length > 0 && (
                   <li>
                     <span className="font-semibold">
                       {game.publishers.length === 1
@@ -199,20 +207,25 @@ export default async function Page({ params }: { params: { slug: string } }) {
                       tags={game.publishers.map((p) => p.publisher)}
                     ></TagsRow>
                   </li>
-                )}
-                {game.genres.length > 0 && (
+                )} */}
+                {movie.genres && movie.genres.length > 0 && (
                   <li>
                     <span className="font-semibold">
-                      {game.genres.length === 1 ? `Genre:` : `Genres:`}
+                      {movie.genres.length === 1 ? `Genre:` : `Genres:`}
                     </span>
                     <TagsRow
-                      type="video-games"
+                      type="cinema"
                       category="genres"
-                      tags={game.genres.map((g) => g.genre)}
+                      tags={movie.genres.map((g) => {
+                        return {
+                          name: g.name,
+                          slug: g.id.toString(),
+                        };
+                      })}
                     />
                   </li>
                 )}
-                {game.engines.length > 0 && (
+                {/* {game.engines.length > 0 && (
                   <li>
                     <span className="font-semibold">
                       {game.engines.length === 1 ? `Engine:` : `Engines:`}
@@ -223,8 +236,8 @@ export default async function Page({ params }: { params: { slug: string } }) {
                       tags={game.engines.map((e) => e.engine)}
                     />
                   </li>
-                )}
-                {game.platforms.length > 0 && (
+                )} */}
+                {/* {game.platforms.length > 0 && (
                   <li className="flex justify-start gap-2">
                     <span className="font-semibold">
                       {game.platforms.length === 1
@@ -235,38 +248,42 @@ export default async function Page({ params }: { params: { slug: string } }) {
                       platforms={game.platforms.map((p) => p.platform.id)}
                     />
                   </li>
-                )}
+                )} */}
               </ul>
 
               {/* Truncated Summary */}
-              {game.summary && <TruncText text={game.summary} />}
+              {movie.overview && <TruncText text={movie.overview} />}
 
               {/* Links table */}
-              {game.websites.length > 0 && (
+              {/* {game.websites.length > 0 && (
                 <div className="mb-8">
                   <LinksList links={game.websites} />
                 </div>
-              )}
+              )} */}
 
               {/* Related Games Tabs */}
-              <Suspense fallback={<p>Loading...</p>}>
+              {/* <Suspense fallback={<p>Loading...</p>}>
                 <ChildGamesTabs slug={game.slug} />
-              </Suspense>
+              </Suspense> */}
 
               {/* YouTube Video Embed */}
-              {game.videos.length > 0 && (
+              {movie.videos.results.length > 0 && (
                 <section className="mb-8" id="trailer">
                   <h2 className="mb-2 scroll-m-20 text-lg font-semibold">
-                    {game.name}&apos;s Trailer
+                    {movie.title}&apos;s Trailer
                   </h2>
                   <Suspense fallback={<p>loading...</p>}>
-                    <YouTubePlayer videoId={game.videos[0].videoId} />
+                    <YouTubePlayer
+                      videoId={
+                        movie.videos.results[0] && movie.videos.results[0].key
+                      }
+                    />
                   </Suspense>
                 </section>
               )}
 
               {/* Screenshots Slider */}
-              {game.screenshots.length > 0 && (
+              {/* {game.screenshots.length > 0 && (
                 <section className="mb-8" id="screenshots">
                   <h2 className="mb-2 scroll-m-20 text-lg font-semibold">
                     {game.name}&apos;s Screenshots
@@ -278,18 +295,18 @@ export default async function Page({ params }: { params: { slug: string } }) {
                     />
                   </Suspense>
                 </section>
-              )}
+              )} */}
 
               <div className="md:hidden">
-                <Suspense fallback={<p>Loading...</p>}>
+                {/* <Suspense fallback={<p>Loading...</p>}>
                   <RelatedSeries gameSlug={game.slug} />
-                </Suspense>
+                </Suspense> */}
               </div>
 
               {/* Similar Games Slider */}
-              <Suspense fallback={<p>Loading...</p>}>
+              {/* <Suspense fallback={<p>Loading...</p>}>
                 <SimilarGames slug={game.slug} />
-              </Suspense>
+              </Suspense> */}
             </div>
 
             {/* Info Second Column */}
@@ -297,19 +314,19 @@ export default async function Page({ params }: { params: { slug: string } }) {
             <div className="hidden col-span-1 lg:flex flex-col items-center">
               {/* Reviews */}
               <RatingCircle
-                rating={game.rating}
-                reviewCount={game.reviewsCount}
+                rating={movie.vote_average * 10}
+                reviewCount={movie.vote_count}
               />
 
               {/* Age Ratings */}
-              {game.ageRatings.length > 0 && (
+              {/* {game.ageRatings.length > 0 && (
                 <AgeRatings ageRatings={game.ageRatings} />
-              )}
+              )} */}
 
               {/* Languages Table */}
-              {game.languageSupports.length > 0 && (
+              {/* {game.languageSupports.length > 0 && (
                 <LanguagesTable languageSupports={game.languageSupports} />
-              )}
+              )} */}
             </div>
           </div>
         </div>
@@ -789,227 +806,81 @@ import {
 } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
-async function RelatedSeries({ gameSlug }: { gameSlug: string }) {
-  const game = await prisma.game.findUnique({
-    where: {
-      slug: gameSlug,
-    },
-    select: {
-      franchises: {
-        select: {
-          franchise: {
-            select: {
-              name: true,
-              slug: true,
-            },
-          },
-        },
-      },
-      collections: {
-        select: {
-          collection: {
-            select: {
-              name: true,
-              slug: true,
-            },
-          },
-        },
-      },
-    },
-  });
-
-  if (!game || (!game.collections.length && !game.franchises.length)) return;
-
+async function RelatedSeries({
+  series,
+}: {
+  series: {
+    backdrop_path: string | null;
+    id: number;
+    name: string;
+    poster_path: string | null;
+  };
+}) {
   return (
     <div className="mb-8">
       <h2 className="md:hidden mb-2 font-semibold text-lg">Related to</h2>
       <p className="hidden md:block mb-2 font-semibold text-lg">Related to</p>
       <ul className="[&>li]:mt-1">
-        {game.franchises.map((e, i) => (
-          <li key={i}>
-            <SeriesModal type="Franchise" data={e.franchise} />
-          </li>
-        ))}
-        {game.collections.map((e, i) => (
-          <li key={i}>
-            <SeriesModal type="Series" data={e.collection} />
-          </li>
-        ))}
+        <li>
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button
+                className="w-full text-start rounded-none h-fit py-1 whitespace-break-spaces"
+                variant="outline"
+              >
+                {series.name}
+              </Button>
+            </DialogTrigger>
+            <Suspense>
+              <SeriesModalContent seriesId={series.id} />
+            </Suspense>
+          </Dialog>
+        </li>
       </ul>
     </div>
   );
 }
 
-function SeriesModal({
-  type,
-  data,
-}: {
-  type: string;
-  data: {
-    name: string;
-    slug: string;
-  };
-}) {
-  return (
-    <Dialog>
-      <DialogTrigger asChild>
-        <Button
-          className="w-full text-start rounded-none h-fit py-1 whitespace-break-spaces"
-          variant="outline"
-        >
-          {data.name} {type}
-        </Button>
-      </DialogTrigger>
-      <Suspense>
-        <SeriesModalContent type={type} slug={data.slug} />
-      </Suspense>
-    </Dialog>
-  );
-}
-
-async function SeriesModalContent({
-  type,
-  slug,
-}: {
-  type: string;
-  slug: string;
-}) {
-  let collection = null;
-
-  if (type === "Series") {
-    collection = await prisma.gCollection.findUnique({
-      where: {
-        slug,
-      },
-      include: {
-        mainGames: {
-          include: {
-            cover: true,
-            platforms: {
-              include: {
-                platform: true,
-              },
-            },
-          },
-        },
-        secondaryGames: {
-          include: {
-            game: {
-              include: {
-                cover: true,
-                platforms: {
-                  include: {
-                    platform: true,
-                  },
-                },
-              },
-            },
-          },
-        },
-      },
-    });
-  }
-
-  if (type === "Franchise") {
-    collection = await prisma.gFranchise.findUnique({
-      where: {
-        slug,
-      },
-      include: {
-        mainGames: {
-          include: {
-            cover: true,
-            platforms: {
-              include: {
-                platform: true,
-              },
-            },
-          },
-        },
-        secondaryGames: {
-          include: {
-            game: {
-              include: {
-                cover: true,
-                platforms: {
-                  include: {
-                    platform: true,
-                  },
-                },
-              },
-            },
-          },
-        },
-      },
-    });
-  }
-
+async function SeriesModalContent({ seriesId }: { seriesId: number }) {
+  const collection = await fetchMovieCollection(seriesId);
   if (!collection) return;
 
-  const uniqueGames = collection.mainGames
-    ? collection.mainGames.map((g) => g)
-    : [];
-  for (const entry of collection.secondaryGames) {
-    if (!uniqueGames.some((g) => g.id === entry.game.id)) {
-      uniqueGames.push(entry.game);
-    }
-  }
-  const gamesQuantity = uniqueGames.length;
-
-  const categoryEnum: { [key: number]: string } = {
-    0: "Main Game",
-    1: "DLC",
-    2: "Expansion",
-    3: "Bundle",
-    4: "Standalone DLC",
-    5: "Mod",
-    6: "Episode",
-    7: "Season",
-    8: "Remake",
-    9: "Remaster",
-    10: "Expanded Game",
-    11: "Port",
-    12: "Fork",
-    13: "Pack",
-    14: "Update",
-  };
+  const moviesQuantity = collection.parts.length;
 
   return (
     <DialogContent className="w-[800px] max-w-[90vw] max-h-[90vh]">
       <DialogHeader>
-        <DialogTitle>
-          {collection.name} {type}
-        </DialogTitle>
+        <DialogTitle>{collection.name}</DialogTitle>
         <DialogDescription>
-          There {gamesQuantity > 1 ? "are" : "is"} {gamesQuantity}{" "}
-          {gamesQuantity > 1 ? "games" : "game"} in this collection.
+          There {moviesQuantity > 1 ? "are" : "is"} {moviesQuantity}{" "}
+          {moviesQuantity > 1 ? "movies" : "movie"} in this collection.
         </DialogDescription>
       </DialogHeader>
       <ScrollArea className="h-full max-h-[70vh] w-auto rounded-md border">
         <div className="grid px-2 md:px-4 py-1 md:py-2">
-          {uniqueGames.map((game, i, arr) => (
+          {collection.parts.map((movie, i, arr) => (
             <div key={i}>
               <div className="py-2 grid grid-cols-4 gap-2">
                 <div className="col-span-3 shrink-0 flex flex-col items-start justify-between">
                   <div>
                     <Link
                       className="block mb-1 hover:underline hover:underline-offset-2"
-                      href={`/video-games/games/${game.slug}`}
+                      href={`/cinema/movies/${movie.id}`}
                     >
                       <h3 className="scroll-m-20 text-base md:text-xl font-medium tracking-tight">
-                        {game.name}
+                        {movie.title}
                       </h3>
                     </Link>
-                    {game.platforms && (
+                    {/* {game.platforms && (
                       <GamePlatforms
                         platforms={game.platforms.map((e) => e.platform.id)}
                       />
-                    )}
+                    )} */}
                   </div>
                   <div>
-                    <Badge className="inline-block">
+                    {/* <Badge className="inline-block">
                       {categoryEnum[game.category]}
-                    </Badge>
+                    </Badge> */}
                     {/* {game.parentGame && (
                   <>
                     {" "}
@@ -1026,16 +897,16 @@ async function SeriesModalContent({
                 </div>
                 <Link
                   className="col-span-1 block mb-1 hover:underline hover:underline-offset-2"
-                  href={`/video-games/games/${game.slug}`}
+                  href={`/cinema/movies/${movie.id}`}
                 >
                   <img
                     className="ms-auto max-h-32"
                     src={
-                      game.cover
-                        ? `https://images.igdb.com/igdb/image/upload/t_cover_big/${game.cover?.imageId}.png`
-                        : "/game-placeholder.webp"
+                      movie.poster_path
+                        ? `https://image.tmdb.org/t/p/w600_and_h900_bestv2${movie.poster_path}`
+                        : "/movie-placeholder.webp"
                     }
-                    alt={`${game.name} game cover`}
+                    alt={`${movie.title} poster`}
                   />
                 </Link>
               </div>

@@ -1,8 +1,7 @@
 "use server";
 
 import prisma from "@/app/lib/prisma";
-import { MoviesSearch } from "./zod-schemas";
-import { MovieDetails } from "./zod-schemas";
+import { MoviesSearch, MovieDetails, MovieCollection } from "./zod-schemas";
 
 const headers = new Headers();
 headers.set("Accept", "application/json");
@@ -16,9 +15,26 @@ const options = {
 export const fetchMovieDetails = async (id: string) => {
   try {
     const response = await fetch(
-      `https://api.themoviedb.org/3/movie/${id}?append_to_response=credits%2Cexternal_ids%2Crelease_dates%2Csimilar%2Cvideos%2Cwatch_providers&language=en-US`
+      `https://api.themoviedb.org/3/movie/${id}?append_to_response=credits%2Cexternal_ids%2Crelease_dates%2Csimilar%2Cvideos%2Cwatch_providers&language=en-US`,
+      options
     );
-    const parsedData = MovieDetails.parse(response);
+    const result = await response.json();
+    console.log(result);
+    const parsedData = MovieDetails.parse(result);
+    return parsedData;
+  } catch (err) {
+    console.error(err);
+  }
+};
+
+export const fetchMovieCollection = async (id: number) => {
+  try {
+    const response = await fetch(
+      `https://api.themoviedb.org/3/collection/${id}?language=en-US`,
+      options
+    );
+    const result = await response.json();
+    const parsedData = MovieCollection.parse(result);
     return parsedData;
   } catch (err) {
     console.error(err);

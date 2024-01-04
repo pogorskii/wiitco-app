@@ -44,6 +44,34 @@ export const MovieImages = z.object({
 });
 export type MovieImages = z.infer<typeof MovieImages>;
 
+export const MovieCollection = z.object({
+  id: z.number(),
+  name: z.string(),
+  overview: z.string().nullable(),
+  poster_path: z.string().nullable(),
+  backdrop_path: z.string().nullable(),
+  parts: z.array(
+    z.object({
+      adult: z.boolean(),
+      backdrop_path: z.string().nullable(),
+      id: z.number(),
+      title: z.string(),
+      original_language: z.string().nullable(),
+      original_title: z.string(),
+      overview: z.string().nullable(),
+      poster_path: z.string().nullable(),
+      media_type: z.string(),
+      genre_ids: z.array(z.number().optional()),
+      popularity: z.number(),
+      release_date: z.string().nullable(),
+      video: z.boolean(),
+      vote_average: z.number(),
+      vote_count: z.number(),
+    })
+  ),
+});
+export type MovieCollection = z.infer<typeof MovieCollection>;
+
 export const MovieDetails = z.object({
   adult: z.boolean(),
   backdrop_path: z.string().nullable(),
@@ -51,19 +79,19 @@ export const MovieDetails = z.object({
     .object({
       id: z.number(),
       name: z.string(),
-      poster_path: z.string().nullable(),
-      backdrop_path: z.string().nullable(),
+      poster_path: z.string().nullable().default(null),
+      backdrop_path: z.string().nullable().default(null),
     })
     .optional(),
   budget: z.number(),
-  genres: z.array(
-    z
-      .object({
+  genres: z
+    .array(
+      z.object({
         id: z.number(),
         name: z.string(),
       })
-      .optional()
-  ),
+    )
+    .optional(),
   homepage: z.string().nullable(),
   id: z.number(),
   imdb_id: z.string().nullable(),
@@ -120,7 +148,7 @@ export const MovieDetails = z.object({
             name: z.string(),
             original_name: z.string(),
             popularity: z.number(),
-            profile_path: z.string(),
+            profile_path: z.string().nullable(),
             cast_id: z.number(),
             character: z.string(),
             credit_id: z.string(),
@@ -138,7 +166,7 @@ export const MovieDetails = z.object({
             name: z.string(),
             original_name: z.string(),
             popularity: z.number(),
-            profile_path: z.string(),
+            profile_path: z.string().nullable(),
             credit_id: z.string(),
             department: z.string(),
             job: z.string(),

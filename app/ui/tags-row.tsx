@@ -8,7 +8,7 @@ export async function TagsRow({
   category,
   tags,
 }: {
-  type: "video-games" | "movies";
+  type: "video-games" | "cinema";
   category: string;
   tags: { name: string; slug: string }[];
 }) {
