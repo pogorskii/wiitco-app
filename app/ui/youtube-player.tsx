@@ -1,30 +1,16 @@
 "use client";
 
-import YouTube, { YouTubeProps } from "react-youtube";
-
-export function YouTubePlayer({ videoId }: YouTubeProps) {
-  // Set up event handlers
-  const onReady: YouTubeProps["onReady"] = (event) => {
-    // Access the player instance
-    const player = event.target;
-    player.pauseVideo();
-  };
-
-  const opts: YouTubeProps["opts"] = {
-    height: "100%",
-    width: "100%",
-    playerVars: {
-      // https://developers.google.com/youtube/player_parameters
-      autoplay: 0,
-    },
-  };
+export function YouTubePlayer({ videoId }: { videoId: string | undefined }) {
+  if (!videoId) return;
 
   return (
-    <YouTube
-      videoId={videoId}
-      onReady={onReady}
-      opts={opts}
-      className="aspect-video"
-    />
+    <iframe
+      width="100%"
+      className="aspect-[16/9]"
+      src={`https://www.youtube.com/embed/${videoId}`}
+      title="YouTube video player"
+      allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+      allowFullScreen
+    ></iframe>
   );
 }

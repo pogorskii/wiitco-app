@@ -3,24 +3,25 @@
 import { Suspense } from "react";
 import { formatDistanceToNow, parse } from "date-fns";
 import Image from "next/image";
-import { GamePlatforms } from "@/app/ui/video-games/game-platforms";
 import { TagsRow } from "@/app/ui/tags-row";
 import { TruncText } from "@/app/ui/trunc-text";
 import { RatingCircle } from "@/app/ui/rating-circle";
-import { ImageCarousel } from "@/app/ui/image-carousel";
-import { SimilarItemsCarousel } from "@/app/ui/similar-items-carousel";
 import { YouTubePlayer } from "@/app/ui/youtube-player";
 import { Breadcrumbs } from "@/app/ui/breadcrumbs";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { FaPlus } from "react-icons/fa";
-import { LanguagesTable } from "@/app/ui/video-games/languages-table";
 import { Separator } from "@/components/ui/separator";
-import prisma from "@/app/lib/prisma";
-import { Game, GCover } from "@prisma/client";
 import type { Metadata, ResolvingMetadata } from "next";
-import { fetchMovieDetails, fetchMovieCollection } from "../../lib/actions";
+import {
+  fetchMovieDetails,
+  fetchMovieCollection,
+  fetchMovieImages,
+} from "../../lib/actions";
+import { MoviesCarousel } from "@/app/ui/cinema/movies-carousel";
+import { ImagesCarousel } from "@/app/ui/cinema/images-carousel";
+import { CastCarousel } from "@/app/ui/cinema/cast-carousel";
 
 export async function generateMetadata(
   {
@@ -48,6 +49,13 @@ export default async function Page({ params }: { params: { slug: string } }) {
   const coverUrl = movie.poster_path
     ? `https://image.tmdb.org/t/p/w600_and_h900_bestv2${movie.poster_path}`
     : "/movie-placeholder.webp";
+
+  const toHoursAndMinutes = (totalMinutes: number) => {
+    const hours = Math.floor(totalMinutes / 60);
+    const minutes = totalMinutes % 60;
+
+    return `${hours} h ${minutes > 0 ? ` ${minutes} m` : ""}`;
+  };
 
   return (
     <>
@@ -90,16 +98,6 @@ export default async function Page({ params }: { params: { slug: string } }) {
               rating={movie.vote_average * 10}
               reviewCount={movie.vote_count}
             />
-
-            {/* Age Ratings */}
-            {/* {game.ageRatings.length > 0 && (
-              <AgeRatings ageRatings={game.ageRatings} />
-            )} */}
-
-            {/* Languages Table */}
-            {/* {game.languageSupports.length > 0 && (
-              <LanguagesTable languageSupports={game.languageSupports} />
-            )} */}
           </div>
 
           {movie.belongs_to_collection && (
@@ -124,9 +122,11 @@ export default async function Page({ params }: { params: { slug: string } }) {
             </div>
 
             <div className="col-span-3 md:col-span-1">
-              {/* <Suspense fallback={<p>Loading...</p>}>
-                <GameCategory category={game.category} slug={game.slug} />
-              </Suspense> */}
+              {movie.status ?? (
+                <Badge variant="default" className="mb-2 text-sm">
+                  {movie.status}
+                </Badge>
+              )}
               <h1 className="mb-2 scroll-m-20 text-xl md:text-2xl font-semibold first:mt-0">
                 {movie.title}
               </h1>
@@ -164,50 +164,37 @@ export default async function Page({ params }: { params: { slug: string } }) {
                 rating={movie.vote_average * 10}
                 reviewCount={movie.vote_count}
               />
-
-              {/* Age Ratings */}
-              {/* {game.ageRatings.length > 0 && (
-                <AgeRatings ageRatings={game.ageRatings} />
-              )} */}
-
-              {/* Languages Table */}
-              {/* {game.languageSupports.length > 0 && (
-                <LanguagesTable languageSupports={game.languageSupports} />
-              )} */}
             </div>
 
             {/* Below LG breakpoint changes into single column */}
             <div className="col-span-4 lg:col-span-3">
+              {movie.tagline && <div className="mb-2">{movie.tagline}</div>}
               {/* Main Info List */}
               <ul className="mb-4 [&>*+*]:mt-2">
-                {/* {game.developers.length > 0 && (
-                  <li>
-                    <span className="font-semibold">
-                      {game.developers.length === 1
-                        ? "Developer:"
-                        : "Developers:"}
-                    </span>
-                    <TagsRow
-                      type="video-games"
-                      category="companies"
-                      tags={game.developers.map((d) => d.developer)}
-                    ></TagsRow>
-                  </li>
-                )} */}
-                {/* {game.publishers.length > 0 && (
-                  <li>
-                    <span className="font-semibold">
-                      {game.publishers.length === 1
-                        ? "Publisher:"
-                        : "Publishers:"}
-                    </span>
-                    <TagsRow
-                      type="video-games"
-                      category="companies"
-                      tags={game.publishers.map((p) => p.publisher)}
-                    ></TagsRow>
-                  </li>
-                )} */}
+                {movie.credits &&
+                  movie.credits.crew.filter((e) => e?.job === "Director")
+                    .length > 0 && (
+                    <li>
+                      <span className="font-semibold">
+                        {movie.credits.crew.filter((e) => e?.job === "Director")
+                          .length === 1
+                          ? `Director:`
+                          : `Directors:`}
+                      </span>
+                      <TagsRow
+                        type="cinema"
+                        category="genres"
+                        tags={movie.credits.crew
+                          .filter((e) => e?.job === "Director")
+                          .map((g) => {
+                            return {
+                              name: g?.name,
+                              slug: g?.id.toString(),
+                            };
+                          })}
+                      />
+                    </li>
+                  )}
                 {movie.genres && movie.genres.length > 0 && (
                   <li>
                     <span className="font-semibold">
@@ -225,46 +212,89 @@ export default async function Page({ params }: { params: { slug: string } }) {
                     />
                   </li>
                 )}
-                {/* {game.engines.length > 0 && (
+                {movie.runtime > 0 && (
+                  <li>
+                    <span className="font-semibold">Runtime: </span>
+                    {toHoursAndMinutes(movie.runtime)}
+                  </li>
+                )}
+                {movie.budget > 0 && (
+                  <li>
+                    <span className="font-semibold">Budget: </span>
+                    {movie.budget.toLocaleString("en-US", {
+                      style: "currency",
+                      currency: "USD",
+                      maximumFractionDigits: 0,
+                    })}
+                  </li>
+                )}
+                {movie.revenue > 0 && (
+                  <li>
+                    <span className="font-semibold">Box office: </span>
+                    {movie.revenue.toLocaleString("en-US", {
+                      style: "currency",
+                      currency: "USD",
+                      maximumFractionDigits: 0,
+                    })}
+                  </li>
+                )}
+                {movie.production_countries.length > 0 && (
                   <li>
                     <span className="font-semibold">
-                      {game.engines.length === 1 ? `Engine:` : `Engines:`}
+                      {movie.production_countries.length === 1
+                        ? `Country:`
+                        : `Countries:`}
                     </span>
                     <TagsRow
-                      type="video-games"
-                      category="game-engines"
-                      tags={game.engines.map((e) => e.engine)}
+                      type="cinema"
+                      category="country"
+                      tags={movie.production_countries.map((e) => {
+                        return {
+                          name: e?.name,
+                          slug: e?.iso_3166_1,
+                        };
+                      })}
                     />
                   </li>
-                )} */}
-                {/* {game.platforms.length > 0 && (
-                  <li className="flex justify-start gap-2">
+                )}
+                {movie.production_companies.length > 0 && (
+                  <li>
                     <span className="font-semibold">
-                      {game.platforms.length === 1
-                        ? "Platform: "
-                        : "Platforms: "}
+                      {movie.production_companies.length === 1
+                        ? `Company:`
+                        : `Companies:`}
                     </span>
-                    <GamePlatforms
-                      platforms={game.platforms.map((p) => p.platform.id)}
+                    <TagsRow
+                      type="cinema"
+                      category="company"
+                      tags={movie.production_companies.map((e) => {
+                        return {
+                          name: e?.name,
+                          slug: e?.id,
+                        };
+                      })}
                     />
                   </li>
-                )} */}
+                )}
               </ul>
 
               {/* Truncated Summary */}
               {movie.overview && <TruncText text={movie.overview} />}
 
               {/* Links table */}
-              {/* {game.websites.length > 0 && (
+              {Object.values(movie.external_ids).some((e) => e !== null) && (
                 <div className="mb-8">
-                  <LinksList links={game.websites} />
+                  <LinksList
+                    homepage={movie.homepage}
+                    links={movie.external_ids}
+                  />
                 </div>
-              )} */}
+              )}
 
-              {/* Related Games Tabs */}
-              {/* <Suspense fallback={<p>Loading...</p>}>
-                <ChildGamesTabs slug={game.slug} />
-              </Suspense> */}
+              {/* Cast Carousel */}
+              {movie.credits.cast.length > 0 && (
+                <CastCarousel actors={movie.credits.cast} />
+              )}
 
               {/* YouTube Video Embed */}
               {movie.videos.results.length > 0 && (
@@ -283,30 +313,17 @@ export default async function Page({ params }: { params: { slug: string } }) {
               )}
 
               {/* Screenshots Slider */}
-              {/* {game.screenshots.length > 0 && (
-                <section className="mb-8" id="screenshots">
-                  <h2 className="mb-2 scroll-m-20 text-lg font-semibold">
-                    {game.name}&apos;s Screenshots
-                  </h2>
-                  <Suspense fallback={<p>loading...</p>}>
-                    <ImageCarousel
-                      images={game.screenshots}
-                      altBase={game.name}
-                    />
-                  </Suspense>
-                </section>
-              )} */}
-
-              <div className="md:hidden">
-                {/* <Suspense fallback={<p>Loading...</p>}>
-                  <RelatedSeries gameSlug={game.slug} />
-                </Suspense> */}
-              </div>
+              <Suspense fallback={<p>loading...</p>}>
+                <Gallery movieTitle={movie.title} id={movie.id} />
+              </Suspense>
 
               {/* Similar Games Slider */}
-              {/* <Suspense fallback={<p>Loading...</p>}>
-                <SimilarGames slug={game.slug} />
-              </Suspense> */}
+              {movie.similar && movie.similar.results.length > 0 && (
+                <SimilarMovies
+                  movieTitle={movie.title}
+                  similarMovies={movie.similar?.results as SimilarMovies}
+                />
+              )}
             </div>
 
             {/* Info Second Column */}
@@ -317,16 +334,6 @@ export default async function Page({ params }: { params: { slug: string } }) {
                 rating={movie.vote_average * 10}
                 reviewCount={movie.vote_count}
               />
-
-              {/* Age Ratings */}
-              {/* {game.ageRatings.length > 0 && (
-                <AgeRatings ageRatings={game.ageRatings} />
-              )} */}
-
-              {/* Languages Table */}
-              {/* {game.languageSupports.length > 0 && (
-                <LanguagesTable languageSupports={game.languageSupports} />
-              )} */}
             </div>
           </div>
         </div>
@@ -335,464 +342,75 @@ export default async function Page({ params }: { params: { slug: string } }) {
   );
 }
 
-async function GameCategory({
-  category,
-  slug,
-}: {
-  category: number;
-  slug: string;
-}) {
-  const categoryEnum: { [key: number]: string } = {
-    0: "Main Game",
-    1: "DLC",
-    2: "Expansion",
-    3: "Bundle",
-    4: "Standalone DLC",
-    5: "Mod",
-    6: "Episode",
-    7: "Season",
-    8: "Remake",
-    9: "Remaster",
-    10: "Expanded Game",
-    11: "Port",
-    12: "Fork",
-    13: "Pack",
-    14: "Update",
-  };
-
-  const categoryName = categoryEnum[category];
-
-  if (category === 0 || category === 3)
-    return (
-      <Badge variant="outline" className="mb-2 text-sm">
-        {categoryName}
-      </Badge>
-    );
-
-  const game = await prisma.game.findUnique({
-    where: {
-      slug,
-    },
-    select: {
-      dlcOf: {
-        select: {
-          name: true,
-          slug: true,
-        },
-      },
-      expansionOf: {
-        select: {
-          name: true,
-          slug: true,
-        },
-      },
-      standaloneDlcOf: {
-        select: {
-          name: true,
-          slug: true,
-        },
-      },
-      modOf: {
-        select: {
-          name: true,
-          slug: true,
-        },
-      },
-      episodeOf: {
-        select: {
-          name: true,
-          slug: true,
-        },
-      },
-      seasonOf: {
-        select: {
-          name: true,
-          slug: true,
-        },
-      },
-      remakeOf: {
-        select: {
-          name: true,
-          slug: true,
-        },
-      },
-      remasterOf: {
-        select: {
-          name: true,
-          slug: true,
-        },
-      },
-      expandedFrom: {
-        select: {
-          name: true,
-          slug: true,
-        },
-      },
-      portOf: {
-        select: {
-          name: true,
-          slug: true,
-        },
-      },
-      forkOf: {
-        select: {
-          name: true,
-          slug: true,
-        },
-      },
-      packOf: {
-        select: {
-          name: true,
-          slug: true,
-        },
-      },
-      updateOf: {
-        select: {
-          name: true,
-          slug: true,
-        },
-      },
-    },
-  });
-
-  if (!game) return;
-
-  const parentGame =
-    game.dlcOf ||
-    game.expansionOf ||
-    game.standaloneDlcOf ||
-    game.modOf ||
-    game.episodeOf ||
-    game.seasonOf ||
-    game.remakeOf ||
-    game.remasterOf ||
-    game.expandedFrom ||
-    game.portOf ||
-    game.forkOf ||
-    game.packOf ||
-    game.updateOf;
-
-  return (
-    <>
-      <Badge variant="outline" className="mb-2 text-sm">
-        {categoryName}
-      </Badge>
-      {parentGame && (
-        <span className="text-sm">
-          {" "}
-          of{" "}
-          <Link
-            className="hover:underline hover:underline-offset-2"
-            href={`/video-games/games/${parentGame.slug}`}
-          >
-            {parentGame.name}
-          </Link>
-        </span>
-      )}
-    </>
-  );
-}
-
-type AgeRatingsType = {
-  id: number;
-  category: number;
-  rating: number;
-  synopsis: string | null;
-  ratingCoverUrl: string | null;
-  gameId: number;
-  checksum: string;
-}[];
-
-// Age Ratings Component
-async function AgeRatings({ ageRatings }: { ageRatings: AgeRatingsType }) {
-  const ratingEnum: { [key: number]: string } = {
-    1: "Three",
-    2: "Seven",
-    3: "Twelve",
-    4: "Sixteen",
-    5: "Eighteen",
-    6: "RP",
-    7: "EC",
-    8: "E",
-    9: "E10",
-    10: "T",
-    11: "M",
-    12: "AO",
-  };
-
-  return (
-    <div className="mb-8 w-full">
-      <h2 className="mt-8 mb-2 font-semibold text-lg text-start">
-        Age Ratings
-      </h2>
-      <div className="flex items-center justify-start gap-2">
-        {/* TODO: Add support for more ratings */}
-        {ageRatings
-          .filter((r) => r.category === 1 || r.category === 2)
-          .map((r) => {
-            const categoryName = r.category === 1 ? "esrb" : "pegi";
-            const ratingName = ratingEnum[r.rating];
-            return (
-              <Image
-                key={r.rating}
-                src={`/${categoryName}/${ratingName}.svg`}
-                width={r.category === 1 ? 68 : 56}
-                height={r.category === 1 ? 68 : 68}
-                alt={`${categoryName} ${ratingName}`}
-              />
-            );
-          })}
-      </div>
-    </div>
-  );
-}
-
-// Related Games Tabs
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-
-type ChildGame = {
-  name: string;
-  slug: string;
-  cover: GCover;
-};
-
-async function ChildGamesTabs({ slug }: { slug: string }) {
-  const game = await prisma.game.findUnique({
-    where: {
-      slug,
-    },
-    select: {
-      name: true,
-      remakes: {
-        select: {
-          name: true,
-          slug: true,
-          cover: true,
-        },
-      },
-      remasters: {
-        select: {
-          name: true,
-          slug: true,
-          cover: true,
-        },
-      },
-      dlcs: {
-        select: {
-          name: true,
-          slug: true,
-          cover: true,
-        },
-      },
-      expansions: {
-        select: {
-          name: true,
-          slug: true,
-          cover: true,
-        },
-      },
-      standaloneDlcs: {
-        select: {
-          name: true,
-          slug: true,
-          cover: true,
-        },
-      },
-    },
-  });
-
-  if (
-    !game ||
-    (!game.remakes.length &&
-      !game.remasters.length &&
-      !game.dlcs.length &&
-      !game.expansions.length &&
-      !game.standaloneDlcs.length)
-  )
-    return;
-
-  return (
-    <Tabs
-      defaultValue={
-        game.remakes.length > 0
-          ? "remakes"
-          : game.remasters.length > 0
-          ? "remasters"
-          : game.dlcs.length > 0
-          ? "dlcs"
-          : game.expansions.length > 0
-          ? "expansions"
-          : "standalones"
-      }
-      className="w-full mb-8"
-    >
-      <TabsList className="w-full grid grid-cols-3 lg:grid-cols-5">
-        {game.remakes.length > 0 && (
-          <TabsTrigger value="remakes">Remakes</TabsTrigger>
-        )}
-        {game.remasters.length > 0 && (
-          <TabsTrigger value="remasters">Remasters</TabsTrigger>
-        )}
-        {game.dlcs.length > 0 && <TabsTrigger value="dlcs">DLCs</TabsTrigger>}
-        {game.expansions.length > 0 && (
-          <TabsTrigger value="expansions">Expansions</TabsTrigger>
-        )}
-        {game.standaloneDlcs.length > 0 && (
-          <TabsTrigger value="standalones">Standalones</TabsTrigger>
-        )}
-      </TabsList>
-      {game.remakes.length > 0 && (
-        <RelatedTab
-          gameTitle={game.name}
-          tabName="remakes"
-          tabData={game.remakes as ChildGame[]}
-        />
-      )}
-      {game.remasters.length > 0 && (
-        <RelatedTab
-          gameTitle={game.name}
-          tabName="remasters"
-          tabData={game.remasters as ChildGame[]}
-        />
-      )}
-      {game.dlcs.length > 0 && (
-        <RelatedTab
-          gameTitle={game.name}
-          tabName="dlcs"
-          tabData={game.dlcs as ChildGame[]}
-        />
-      )}
-      {game.expansions.length > 0 && (
-        <RelatedTab
-          gameTitle={game.name}
-          tabName="expansions"
-          tabData={game.expansions as ChildGame[]}
-        />
-      )}
-      {game.standaloneDlcs.length > 0 && (
-        <RelatedTab
-          gameTitle={game.name}
-          tabName="standalones"
-          tabData={game.standaloneDlcs as ChildGame[]}
-        />
-      )}
-    </Tabs>
-  );
-}
-
-async function RelatedTab({
-  gameTitle,
-  tabName,
-  tabData,
-}: {
-  gameTitle: string;
-  tabName: string;
-  tabData: ChildGame[];
-}) {
-  const tabHeading =
-    tabName === "dlcs"
-      ? "DLCs"
-      : tabName.slice(0, 1).toUpperCase() + tabName.slice(1);
-
-  return (
-    <TabsContent value={tabName}>
-      <Card>
-        <CardHeader className="pb-2">
-          <CardTitle className="text-lg">
-            {tabHeading} of {gameTitle}
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="min-h-[200px] grid grid-cols-2 md:grid-cols-4 lg:grid-cols-3 gap-4">
-          {tabData.map((g) => (
-            <Link
-              key={g.slug}
-              className="overflow-hidden w-full inline-block relative col-span-1 text-white hover:text-blue-400 transition-colors duration-200"
-              href={`/video-games/games/${g.slug}`}
-            >
-              <img
-                className="object-cover"
-                src={
-                  g.cover
-                    ? `https://images.igdb.com/igdb/image/upload/t_cover_big/${g.cover?.imageId}.png`
-                    : "/game-placeholder.webp"
-                }
-                alt={`${g.name} game cover`}
-              />
-              <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-transparent to-black"></div>
-              <h3 className="absolute bottom-0 p-2 scroll-m-20 text-base font-semibold tracking-tight">
-                {g.name}
-              </h3>
-            </Link>
-          ))}
-        </CardContent>
-      </Card>
-    </TabsContent>
-  );
-}
-
 // Links Table Component
 import {
   FaExternalLinkAlt,
   FaWikipediaW,
   FaFacebookSquare,
-  FaTwitch,
   FaInstagramSquare,
-  FaYoutubeSquare,
-  FaApple,
-  FaAndroid,
-  FaSteamSquare,
-  FaRedditSquare,
-  FaItchIo,
-  FaDiscord,
+  FaImdb,
 } from "react-icons/fa";
 import { FaXTwitter } from "react-icons/fa6";
-import { SiEpicgames, SiGogdotcom } from "react-icons/si";
 import { IconType } from "react-icons/lib";
 
 function LinksList({
+  homepage,
   links,
 }: {
+  homepage: string | null;
   links: {
-    url: string;
-    category: number;
-  }[];
+    imdb_id: string | null;
+    wikidata_id: string | null;
+    facebook_id: string | null;
+    instagram_id: string | null;
+    twitter_id: string | null;
+  };
 }) {
-  const sortedLinks = links.sort((a, b) => a.category - b.category);
-
-  const categoryEnum: { [key: number]: [string, IconType] } = {
-    1: ["Official site", FaExternalLinkAlt],
-    2: ["Wikia", FaExternalLinkAlt],
-    3: ["Wikipedia", FaWikipediaW],
-    4: ["Facebook", FaFacebookSquare],
-    5: ["X (Twitter)", FaXTwitter],
-    6: ["Twitch", FaTwitch],
-    8: ["Instagram", FaInstagramSquare],
-    9: ["YouTube", FaYoutubeSquare],
-    10: ["iPhone", FaApple],
-    11: ["iPad", FaApple],
-    12: ["Android", FaAndroid],
-    13: ["Steam", FaSteamSquare],
-    14: ["Reddit", FaRedditSquare],
-    15: ["Itch", FaItchIo],
-    16: ["Epic Games", SiEpicgames],
-    17: ["GOG", SiGogdotcom],
-    18: ["Discord", FaDiscord],
+  const categoryEnum: { [key: string]: [string, IconType, string] } = {
+    imdb_id: ["IMDb", FaImdb, "https://www.imdb.com/title/"],
+    wikidata_id: ["Wikipedia", FaWikipediaW, "https://www.wikidata.org/wiki/"],
+    facebook_id: ["Facebook", FaFacebookSquare, "https://www.facebook.com/"],
+    twitter_id: ["X (Twitter)", FaXTwitter, "https://twitter.com/"],
+    instagram_id: [
+      "Instagram",
+      FaInstagramSquare,
+      "https://www.instagram.com/",
+    ],
   };
 
-  const listItems = sortedLinks.map((l, i) => {
-    const Icon = categoryEnum[l.category][1];
+  const listItems = Object.entries(links).map((link, i) => {
+    if (!link[1]) return;
+    const Icon = categoryEnum[link[0]][1];
     return (
       <li key={i}>
-        <a className="hover:underline hover:underline-offset-4" href={l.url}>
+        <a
+          className="hover:underline hover:underline-offset-4"
+          href={`${categoryEnum[link[0]][2]}${link[1]}`}
+        >
           <Icon className="inline-block me-1.5" />
-          <span>{categoryEnum[l.category][0]}</span>
+          <span>{categoryEnum[link[0]][0]}</span>
         </a>
       </li>
     );
   });
 
-  return <ul className="grid grid-cols-2 md:grid-cols-3 gap-2">{listItems}</ul>;
+  return (
+    <ul className="grid grid-cols-2 md:grid-cols-3 gap-2">
+      {homepage && (
+        <li>
+          <a
+            className="hover:underline hover:underline-offset-4"
+            href={homepage}
+          >
+            <FaExternalLinkAlt className="inline-block me-1.5" />
+            <span>Official site</span>
+          </a>
+        </li>
+      )}
+
+      {listItems}
+    </ul>
+  );
 }
 
 // Franchise / Series Popover Component
@@ -871,28 +489,6 @@ async function SeriesModalContent({ seriesId }: { seriesId: number }) {
                         {movie.title}
                       </h3>
                     </Link>
-                    {/* {game.platforms && (
-                      <GamePlatforms
-                        platforms={game.platforms.map((e) => e.platform.id)}
-                      />
-                    )} */}
-                  </div>
-                  <div>
-                    {/* <Badge className="inline-block">
-                      {categoryEnum[game.category]}
-                    </Badge> */}
-                    {/* {game.parentGame && (
-                  <>
-                    {" "}
-                    of{" "}
-                    <a
-                      className="hover:underline hover:underline-offset-2"
-                      href={`/video-games/games/${game.parentGame.slug}`}
-                    >
-                      {game.parentGame.name}
-                    </a>
-                  </>
-                )} */}
                   </div>
                 </div>
                 <Link
@@ -919,43 +515,57 @@ async function SeriesModalContent({ seriesId }: { seriesId: number }) {
   );
 }
 
-async function SimilarGames({ slug }: { slug: string }) {
-  const game = await prisma.game.findUnique({
-    where: {
-      slug,
-    },
-    select: {
-      name: true,
-      similarOf: {
-        select: {
-          similar: {
-            select: {
-              name: true,
-              slug: true,
-              cover: true,
-            },
-          },
-        },
-      },
-    },
-  });
+// Screenshots carousel
+async function Gallery({ movieTitle, id }: { movieTitle: string; id: number }) {
+  const images = await fetchMovieImages(id);
+  if (!images) return;
 
-  if (!game) return;
+  const validBackdrops = [];
+
+  for (const backdrop of images.backdrops) {
+    if (backdrop) validBackdrops.push(backdrop);
+  }
 
   return (
-    <>
-      <h2 className="mb-2 lg:mb-[340px] scroll-m-20 text-lg font-semibold">
-        More games like {game.name}
+    <section className="mb-8" id="screenshots">
+      <h2 className="mb-2 scroll-m-20 text-lg font-semibold">
+        {movieTitle}&apos;s Images
       </h2>
-      <div className="lg:absolute bottom-0 left-1/2 lg:translate-x-[-50%] lg:w-[90vw]">
-        <SimilarItemsCarousel
-          games={
-            game.similarOf.map((e) => e.similar) as (Game & {
-              cover: GCover;
-            })[]
-          }
-        />
-      </div>
+      <ImagesCarousel movieTitle={movieTitle} images={validBackdrops} />
+    </section>
+  );
+}
+
+type SimilarMovies = {
+  adult: boolean;
+  backdrop_path: string | null;
+  genre_ids: number[];
+  id: number;
+  original_language: string;
+  original_title: string;
+  overview: string | null;
+  popularity: number;
+  poster_path: string | null;
+  release_date: string | null;
+  title: string;
+  video: boolean;
+  vote_average: number;
+  vote_count: number;
+}[];
+
+async function SimilarMovies({
+  movieTitle,
+  similarMovies,
+}: {
+  movieTitle: string;
+  similarMovies: SimilarMovies;
+}) {
+  return (
+    <>
+      <h2 className="mb-2 scroll-m-20 text-lg font-semibold">
+        More movies like {movieTitle}
+      </h2>
+      <MoviesCarousel movies={similarMovies} />
     </>
   );
 }

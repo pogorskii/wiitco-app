@@ -82,7 +82,7 @@ export const MovieDetails = z.object({
       poster_path: z.string().nullable().default(null),
       backdrop_path: z.string().nullable().default(null),
     })
-    .optional(),
+    .nullable(),
   budget: z.number(),
   genres: z
     .array(
@@ -136,54 +136,50 @@ export const MovieDetails = z.object({
   video: z.boolean(),
   vote_average: z.number(),
   vote_count: z.number(),
-  credits: z
-    .object({
-      cast: z.array(
-        z
-          .object({
-            adult: z.boolean(),
-            gender: z.number(),
-            id: z.number(),
-            known_for_department: z.string(),
-            name: z.string(),
-            original_name: z.string(),
-            popularity: z.number(),
-            profile_path: z.string().nullable(),
-            cast_id: z.number(),
-            character: z.string(),
-            credit_id: z.string(),
-            order: z.number(),
-          })
-          .optional()
-      ),
-      crew: z.array(
-        z
-          .object({
-            adult: z.boolean(),
-            gender: z.number(),
-            id: z.number(),
-            known_for_department: z.string(),
-            name: z.string(),
-            original_name: z.string(),
-            popularity: z.number(),
-            profile_path: z.string().nullable(),
-            credit_id: z.string(),
-            department: z.string(),
-            job: z.string(),
-          })
-          .optional()
-      ),
-    })
-    .optional(),
-  external_ids: z
-    .object({
-      imdb_id: z.string().nullable(),
-      wikidata_id: z.string().nullable(),
-      facebook_id: z.string().nullable(),
-      instagram_id: z.string().nullable(),
-      twitter_id: z.string().nullable(),
-    })
-    .optional(),
+  credits: z.object({
+    cast: z.array(
+      z
+        .object({
+          adult: z.boolean(),
+          gender: z.number(),
+          id: z.number(),
+          known_for_department: z.string(),
+          name: z.string(),
+          original_name: z.string(),
+          popularity: z.number(),
+          profile_path: z.string().nullable(),
+          cast_id: z.number(),
+          character: z.string(),
+          credit_id: z.string(),
+          order: z.number(),
+        })
+        .optional()
+    ),
+    crew: z.array(
+      z
+        .object({
+          adult: z.boolean(),
+          gender: z.number(),
+          id: z.number(),
+          known_for_department: z.string(),
+          name: z.string(),
+          original_name: z.string(),
+          popularity: z.number(),
+          profile_path: z.string().nullable(),
+          credit_id: z.string(),
+          department: z.string(),
+          job: z.string(),
+        })
+        .optional()
+    ),
+  }),
+  external_ids: z.object({
+    imdb_id: z.string().nullable(),
+    wikidata_id: z.string().nullable(),
+    facebook_id: z.string().nullable(),
+    instagram_id: z.string().nullable(),
+    twitter_id: z.string().nullable(),
+  }),
   release_dates: z.object({
     results: z.array(
       z

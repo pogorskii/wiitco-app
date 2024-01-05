@@ -10,8 +10,12 @@ export async function TagsRow({
 }: {
   type: "video-games" | "cinema";
   category: string;
-  tags: { name: string; slug: string }[];
+  tags: { name: string | undefined; slug: string | number | undefined }[];
 }) {
+  const validTags = tags.filter((e) => {
+    if (e.name && e.slug) return e;
+  });
+
   return (
     <>
       {tags.map((tag, i, arr) => (
