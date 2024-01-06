@@ -18,10 +18,11 @@ import {
   fetchMovieDetails,
   fetchMovieCollection,
   fetchMovieImages,
+  fetchJustWatchInfo,
 } from "../../lib/actions";
-import { MoviesCarousel } from "@/app/ui/cinema/movies-carousel";
 import { ImagesCarousel } from "@/app/ui/cinema/images-carousel";
 import { CastCarousel } from "@/app/ui/cinema/cast-carousel";
+import { JustWatchInfo } from "@/app/ui/cinema/just-watch-info";
 
 export async function generateMetadata(
   {
@@ -31,7 +32,6 @@ export async function generateMetadata(
   },
   parent: ResolvingMetadata
 ): Promise<Metadata> {
-  // read route params
   const movie = await fetchMovieDetails(params.slug);
 
   if (!movie)
@@ -46,7 +46,7 @@ export async function generateMetadata(
 
 export default async function Page({ params }: { params: { slug: string } }) {
   const movie = await fetchMovieDetails(params.slug);
-  if (!movie) return <p>No game found.</p>;
+  if (!movie) return <p>Movie not found.</p>;
 
   const coverUrl = movie.poster_path
     ? `https://image.tmdb.org/t/p/w600_and_h900_bestv2${movie.poster_path}`
@@ -316,6 +316,11 @@ export default async function Page({ params }: { params: { slug: string } }) {
                 </div>
               )}
 
+              {/* JustWatch Info */}
+              <Suspense fallback={<p>Loading...</p>}>
+                <JustWatchSection movieTitle={movie.title} id={movie.id} />
+              </Suspense>
+
               {/* Cast Carousel */}
               {movie.credits.cast.length > 0 && (
                 <CastCarousel actors={movie.credits.cast} />
@@ -551,5 +556,61 @@ async function Gallery({ movieTitle, id }: { movieTitle: string; id: number }) {
       </h2>
       <ImagesCarousel movieTitle={movieTitle} images={validBackdrops} />
     </section>
+  );
+}
+
+async function JustWatchSection({
+  movieTitle,
+  id,
+}: {
+  movieTitle: string;
+  id: number;
+}) {
+  const providers = await fetchJustWatchInfo(id);
+  if (!providers) return;
+
+  const availableCountries: {
+    [key: string]: {
+      link?: string | undefined;
+      buy?:
+        | {
+            logo_path: string;
+            provider_id: number;
+            provider_name: string;
+            display_priority: number;
+          }[]
+        | undefined;
+      rent?:
+        | {
+            logo_path: string;
+            provider_id: number;
+            provider_name: string;
+            display_priority: number;
+          }[]
+        | undefined;
+      flatrate?:
+        | {
+            logo_path: string;
+            provider_id: number;
+            provider_name: string;
+            display_priority: number;
+          }[]
+        | undefined;
+    };
+  } = {};
+
+  for (const entry of Object.entries(providers)) {
+    const [country, data] = entry;
+    if (data.buy || data.rent || data.flatrate)
+      availableCountries[country] = data;
+  }
+
+  if (!availableCountries) return;
+
+  return (
+    <JustWatchInfo
+      movieTitle={movieTitle}
+      watchProviders={availableCountries}
+    />
   );
 }

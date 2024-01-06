@@ -6,6 +6,7 @@ import {
   MovieDetails,
   MovieCollection,
   MovieImages,
+  MovieJustWatch,
 } from "./zod-schemas";
 
 const headers = new Headers();
@@ -25,7 +26,6 @@ export const fetchMovieDetails = async (id: string) => {
     );
     const result = await response.json();
     const parsedData = MovieDetails.parse(result);
-    console.log(parsedData.credits.crew);
     return parsedData;
   } catch (err) {
     console.error(err);
@@ -54,6 +54,20 @@ export const fetchMovieImages = async (id: number) => {
     );
     const result = await response.json();
     const parsedData = MovieImages.parse(result);
+    return parsedData;
+  } catch (err) {
+    console.error(err);
+  }
+};
+
+export const fetchJustWatchInfo = async (id: number) => {
+  try {
+    const response = await fetch(
+      `https://api.themoviedb.org/3/movie/${id}/watch/providers`,
+      options
+    );
+    const result = await response.json();
+    const parsedData = MovieJustWatch.parse(result.results);
     return parsedData;
   } catch (err) {
     console.error(err);

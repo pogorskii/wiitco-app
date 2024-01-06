@@ -2,7 +2,6 @@
 
 import { redirect } from "next/navigation";
 
-export default async function Page({ params }: { params: { year: string } }) {
-  const year = params.year;
+export default async function Page() {
   redirect(`/cinema/search/`);
 }

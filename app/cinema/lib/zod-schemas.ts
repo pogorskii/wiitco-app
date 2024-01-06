@@ -254,3 +254,123 @@ export const movieReleasesSchema = z.array(
   })
 );
 export type MovieReleases = z.infer<typeof movieReleasesSchema>;
+
+const JustWatchBase = z.object({
+  link: z.string().optional(),
+  buy: z
+    .array(
+      z.object({
+        logo_path: z.string(),
+        provider_id: z.number(),
+        provider_name: z.string(),
+        display_priority: z.number(),
+      })
+    )
+    .optional(),
+  rent: z
+    .array(
+      z.object({
+        logo_path: z.string(),
+        provider_id: z.number(),
+        provider_name: z.string(),
+        display_priority: z.number(),
+      })
+    )
+    .optional(),
+  flatrate: z
+    .array(
+      z.object({
+        logo_path: z.string(),
+        provider_id: z.number(),
+        provider_name: z.string(),
+        display_priority: z.number(),
+      })
+    )
+    .optional(),
+});
+export const MovieJustWatch = z.object({
+  AD: JustWatchBase.optional(),
+  AE: JustWatchBase.optional(),
+  AG: JustWatchBase.optional(),
+  AL: JustWatchBase.optional(),
+  AO: JustWatchBase.optional(),
+  AR: JustWatchBase.optional(),
+  AT: JustWatchBase.optional(),
+  AU: JustWatchBase.optional(),
+  AZ: JustWatchBase.optional(),
+  BA: JustWatchBase.optional(),
+  BB: JustWatchBase.optional(),
+  BE: JustWatchBase.optional(),
+  BG: JustWatchBase.optional(),
+  BH: JustWatchBase.optional(),
+  BM: JustWatchBase.optional(),
+  BO: JustWatchBase.optional(),
+  BR: JustWatchBase.optional(),
+  BS: JustWatchBase.optional(),
+  BY: JustWatchBase.optional(),
+  BZ: JustWatchBase.optional(),
+  CA: JustWatchBase.optional(),
+  CH: JustWatchBase.optional(),
+  CI: JustWatchBase.optional(),
+  CL: JustWatchBase.optional(),
+  CM: JustWatchBase.optional(),
+  CO: JustWatchBase.optional(),
+  CR: JustWatchBase.optional(),
+  CU: JustWatchBase.optional(),
+  CV: JustWatchBase.optional(),
+  CY: JustWatchBase.optional(),
+  CZ: JustWatchBase.optional(),
+  DE: JustWatchBase.optional(),
+  DK: JustWatchBase.optional(),
+  DO: JustWatchBase.optional(),
+  DZ: JustWatchBase.optional(),
+  EC: JustWatchBase.optional(),
+  EE: JustWatchBase.optional(),
+  EG: JustWatchBase.optional(),
+  ES: JustWatchBase.optional(),
+  FI: JustWatchBase.optional(),
+  FJ: JustWatchBase.optional(),
+  FR: JustWatchBase.optional(),
+  GB: JustWatchBase.optional(),
+  GF: JustWatchBase.optional(),
+  GG: JustWatchBase.optional(),
+  GH: JustWatchBase.optional(),
+  GI: JustWatchBase.optional(),
+  GQ: JustWatchBase.optional(),
+  GR: JustWatchBase.optional(),
+  GT: JustWatchBase.optional(),
+  HK: JustWatchBase.optional(),
+  HN: JustWatchBase.optional(),
+  HR: JustWatchBase.optional(),
+  HU: JustWatchBase.optional(),
+  ID: JustWatchBase.optional(),
+  IE: JustWatchBase.optional(),
+  IL: JustWatchBase.optional(),
+  IN: JustWatchBase.optional(),
+  IQ: JustWatchBase.optional(),
+  IS: JustWatchBase.optional(),
+  IT: JustWatchBase.optional(),
+  JM: JustWatchBase.optional(),
+  JO: JustWatchBase.optional(),
+  JP: JustWatchBase.optional(),
+  KE: JustWatchBase.optional(),
+  KR: JustWatchBase.optional(),
+  KW: JustWatchBase.optional(),
+  LB: JustWatchBase.optional(),
+  LC: JustWatchBase.optional(),
+  LI: JustWatchBase.optional(),
+  LT: JustWatchBase.optional(),
+  LU: JustWatchBase.optional(),
+  LV: JustWatchBase.optional(),
+  LY: JustWatchBase.optional(),
+  MA: JustWatchBase.optional(),
+  MC: JustWatchBase.optional(),
+  MD: JustWatchBase.optional(),
+  ME: JustWatchBase.optional(),
+  MG: JustWatchBase.optional(),
+  MK: JustWatchBase.optional(),
+  ML: JustWatchBase.optional(),
+  MX: JustWatchBase.optional(),
+  NZ: JustWatchBase.optional(),
+  US: JustWatchBase.optional(),
+});

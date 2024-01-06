@@ -66,10 +66,10 @@ export function CastCarousel({ actors }: { actors: Actors }) {
       <ScrollArea className="w-full whitespace-nowrap rounded-md border">
         <div className="flex w-max space-x-4 p-4">
           {sortedTopActors.map((actor, i) => (
-            <figure key={i} className="shrink-0">
-              <div className="overflow-hidden rounded-md">
+            <figure key={i} className="shrink-0 w-[156px]">
+              <div className="h-[200px] overflow-hidden rounded-md">
                 <img
-                  className="h-[200px]"
+                  className="object-fill"
                   src={
                     actor.profile_path
                       ? `https://image.tmdb.org/t/p/w276_and_h350_face/${actor.profile_path}`
@@ -79,8 +79,10 @@ export function CastCarousel({ actors }: { actors: Actors }) {
                 />
               </div>
               <figcaption className="pt-2 text-xs">
-                <div className="mb-1 text-sm font-semibold">{actor.name}</div>
-                <div className="text-xs text-muted-foreground">
+                <p className="mb-1 text-sm font-semibold text-ellipsis overflow-hidden">
+                  {actor.name}
+                </p>
+                <div className="text-xs text-muted-foreground text-ellipsis overflow-hidden">
                   {actor.character}
                 </div>
               </figcaption>
