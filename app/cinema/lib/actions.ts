@@ -20,12 +20,12 @@ const options = {
 export const fetchMovieDetails = async (id: string) => {
   try {
     const response = await fetch(
-      `https://api.themoviedb.org/3/movie/${id}?append_to_response=credits%2Cexternal_ids%2Crelease_dates%2Csimilar%2Cvideos%2Cwatch_providers&language=en-US`,
+      `https://api.themoviedb.org/3/movie/${id}?append_to_response=credits%2Cexternal_ids%2Crelease_dates%2Cvideos&language=en-US`,
       options
     );
     const result = await response.json();
     const parsedData = MovieDetails.parse(result);
-    console.log(parsedData.credits.cast);
+    console.log(parsedData.credits.crew);
     return parsedData;
   } catch (err) {
     console.error(err);

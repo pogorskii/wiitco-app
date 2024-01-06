@@ -1,9 +1,9 @@
 "use client";
 
-import { MoviesSearch } from "./lib/zod-schemas";
+import { MoviesSearch } from "../cinema/lib/zod-schemas";
 import { useEffect, useState, useCallback, useRef } from "react";
 import { useInView } from "react-intersection-observer";
-import { fetchMoviesSearch } from "./lib/actions";
+import { fetchMoviesSearch } from "../cinema/lib/actions";
 import { MovieSearchCard } from "../ui/cinema/movie-cards";
 import { Spinner } from "@/app/ui/spinner";
 

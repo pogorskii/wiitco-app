@@ -1,13 +1,15 @@
 "use client";
 
-import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from "@/components/ui/carousel";
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Separator } from "@/components/ui/separator";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 
 type Actors = (
   | {
@@ -27,6 +29,26 @@ type Actors = (
   | undefined
 )[];
 
+export interface Artwork {
+  artist: string;
+  art: string;
+}
+
+export const works: Artwork[] = [
+  {
+    artist: "Ornella Binni",
+    art: "https://images.unsplash.com/photo-1465869185982-5a1a7522cbcb?auto=format&fit=crop&w=300&q=80",
+  },
+  {
+    artist: "Tom Byrom",
+    art: "https://images.unsplash.com/photo-1548516173-3cabfa4607e9?auto=format&fit=crop&w=300&q=80",
+  },
+  {
+    artist: "Vladimir Malyavko",
+    art: "https://images.unsplash.com/photo-1494337480532-3725c85fd2ab?auto=format&fit=crop&w=300&q=80",
+  },
+];
+
 export function CastCarousel({ actors }: { actors: Actors }) {
   const validActors = [];
 
@@ -39,54 +61,79 @@ export function CastCarousel({ actors }: { actors: Actors }) {
     .filter((_, i) => i < 20);
 
   return (
-    <>
+    <div className="mb-8">
       <h2 className="mb-2 text-lg font-semibold">Top cast</h2>
-      <Carousel
-        opts={{
-          align: "start",
-        }}
-      >
-        <CarouselContent>
+      <ScrollArea className="w-full whitespace-nowrap rounded-md border">
+        <div className="flex w-max space-x-4 p-4">
           {sortedTopActors.map((actor, i) => (
-            <CarouselItem
-              key={i}
-              className="basis-1/2 md:basis-1/3 lg:basis-1/4"
-            >
-              <div className="p-1">
-                <Card className="overflow-hidden">
-                  <CardContent className="relative p-0 flex aspect-[16/9] items-center justify-center">
-                    <img
-                      src={
-                        actor.profile_path
-                          ? `https://image.tmdb.org/t/p/w276_and_h350_face/${actor.profile_path}`
-                          : ``
-                      }
-                      alt={`${actor.name} photo`}
-                    />
-                  </CardContent>
-                </Card>
-                <div className="p-2">
-                  <div className="mb-1 text-sm font-semibold">
-                    {actor.name}d
-                  </div>
-                  <div className="text-xs">{actor.character}</div>
-                </div>
+            <figure key={i} className="shrink-0">
+              <div className="overflow-hidden rounded-md">
+                <img
+                  className="h-[200px]"
+                  src={
+                    actor.profile_path
+                      ? `https://image.tmdb.org/t/p/w276_and_h350_face/${actor.profile_path}`
+                      : "/movie-placeholder.webp"
+                  }
+                  alt={`${actor.name} photo`}
+                />
               </div>
-            </CarouselItem>
+              <figcaption className="pt-2 text-xs">
+                <div className="mb-1 text-sm font-semibold">{actor.name}</div>
+                <div className="text-xs text-muted-foreground">
+                  {actor.character}
+                </div>
+              </figcaption>
+            </figure>
           ))}
-          <CarouselItem className="basis-1/2 md:basis-1/3 lg:basis-1/4">
-            <div className="p-1">
-              <Card className="overflow-hidden">
-                <CardContent className="relative p-0 flex aspect-[16/9] items-center justify-center">
-                  <div>Show all actors</div>
-                </CardContent>
-              </Card>
-            </div>
-          </CarouselItem>
-        </CarouselContent>
-        <CarouselPrevious />
-        <CarouselNext />
-      </Carousel>
-    </>
+          {validActors.length > 19 && (
+            <figure className="my-auto h-full shrink-0">
+              <div className="p-1">
+                <Dialog>
+                  <DialogTrigger asChild>
+                    <Button variant="outline">All Actors</Button>
+                  </DialogTrigger>
+                  <DialogContent className="w-[800px] max-w-[90vw] max-h-[90vh]">
+                    <DialogHeader>
+                      <DialogTitle>Full Cast</DialogTitle>
+                    </DialogHeader>
+                    <ScrollArea className="h-full max-h-[70vh] w-auto rounded-md border">
+                      <div className="grid grid-cols-2 gap-4 p-4">
+                        {validActors.map((actor, i) => (
+                          <div key={i}>
+                            {i > 1 && <Separator className="mb-4" />}
+                            <div className="grid grid-cols-4 gap-4">
+                              <div className="col-span-1 aspect-square overflow-hidden rounded-md">
+                                <img
+                                  src={
+                                    actor.profile_path
+                                      ? `https://image.tmdb.org/t/p/w132_and_h132_face/${actor.profile_path}`
+                                      : "/movie-placeholder.webp"
+                                  }
+                                  alt={`${actor.name} photo`}
+                                />
+                              </div>
+                              <div className="col-span-3 shrink-0 flex flex-col items-start">
+                                <h3 className="scroll-m-20 text-base font-medium tracking-tight">
+                                  {actor.name}
+                                </h3>
+                                <div className="text-sm text-muted-foreground">
+                                  {actor.character}
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </ScrollArea>
+                  </DialogContent>
+                </Dialog>
+              </div>
+            </figure>
+          )}
+        </div>
+        <ScrollBar orientation="horizontal" />
+      </ScrollArea>
+    </div>
   );
 }

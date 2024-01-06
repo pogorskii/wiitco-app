@@ -20,7 +20,7 @@ export function MoviesDay({
   const gameCards = movies.map((movie, i) => (
     <MovieCardCalendar
       key={i}
-      id={i}
+      id={movie.id}
       title={movie.title}
       imageId={movie.posterPath}
       types={movie.releaseTypes}

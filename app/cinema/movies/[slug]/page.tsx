@@ -32,13 +32,15 @@ export async function generateMetadata(
   parent: ResolvingMetadata
 ): Promise<Metadata> {
   // read route params
-  const gameName = params.slug
-    .split("-")
-    .map((w) => w.slice(0, 1).toLocaleUpperCase() + w.slice(1))
-    .join(" ");
+  const movie = await fetchMovieDetails(params.slug);
+
+  if (!movie)
+    return {
+      title: "Movie Details",
+    };
 
   return {
-    title: `${gameName}`,
+    title: `${movie.title}`,
   };
 }
 
@@ -75,24 +77,22 @@ export default async function Page({ params }: { params: { slug: string } }) {
         {/* First column */}
         {/* Shown only on MD breakpoint and above */}
         <div className="hidden md:block col-span-1">
-          <Suspense fallback={<p>loading...</p>}>
-            <Image
-              src={coverUrl}
-              alt={`${movie.title} poster`}
-              width={600}
-              height={900}
-              style={{
-                width: "100%",
-              }}
-              priority
-            />
-          </Suspense>
+          <Image
+            src={coverUrl}
+            alt={`${movie.title} poster`}
+            width={600}
+            height={900}
+            style={{
+              width: "100%",
+            }}
+            priority
+          />
           {/* TODO: Change appearance if added */}
           <Button className="mt-4 mb-6 w-full">
             <FaPlus className="me-1" /> Watch this movie
           </Button>
 
-          <div className="flex col-span-1 lg:hidden flex-col items-center">
+          <div className="mb-8 flex col-span-1 lg:hidden flex-col items-center">
             {/* Reviews */}
             <RatingCircle
               rating={movie.vote_average * 10}
@@ -122,8 +122,8 @@ export default async function Page({ params }: { params: { slug: string } }) {
             </div>
 
             <div className="col-span-3 md:col-span-1">
-              {movie.status ?? (
-                <Badge variant="default" className="mb-2 text-sm">
+              {movie.status && (
+                <Badge variant="outline" className="mb-2">
                   {movie.status}
                 </Badge>
               )}
@@ -131,7 +131,7 @@ export default async function Page({ params }: { params: { slug: string } }) {
                 {movie.title}
               </h1>
               {movie.release_date && movie.release_date !== "" && (
-                <p>
+                <span>
                   {parse(
                     movie.release_date,
                     "yyyy-MM-dd",
@@ -145,7 +145,7 @@ export default async function Page({ params }: { params: { slug: string } }) {
                     }
                   )}
                   )
-                </p>
+                </span>
               )}
             </div>
           </div>
@@ -183,9 +183,34 @@ export default async function Page({ params }: { params: { slug: string } }) {
                       </span>
                       <TagsRow
                         type="cinema"
-                        category="genres"
+                        category="people"
                         tags={movie.credits.crew
                           .filter((e) => e?.job === "Director")
+                          .map((g) => {
+                            return {
+                              name: g?.name,
+                              slug: g?.id.toString(),
+                            };
+                          })}
+                      />
+                    </li>
+                  )}
+                {movie.credits &&
+                  movie.credits.crew.filter((e) => e?.job === "Screenplay")
+                    .length > 0 && (
+                    <li>
+                      <span className="font-semibold">
+                        {movie.credits.crew.filter(
+                          (e) => e?.job === "Screenplay"
+                        ).length === 1
+                          ? `Writer:`
+                          : `Writers:`}
+                      </span>
+                      <TagsRow
+                        type="cinema"
+                        category="people"
+                        tags={movie.credits.crew
+                          .filter((e) => e?.job === "Screenplay")
                           .map((g) => {
                             return {
                               name: g?.name,
@@ -316,14 +341,6 @@ export default async function Page({ params }: { params: { slug: string } }) {
               <Suspense fallback={<p>loading...</p>}>
                 <Gallery movieTitle={movie.title} id={movie.id} />
               </Suspense>
-
-              {/* Similar Games Slider */}
-              {movie.similar && movie.similar.results.length > 0 && (
-                <SimilarMovies
-                  movieTitle={movie.title}
-                  similarMovies={movie.similar?.results as SimilarMovies}
-                />
-              )}
             </div>
 
             {/* Info Second Column */}
@@ -443,7 +460,7 @@ async function RelatedSeries({
           <Dialog>
             <DialogTrigger asChild>
               <Button
-                className="w-full text-start rounded-none h-fit py-1 whitespace-break-spaces"
+                className="w-full font-normal leading-normal text-start rounded-none h-fit px-2 whitespace-break-spaces"
                 variant="outline"
               >
                 {series.name}
@@ -525,6 +542,7 @@ async function Gallery({ movieTitle, id }: { movieTitle: string; id: number }) {
   for (const backdrop of images.backdrops) {
     if (backdrop) validBackdrops.push(backdrop);
   }
+  if (validBackdrops.length === 0) return;
 
   return (
     <section className="mb-8" id="screenshots">
@@ -533,39 +551,5 @@ async function Gallery({ movieTitle, id }: { movieTitle: string; id: number }) {
       </h2>
       <ImagesCarousel movieTitle={movieTitle} images={validBackdrops} />
     </section>
-  );
-}
-
-type SimilarMovies = {
-  adult: boolean;
-  backdrop_path: string | null;
-  genre_ids: number[];
-  id: number;
-  original_language: string;
-  original_title: string;
-  overview: string | null;
-  popularity: number;
-  poster_path: string | null;
-  release_date: string | null;
-  title: string;
-  video: boolean;
-  vote_average: number;
-  vote_count: number;
-}[];
-
-async function SimilarMovies({
-  movieTitle,
-  similarMovies,
-}: {
-  movieTitle: string;
-  similarMovies: SimilarMovies;
-}) {
-  return (
-    <>
-      <h2 className="mb-2 scroll-m-20 text-lg font-semibold">
-        More movies like {movieTitle}
-      </h2>
-      <MoviesCarousel movies={similarMovies} />
-    </>
   );
 }

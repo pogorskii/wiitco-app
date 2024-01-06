@@ -1,7 +1,7 @@
 "use server";
 
 import { v4 as uuid } from "uuid";
-import { fetchMoviesSearch } from "./lib/actions";
+import { fetchMoviesSearch } from "../cinema/lib/actions";
 import InfiniteMoviesSearch from "./infinite-movies-search";
 import { Breadcrumbs } from "@/app/ui/breadcrumbs";
 import { SectionNav } from "../ui/cinema/section-nav";

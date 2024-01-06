@@ -4,9 +4,7 @@ import { motion } from "framer-motion";
 import { useState } from "react";
 import { FaChevronDown, FaChevronUp } from "react-icons/fa";
 import { Button } from "@/components/ui/button";
-
 import { MovieLengthFilter, MovieReleaseTypeFilter } from "./movie-filters";
-
 import { MonthSwitcher } from "../month-switcher";
 
 export function CalendarNav({ year, month }: { year: string; month: string }) {
@@ -31,9 +29,8 @@ export function CalendarNav({ year, month }: { year: string; month: string }) {
         className="p-1 sm:hidden overflow-hidden [&>button]:mt-2"
         style={{ height: filtersOpen ? "auto" : "0px" }}
       >
-        {/* <PlatformFilter />
-        <FilterUnknownGames />
-        <GameCategoryFilter /> */}
+        <MovieReleaseTypeFilter />
+        <MovieLengthFilter />
       </motion.div>
       <Button
         variant="ghost"
