@@ -13,14 +13,12 @@ export function InfiniteMoviesCalendar({
   year,
   initialMovies,
   types,
-  platforms,
   lengthFilter,
 }: {
   month: string;
   year: string;
   initialMovies?: MovieReleasesByMonth;
   types?: string;
-  platforms?: string;
   lengthFilter?: string;
 }) {
   const [movies, setMovies] = useState(initialMovies);
@@ -29,14 +27,13 @@ export function InfiniteMoviesCalendar({
   const [ref, inView] = useInView({ rootMargin: "1000px" });
   const itemsPerPage = 40;
 
-  const loadMoreGames = useCallback(async () => {
+  const loadMoreMovies = useCallback(async () => {
     const next = page.current + 1;
     const movies = await fetchMovieReleaseDatesByMonth({
       page: next,
       year,
       month,
       types,
-      // platforms,
       lengthFilter,
     });
     if (movies?.length) {
@@ -49,13 +46,13 @@ export function InfiniteMoviesCalendar({
     } else {
       setLoadingActive(false);
     }
-  }, [month, year, initialMovies, types, platforms, lengthFilter]);
+  }, [month, year, initialMovies, types, lengthFilter]);
 
   useEffect(() => {
     if (inView) {
-      loadMoreGames();
+      loadMoreMovies();
     }
-  }, [inView, loadMoreGames]);
+  }, [inView, loadMoreMovies]);
 
   if (!movies)
     return (

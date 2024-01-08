@@ -29,10 +29,10 @@ type Images = {
 }[];
 
 export function ImagesCarousel({
-  movieTitle,
+  title,
   images,
 }: {
-  movieTitle: string;
+  title: string;
   images: Images;
 }) {
   return (
@@ -51,7 +51,7 @@ export function ImagesCarousel({
                     <CardContent className="cursor-pointer relative p-0 flex aspect-[16/9] items-center justify-center">
                       <img
                         src={`https://image.tmdb.org/t/p/w1066_and_h600_bestv2/${image.file_path}`}
-                        alt={`${movieTitle} image ${i}`}
+                        alt={`${title} image ${i}`}
                       />
                     </CardContent>
                   </Card>
@@ -60,20 +60,10 @@ export function ImagesCarousel({
               <DialogContent className="border-none p-0 max-w-[80vw]">
                 <img
                   src={`https://www.themoviedb.org/t/p/original/${image.file_path}`}
-                  alt={`${movieTitle} image ${i}`}
+                  alt={`${title} image ${i}`}
                 />
               </DialogContent>
             </Dialog>
-            {/* <div className="p-1">
-              <Card className="overflow-hidden">
-                <CardContent className="relative p-0 flex aspect-[16/9] items-center justify-center">
-                  <img
-                    src={`https://image.tmdb.org/t/p/w1066_and_h600_bestv2/${image.file_path}`}
-                    alt={`${movieTitle} image ${i}`}
-                  />
-                </CardContent>
-              </Card>
-            </div> */}
           </CarouselItem>
         ))}
       </CarouselContent>

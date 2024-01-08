@@ -16,7 +16,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { convertCountryCodeToName } from "@/lib/utils";
+import { convertCountryCodeToName } from "@/app/lib/utils";
 
 type WatchProviders = {
   [key: string]: {
@@ -49,10 +49,10 @@ type WatchProviders = {
 };
 
 export function JustWatchInfo({
-  movieTitle,
+  title,
   watchProviders,
 }: {
-  movieTitle: string;
+  title: string;
   watchProviders: WatchProviders;
 }) {
   const [openTab, setOpenTab] = useState<string | null>(null);
@@ -63,9 +63,7 @@ export function JustWatchInfo({
 
   return (
     <div className="mb-8">
-      <h2 className="mb-2 text-lg font-semibold">
-        Where to watch {movieTitle}
-      </h2>
+      <h2 className="mb-2 text-lg font-semibold">Where to watch {title}</h2>
       <div className="p-4 rounded-md border">
         <Select onValueChange={handleSelect}>
           <SelectTrigger className="mb-2 w-[220px]">

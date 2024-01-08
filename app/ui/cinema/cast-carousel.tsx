@@ -21,7 +21,6 @@ type Actors = (
       known_for_department: string;
       original_name: string;
       profile_path: string | null;
-      cast_id: number;
       character: string;
       credit_id: string;
       order: number;

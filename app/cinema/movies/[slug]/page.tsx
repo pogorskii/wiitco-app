@@ -18,7 +18,7 @@ import {
   fetchMovieDetails,
   fetchMovieCollection,
   fetchMovieImages,
-  fetchJustWatchInfo,
+  fetchMovieJustWatchInfo,
 } from "../../lib/actions";
 import { ImagesCarousel } from "@/app/ui/cinema/images-carousel";
 import { CastCarousel } from "@/app/ui/cinema/cast-carousel";
@@ -53,10 +53,11 @@ export default async function Page({ params }: { params: { slug: string } }) {
     : "/movie-placeholder.webp";
 
   const toHoursAndMinutes = (totalMinutes: number) => {
-    const hours = Math.floor(totalMinutes / 60);
+    const hours =
+      totalMinutes > 60 ? Math.floor(totalMinutes / 60) + " h " : "";
     const minutes = totalMinutes % 60;
 
-    return `${hours} h ${minutes > 0 ? ` ${minutes} m` : ""}`;
+    return `${hours}${minutes > 0 ? ` ${minutes} m` : ""}`;
   };
 
   return (
@@ -554,7 +555,7 @@ async function Gallery({ movieTitle, id }: { movieTitle: string; id: number }) {
       <h2 className="mb-2 scroll-m-20 text-lg font-semibold">
         {movieTitle}&apos;s Images
       </h2>
-      <ImagesCarousel movieTitle={movieTitle} images={validBackdrops} />
+      <ImagesCarousel title={movieTitle} images={validBackdrops} />
     </section>
   );
 }
@@ -566,7 +567,7 @@ async function JustWatchSection({
   movieTitle: string;
   id: number;
 }) {
-  const providers = await fetchJustWatchInfo(id);
+  const providers = await fetchMovieJustWatchInfo(id);
   if (!providers) return;
 
   const availableCountries: {
@@ -605,12 +606,10 @@ async function JustWatchSection({
       availableCountries[country] = data;
   }
 
-  if (!availableCountries) return;
+  if (Object.entries(availableCountries).length === 0) return;
+  console.log(availableCountries);
 
   return (
-    <JustWatchInfo
-      movieTitle={movieTitle}
-      watchProviders={availableCountries}
-    />
+    <JustWatchInfo title={movieTitle} watchProviders={availableCountries} />
   );
 }

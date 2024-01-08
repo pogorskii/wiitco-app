@@ -1,10 +1,10 @@
 "use server";
 
 import { v4 as uuid } from "uuid";
-import { fetchMoviesSearch } from "../cinema/lib/actions";
-import InfiniteMoviesSearch from "./infinite-movies-search";
+import { fetchTelevisionShowsSearch } from "../lib/actions";
+import InfiniteTelevisionShowsSearch from "../infinite-television-shows-search";
 import { Breadcrumbs } from "@/app/ui/breadcrumbs";
-import { SectionNav } from "../ui/cinema/section-nav";
+import { SectionNav } from "@/app/ui/tv/section-nav";
 import { Suspense } from "react";
 import { GamesSearchBodySkeleton } from "@/app/ui/video-games/skeletons";
 import type { Metadata, ResolvingMetadata } from "next";
@@ -18,7 +18,7 @@ export async function generateMetadata(
   parent: ResolvingMetadata
 ): Promise<Metadata> {
   return {
-    title: `Movies Search`,
+    title: `TV Shows Search`,
   };
 }
 
@@ -38,11 +38,11 @@ export default async function Page({
       <Breadcrumbs
         breadcrumbs={[
           { label: "Home", href: "/" },
-          { label: "Movies", href: "/movies", active: true },
+          { label: "TV Shows", href: "/tv", active: true },
         ]}
       />
       <h1 className="scroll-m-20 border-b pb-2 text-3xl font-semibold tracking-tight first:mt-0">
-        All Movies
+        All TV Shows
       </h1>
       <SectionNav />
       <Suspense fallback={<GamesSearchBodySkeleton />}>
@@ -59,15 +59,15 @@ async function PageContent({
   search?: string;
   genre?: string;
 }) {
-  const movies = await fetchMoviesSearch({
+  const shows = await fetchTelevisionShowsSearch({
     search,
     genre,
   });
 
   return (
     <div key={uuid()} className="grid grid-cols-1 md:grid-cols-2 sm:gap-6">
-      <InfiniteMoviesSearch
-        initialMovies={movies}
+      <InfiniteTelevisionShowsSearch
+        initialTelevisionShows={shows}
         search={search}
         genre={genre}
       />

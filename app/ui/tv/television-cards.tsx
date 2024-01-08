@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
-import { MoviesSearch } from "@/app/cinema/lib/zod-schemas";
+import { TelevisionShowsSearch } from "@/app/tv/lib/zod-schemas";
+import { TelevisionSeasonFormatted } from "@/app/tv/lib/definitions";
 import { parse } from "date-fns";
 
 // shadcn
@@ -13,55 +14,50 @@ import {
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 
-export function MovieCardCalendar({
-  id,
-  title,
-  imageId,
-  types,
-  actors,
-  directors,
-  genres,
+export function TelevisionSeasonCardCalendar({
+  televisionSeason,
 }: {
-  id: number;
-  title: string;
-  imageId: string | null;
-  types: number[];
-  actors: string[];
-  directors: string[];
-  genres: number[];
+  televisionSeason: TelevisionSeasonFormatted;
 }) {
-  const coverUrl = imageId
-    ? `https://image.tmdb.org/t/p/w600_and_h900_bestv2${imageId}`
-    : "/movie-placeholder.webp";
-  const typesEnum: { [key: number]: string } = {
-    1: "Premiere",
-    2: "Limited Release",
-    3: "Theatrical",
-    4: "Digital",
-    5: "Physical",
-    6: "On TV",
-  };
-  const typeNames = types.map((x) => typesEnum[x]);
+  const {
+    showId,
+    showName,
+    seasonName,
+    seasonNumber,
+    showPoster,
+    seasonPoster,
+    airDate,
+    episodeCount,
+    genres,
+    creatorNames,
+    networks,
+    originCountries,
+    status,
+    type,
+  } = televisionSeason;
+
+  const coverUrl = seasonPoster
+    ? `https://image.tmdb.org/t/p/w600_and_h900_bestv2${seasonPoster}`
+    : showPoster
+    ? `https://image.tmdb.org/t/p/w600_and_h900_bestv2${showPoster}`
+    : "/television-placeholder.webp";
 
   const genresEnum: { [key: number]: string } = {
-    28: "Action",
-    12: "Adventure",
+    10759: "Adventure",
     16: "Animation",
     35: "Comedy",
     80: "Crime",
     99: "Documentary",
     18: "Drama",
     10751: "Family",
-    14: "Fantasy",
-    36: "History",
-    27: "Horror",
-    10402: "Music",
+    10762: "Kids",
     9648: "Mystery",
-    10749: "Romance",
-    878: "Sci-Fi",
-    10770: "TV Movie",
-    53: "Thriller",
-    10752: "War",
+    10763: "News",
+    10764: "Reality",
+    10765: "Sci-Fi & Fantasy",
+    10766: "Soap",
+    10767: "Talk",
+    10768: "Politics",
     37: "Western",
   };
   const genreNames = genres.map((e) => genresEnum[e]);
@@ -69,33 +65,32 @@ export function MovieCardCalendar({
   return (
     <>
       <Card
-        key={id}
+        key={showId}
         className="hidden sm:flex col-span-1 shadow border border-gray-200 dark:border-gray-800 flex-col overflow-hidden h-auto max-w-full rounded-lg"
       >
-        <Link className="flex flex-col grow" href={`/cinema/movies/${id}`}>
+        <Link className="flex flex-col grow" href={`/tv/shows/${showId}`}>
           <div className="relative overflow-hidden">
             <div className="absolute z-10 top-2 left-2">
-              {typeNames.map((type, i) => (
-                <Badge key={i} variant="secondary">
-                  {type}
-                </Badge>
-              ))}
+              <Badge variant="secondary">{type}</Badge>
             </div>
             <Image
               className="hover:scale-105 duration-200 ease-in-out"
               src={coverUrl}
-              alt={title}
+              alt={`${showName} poster`}
               width={600}
               height={900}
               style={{ objectFit: "cover" }}
             />
           </div>
           <div className="p-6 flex flex-col grow">
-            <CardTitle className="mb-1 text-xl">{title}</CardTitle>
+            <CardTitle className="mb-1 text-xl">{showName}</CardTitle>
+            <Badge className="mb-2 self-start" variant="outline">
+              {seasonName}
+            </Badge>
             <div className="mb-2 bg-blue-400 w-full h-[1px]"></div>
-            {actors.length > 0 && (
+            {creatorNames.length > 0 && (
               <div className="mb-4 text-sm">
-                {actors.map((e, i, arr) => {
+                {creatorNames.map((e, i, arr) => {
                   if (i < 2 && i < 1 && arr.length > 1) {
                     return <span key={i}>{e}, </span>;
                   } else if (i < 2) {
@@ -124,14 +119,14 @@ export function MovieCardCalendar({
       {/* Mobile version */}
       <div className="flex sm:hidden py-4">
         <div className="w-24 grow-0 shrink-0">
-          <Link href={`/cinema/movies/${id}`}>
+          <Link href={`/tv/shows/${showId}`}>
             <div className="overflow-hidden ms-auto w-fit">
               <Image
                 className="hover:scale-105 duration-200 ease-in-out"
                 src={coverUrl}
                 width={600}
                 height={900}
-                alt={`${title} game cover`}
+                alt={`${showName} poster`}
                 style={{
                   width: "100%",
                   height: "auto",
@@ -143,39 +138,25 @@ export function MovieCardCalendar({
         </div>
         <div className="ps-2 w-full flex flex-col justify-between">
           <div className="mb-2 p-0 text-xs">
-            {typeNames.map((type, i) => (
-              <Badge
-                key={i}
-                className="p-0.5 font-normal leading-none rounded-sm"
-                variant="outline"
-              >
-                {type}
-              </Badge>
-            ))}
+            <Badge
+              className="p-0.5 font-normal leading-none rounded-sm"
+              variant="outline"
+            >
+              {type}
+            </Badge>
           </div>
           <Link
             className="mb-1 hover:text-blue-400 hover:underline hover:underline-offset-2 hover:decoration-solid"
-            href={`/cinema/movies/${id}`}
+            href={`/tv/shows/${showId}`}
           >
-            <h2 className="text-base font-semibold">{title}</h2>
+            <h2 className="text-base font-semibold">{showName}</h2>
           </Link>
+          <Badge>{seasonName}</Badge>
           <div className="mb-2 bg-blue-400 w-full h-[1px]"></div>
-          {directors.length > 0 && (
+          {creatorNames.length > 0 && (
             <div className="mb-0 text-sm">
-              <span className="font-semibold">Directed by:</span>{" "}
-              {directors.map((e, i, arr) => {
-                if (i < 2 && i < 1 && arr.length > 1) {
-                  return <span key={i}>{e}, </span>;
-                } else if (i < 2) {
-                  return <span key={i}>{e}</span>;
-                }
-              })}
-            </div>
-          )}
-          {actors.length > 0 && (
-            <div className="mb-4 text-sm">
-              <span className="font-semibold">Starring:</span>{" "}
-              {actors.map((e, i, arr) => {
+              <span className="font-semibold">Created by:</span>{" "}
+              {creatorNames.map((e, i, arr) => {
                 if (i < 2 && i < 1 && arr.length > 1) {
                   return <span key={i}>{e}, </span>;
                 } else if (i < 2) {
@@ -201,39 +182,40 @@ export function MovieCardCalendar({
 }
 
 type ArrayElement<T extends Array<any>> = T[number];
-type MovieSearch = ArrayElement<MoviesSearch>;
+type TelevisionShowSearch = ArrayElement<TelevisionShowsSearch>;
 
-export function MovieSearchCard({ movie }: { movie: MovieSearch }) {
+export function TelevisionShowSearchCard({
+  televisionShow,
+}: {
+  televisionShow: TelevisionShowSearch;
+}) {
   // const parentReleaseYear = game.parentGame?.releaseDate?.getFullYear();
   const coverUrl =
-    movie.poster_path && movie.poster_path !== ""
-      ? `https://image.tmdb.org/t/p/w600_and_h900_bestv2${movie.poster_path}`
-      : "/movie-placeholder.webp";
+    televisionShow.poster_path && televisionShow.poster_path !== ""
+      ? `https://image.tmdb.org/t/p/w600_and_h900_bestv2${televisionShow.poster_path}`
+      : "/television-placeholder.webp";
 
   const genresEnum: { [key: number]: string } = {
-    28: "Action",
-    12: "Adventure",
+    10759: "Adventure",
     16: "Animation",
     35: "Comedy",
     80: "Crime",
     99: "Documentary",
     18: "Drama",
     10751: "Family",
-    14: "Fantasy",
-    36: "History",
-    27: "Horror",
-    10402: "Music",
+    10762: "Kids",
     9648: "Mystery",
-    10749: "Romance",
-    878: "Sci-Fi",
-    10770: "TV Movie",
-    53: "Thriller",
-    10752: "War",
+    10763: "News",
+    10764: "Reality",
+    10765: "Sci-Fi & Fantasy",
+    10766: "Soap",
+    10767: "Talk",
+    10768: "Politics",
     37: "Western",
   };
-  const genreNames = movie.genre_ids?.map((e) => genresEnum[e]);
+  const genreNames = televisionShow.genre_ids?.map((e) => genresEnum[e]);
 
-  function getMovieDate(dateString: string) {
+  function getDate(dateString: string) {
     const date = parse(dateString, "yyyy-MM-dd", new Date());
     return date.toDateString();
   }
@@ -246,10 +228,10 @@ export function MovieSearchCard({ movie }: { movie: MovieSearch }) {
           <CardHeader className="p-0">
             <Link
               className="hover:text-blue-400 hover:underline hover:underline-offset-2 hover:decoration-solid"
-              href={`/cinema/movies/${movie.id}`}
+              href={`/tv/shows/${televisionShow.id}`}
             >
               <CardTitle className="text-xl font-semibold">
-                {movie.title}
+                {televisionShow.name}
               </CardTitle>
             </Link>
             <div className="mt-auto mb-0 inline-flex flex-wrap self-start gap-1">
@@ -269,21 +251,21 @@ export function MovieSearchCard({ movie }: { movie: MovieSearch }) {
           </CardHeader>
           <CardFooter className="flex flex-col items-start mt-auto p-0 text-base">
             <p className="mt-2 mb-1">
-              {movie.release_date &&
-                movie.release_date !== "" &&
-                getMovieDate(movie.release_date)}
+              {televisionShow.first_air_date &&
+                televisionShow.first_air_date !== "" &&
+                getDate(televisionShow.first_air_date)}
             </p>
           </CardFooter>
         </CardContent>
         <div className="col-span-1 w-full">
-          <Link href={`/cinema/movies/${movie.id}`}>
+          <Link href={`/tv/shows/${televisionShow.id}`}>
             <div className="overflow-hidden ms-auto w-fit h-full">
               <Image
                 className="hover:scale-105 duration-200 ease-in-out h-full"
                 src={coverUrl}
                 width={600}
                 height={900}
-                alt={`${movie.title} poster`}
+                alt={`${televisionShow.name} poster`}
                 style={{
                   objectFit: "cover",
                 }}
@@ -296,14 +278,14 @@ export function MovieSearchCard({ movie }: { movie: MovieSearch }) {
       {/* Mobile version */}
       <div className="col-span-2 md:col-span-1 flex sm:hidden py-4">
         <div className="w-24 grow-0 shrink-0">
-          <Link href={`/cinema/movies/${movie.id}`}>
+          <Link href={`/tv/shows/${televisionShow.id}`}>
             <div className="overflow-hidden ms-auto w-fit">
               <Image
                 className="hover:scale-105 duration-200 ease-in-out"
                 src={coverUrl}
                 width={600}
                 height={900}
-                alt={`${movie.title} poster`}
+                alt={`${televisionShow.name} poster`}
                 style={{
                   width: "100%",
                   height: "auto",
@@ -316,9 +298,9 @@ export function MovieSearchCard({ movie }: { movie: MovieSearch }) {
         <div className="ps-2 flex flex-col justify-between">
           <Link
             className="mb-2 hover:text-blue-400 hover:underline hover:underline-offset-2 hover:decoration-solid"
-            href={`/cinema/movies/${movie.id}`}
+            href={`/tv/shows/${televisionShow.id}`}
           >
-            <h2 className="text-base font-semibold">{movie.title}</h2>
+            <h2 className="text-base font-semibold">{televisionShow.name}</h2>
           </Link>
           <div className="inline-flex flex-wrap self-start gap-1.5">
             {genreNames &&
@@ -333,9 +315,9 @@ export function MovieSearchCard({ movie }: { movie: MovieSearch }) {
           </div>
           <div className="mt-auto p-0 text-xs">
             <p className="mb-1">
-              {movie.release_date &&
-                movie.release_date !== "" &&
-                getMovieDate(movie.release_date)}
+              {televisionShow.first_air_date &&
+                televisionShow.first_air_date !== "" &&
+                getDate(televisionShow.first_air_date)}
             </p>
           </div>
         </div>

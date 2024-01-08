@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { fetchTwitchToken } from "@/app/lib/data";
 import {
   drop,
   fetchTest,
@@ -334,7 +335,7 @@ export default function Page() {
           <Button onClick={connectCompanyGame}>CONNECT CompanyGame</Button>
           <Button onClick={connectSimilarGames}>CONNECT SimilarGames</Button>
         </div>
-        <Button onClick={() => fetchTest()}>TEST</Button>
+        <Button onClick={() => fetchTwitchToken()}>TEST</Button>
         <Button variant="destructive" onClick={handleDelete}>
           DROP game engines table
         </Button>

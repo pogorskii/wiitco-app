@@ -8,7 +8,7 @@ export async function TagsRow({
   category,
   tags,
 }: {
-  type: "video-games" | "cinema";
+  type: "video-games" | "cinema" | "tv";
   category: string;
   tags: { name: string | undefined; slug: string | number | undefined }[];
 }) {
@@ -18,7 +18,7 @@ export async function TagsRow({
 
   return (
     <>
-      {tags.map((tag, i, arr) => (
+      {validTags.map((tag, i, arr) => (
         <Link
           key={tag.slug + uuid()}
           className=" text-blue-500 hover:text-blue-400 hover:underline hover:underline-offset-4 hover:decoration-solid"

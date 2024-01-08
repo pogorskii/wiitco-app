@@ -16,6 +16,8 @@ import {
 // Map of links to display in the side navigation.
 const links = [
   { name: "Movies", href: "/cinema" },
+  { name: "TV Shows", href: "/tv" },
+
   {
     name: "Video Games",
     href: "/video-games",
@@ -32,6 +34,19 @@ const moviesLinks: { title: string; href: string; description: string }[] = [
     title: "Movies Database",
     href: "/cinema/search",
     description: "Browse, search, and filter all movies.",
+  },
+];
+
+const tvLinks: { title: string; href: string; description: string }[] = [
+  {
+    title: "Calendar",
+    href: "/tv/calendar",
+    description: "Schedule of TV Shows seasons.",
+  },
+  {
+    title: "TV Shows Database",
+    href: "/tv/search",
+    description: "Browse, search, and filter all TV shows.",
   },
 ];
 
@@ -79,7 +94,29 @@ export function NavLinks() {
         <NavigationMenuItem>
           <NavigationMenuTrigger
             className={clsx("rounded-3xl", {
-              "text-pr": pathname.includes(links[1].href),
+              "bg-primary/10": pathname.includes(links[1].href),
+            })}
+          >
+            TV Shows
+          </NavigationMenuTrigger>
+          <NavigationMenuContent>
+            <ul className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px] ">
+              {tvLinks.map((component) => (
+                <ListItem
+                  key={component.title}
+                  title={component.title}
+                  href={component.href}
+                >
+                  {component.description}
+                </ListItem>
+              ))}
+            </ul>
+          </NavigationMenuContent>
+        </NavigationMenuItem>
+        <NavigationMenuItem>
+          <NavigationMenuTrigger
+            className={clsx("rounded-3xl", {
+              "bg-primary/10": pathname.includes(links[2].href),
             })}
           >
             Video Games

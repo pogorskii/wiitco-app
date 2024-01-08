@@ -60,7 +60,7 @@ export const fetchMovieImages = async (id: number) => {
   }
 };
 
-export const fetchJustWatchInfo = async (id: number) => {
+export const fetchMovieJustWatchInfo = async (id: number) => {
   try {
     const response = await fetch(
       `https://api.themoviedb.org/3/movie/${id}/watch/providers`,
