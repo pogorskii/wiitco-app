@@ -127,23 +127,25 @@ export default async function Page({ params }: { params: { slug: string } }) {
               {televisionShow.first_air_date &&
                 televisionShow.first_air_date !== "" && (
                   <span>
+                    {televisionShow.in_production && (
+                      <span className="font-semibold">Since: </span>
+                    )}
                     {parse(
                       televisionShow.first_air_date,
                       "yyyy-MM-dd",
                       new Date()
                     ).toDateString()}{" "}
-                    (
-                    {formatDistanceToNow(
-                      parse(
-                        televisionShow.first_air_date,
-                        "yyyy-MM-dd",
-                        new Date()
-                      ),
-                      {
-                        addSuffix: true,
-                      }
+                    {televisionShow.last_air_date && (
+                      <>
+                        {" "}
+                        –{" "}
+                        {parse(
+                          televisionShow.last_air_date,
+                          "yyyy-MM-dd",
+                          new Date()
+                        ).toDateString()}
+                      </>
                     )}
-                    )
                   </span>
                 )}
             </div>
