@@ -48,7 +48,7 @@ export const fetchTelevisionShowImages = async (id: number) => {
 export const fetchTelevisionShowJustWatchInfo = async (id: number) => {
   try {
     const response = await fetch(
-      `https://api.themoviedb.org/3/movie/${id}/watch/providers`,
+      `https://api.themoviedb.org/3/tv/${id}/watch/providers`,
       options
     );
     const result = await response.json();
@@ -59,13 +59,13 @@ export const fetchTelevisionShowJustWatchInfo = async (id: number) => {
   }
 };
 
-export const fetchTelevisionShowsSearch = async ({
+export const fetchAnimeShowsSearch = async ({
   search,
-  genre,
+  // genre,
   page = 1,
 }: {
   search?: string;
-  genre?: string;
+  // genre?: string;
   page?: number;
 }) => {
   try {
@@ -80,18 +80,22 @@ export const fetchTelevisionShowsSearch = async ({
           options
         );
     const result = await response.json();
-    const parsedData = genre
-      ? TelevisionShowsSearch.parse(result.results).filter((e) =>
-          e.genre_ids?.includes(Number(genre))
-        )
-      : TelevisionShowsSearch.parse(result.results);
+    const parsedData = TelevisionShowsSearch.parse(result.results).filter(
+      (e) => e.genre_ids?.includes(16) && e.origin_country.includes("JP")
+    );
+
+    // const parsedData = genre
+    //   ? TelevisionShowsSearch.parse(result.results).filter(
+    //       (e) => e.genre_ids?.includes(16) && e.origin_country.includes("JP")
+    //     )
+    //   : TelevisionShowsSearch.parse(result.results);
     return parsedData;
   } catch (err) {
     console.error(err);
   }
 };
 
-export const fetchTelevisionSeasonsByMonth = async ({
+export const fetchAnimeSeasonsByMonth = async ({
   page = 1,
   year,
   month,
@@ -122,13 +126,35 @@ export const fetchTelevisionSeasonsByMonth = async ({
     take: 40,
     skip: 40 * (page - 1),
     where: {
-      airDate: {
-        gte: startDate,
-        lte: endDate,
-      },
-      show: {
-        type: { in: typesQuery },
-      },
+      AND: [
+        {
+          airDate: {
+            gte: startDate,
+            lte: endDate,
+          },
+        },
+        {
+          show: {
+            AND: [
+              { type: { in: typesQuery } },
+              {
+                genres: {
+                  some: {
+                    genreId: 16,
+                  },
+                },
+              },
+              {
+                originCountries: {
+                  some: {
+                    countryIso: "JP",
+                  },
+                },
+              },
+            ],
+          },
+        },
+      ],
     },
     orderBy: [{ airDate: "asc" }, { id: "asc" }],
     select: {

@@ -45,7 +45,7 @@ export async function generateMetadata(
 
 export default async function Page({ params }: { params: { slug: string } }) {
   const televisionShow = await fetchTelevisionShowDetails(params.slug);
-  if (!televisionShow) return <p>TV Show not found.</p>;
+  if (!televisionShow) return <p>Anime not found.</p>;
 
   const coverUrl = televisionShow.poster_path
     ? `https://image.tmdb.org/t/p/w600_and_h900_bestv2${televisionShow.poster_path}`
@@ -64,10 +64,10 @@ export default async function Page({ params }: { params: { slug: string } }) {
       <Breadcrumbs
         breadcrumbs={[
           { label: "Home", href: "/" },
-          { label: "TV Shows", href: "/tv/shows" },
+          { label: "Anime", href: "/anime/shows" },
           {
             label: televisionShow.name,
-            href: `/tv/shows/${params.slug}`,
+            href: `/anime/shows/${params.slug}`,
             active: true,
           },
         ]}
@@ -89,7 +89,7 @@ export default async function Page({ params }: { params: { slug: string } }) {
           />
           {/* TODO: Change appearance if added */}
           <Button className="mt-4 mb-6 w-full">
-            <FaPlus className="me-1" /> Watch this TV Show
+            <FaPlus className="me-1" /> Watch this Anime
           </Button>
 
           <div className="mb-8 flex col-span-1 lg:hidden flex-col items-center">
@@ -142,7 +142,7 @@ export default async function Page({ params }: { params: { slug: string } }) {
           </div>
 
           <Button className="mb-2 mt-4 w-full md:hidden">
-            <FaPlus className="me-1" /> Watch this movie
+            <FaPlus className="me-1" /> Watch this Anime
           </Button>
 
           <Separator className="mt-1 mb-4" />

@@ -17,7 +17,7 @@ import {
 const links = [
   { name: "Movies", href: "/cinema" },
   { name: "TV Shows", href: "/tv" },
-
+  { name: "Anime", href: "/anime" },
   {
     name: "Video Games",
     href: "/video-games",
@@ -37,16 +37,30 @@ const moviesLinks: { title: string; href: string; description: string }[] = [
   },
 ];
 
-const tvLinks: { title: string; href: string; description: string }[] = [
+const televisionLinks: { title: string; href: string; description: string }[] =
+  [
+    {
+      title: "Calendar",
+      href: "/tv/calendar",
+      description: "Schedule of TV Shows seasons.",
+    },
+    {
+      title: "TV Shows Database",
+      href: "/tv/search",
+      description: "Browse, search, and filter all TV shows.",
+    },
+  ];
+
+const animeLinks: { title: string; href: string; description: string }[] = [
   {
     title: "Calendar",
-    href: "/tv/calendar",
-    description: "Schedule of TV Shows seasons.",
+    href: "/anime/calendar",
+    description: "Schedule of Anime seasons.",
   },
   {
-    title: "TV Shows Database",
-    href: "/tv/search",
-    description: "Browse, search, and filter all TV shows.",
+    title: "Anime Database",
+    href: "/anime/search",
+    description: "Browse, search, and filter all Anime.",
   },
 ];
 
@@ -101,7 +115,7 @@ export function NavLinks() {
           </NavigationMenuTrigger>
           <NavigationMenuContent>
             <ul className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px] ">
-              {tvLinks.map((component) => (
+              {televisionLinks.map((component) => (
                 <ListItem
                   key={component.title}
                   title={component.title}
@@ -117,6 +131,28 @@ export function NavLinks() {
           <NavigationMenuTrigger
             className={clsx("rounded-3xl", {
               "bg-primary/10": pathname.includes(links[2].href),
+            })}
+          >
+            Anime
+          </NavigationMenuTrigger>
+          <NavigationMenuContent>
+            <ul className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px] ">
+              {animeLinks.map((component) => (
+                <ListItem
+                  key={component.title}
+                  title={component.title}
+                  href={component.href}
+                >
+                  {component.description}
+                </ListItem>
+              ))}
+            </ul>
+          </NavigationMenuContent>
+        </NavigationMenuItem>
+        <NavigationMenuItem>
+          <NavigationMenuTrigger
+            className={clsx("rounded-3xl", {
+              "bg-primary/10": pathname.includes(links[3].href),
             })}
           >
             Video Games
