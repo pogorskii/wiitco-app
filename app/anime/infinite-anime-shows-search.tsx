@@ -20,14 +20,13 @@ export default function InfiniteAnimeShowsSearch({
   const page = useRef(1);
   const [loadingActive, setLoadingActive] = useState(true);
   const [ref, inView] = useInView({ rootMargin: "1000px" });
-  const itemsPerPage = 20;
 
   const loadMoreShows = useCallback(async () => {
     const next = page.current + 1;
     const shows = await fetchAnimeShowsSearch({
       page: next,
       search,
-      // genre,
+      genre,
     });
     if (shows?.length) {
       page.current = next;
@@ -35,7 +34,6 @@ export default function InfiniteAnimeShowsSearch({
         ...(prev?.length ? prev : []),
         ...(shows as TelevisionShowsSearch),
       ]);
-      // if (shows.length < itemsPerPage) setLoadingActive(false);
     } else {
       setLoadingActive(false);
     }

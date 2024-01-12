@@ -6,7 +6,7 @@ import { InfiniteGamesCalendar } from "./infinite-games-calendar";
 import { Breadcrumbs } from "@/app/ui/breadcrumbs";
 import { CalendarNav } from "@/app/ui/video-games/calendar-nav";
 import { Suspense } from "react";
-import { GamesCalendarBodySkeleton } from "@/app/ui/video-games/skeletons";
+import { GamesCalendarBodySkeleton } from "@/app/ui/skeletons";
 import { getMonthYearName } from "@/app/lib/utils";
 import type { Metadata, ResolvingMetadata } from "next";
 

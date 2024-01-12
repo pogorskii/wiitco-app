@@ -6,7 +6,7 @@ import InfiniteMoviesSearch from "../infinite-movies-search";
 import { Breadcrumbs } from "@/app/ui/breadcrumbs";
 import { SectionNav } from "../../ui/cinema/section-nav";
 import { Suspense } from "react";
-import { GamesSearchBodySkeleton } from "@/app/ui/video-games/skeletons";
+import { GamesSearchBodySkeleton } from "@/app/ui/skeletons";
 import type { Metadata, ResolvingMetadata } from "next";
 
 export async function generateMetadata(

@@ -31,7 +31,7 @@ export function InfiniteAnimeSeasonsCalendar({
       page: next,
       year,
       month,
-      types,
+      itemsPerPage,
     });
     if (seasons?.length) {
       page.current = next;

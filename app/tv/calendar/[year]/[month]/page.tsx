@@ -7,7 +7,7 @@ import { InfiniteTelevisionSeasonsCalendar } from "./infinte-tv-shows-calendar";
 import { Breadcrumbs } from "@/app/ui/breadcrumbs";
 import { TelevisionCalendarNav } from "@/app/ui/tv/television-calendar-nav";
 import { Suspense } from "react";
-import { GamesCalendarBodySkeleton } from "@/app/ui/video-games/skeletons";
+import { CalendarBodySkeleton } from "@/app/ui/skeletons";
 import { getMonthYearName } from "@/app/lib/utils";
 import type { Metadata, ResolvingMetadata } from "next";
 
@@ -31,14 +31,12 @@ export default async function Page({
   searchParams,
 }: {
   params: { year: string; month: string };
-  searchParams?: {
+  searchParams: {
     types?: string;
-    platforms?: string;
   };
 }) {
   const types = searchParams?.types;
-  const year = params.year;
-  const month = params.month;
+  const { year, month } = params;
   const displayDate = getMonthYearName(month, year);
 
   return (
@@ -58,7 +56,7 @@ export default async function Page({
         All TV Shows Airing in {displayDate}
       </h1>
       <TelevisionCalendarNav year={year} month={month} />
-      <Suspense fallback={<GamesCalendarBodySkeleton />}>
+      <Suspense fallback={<CalendarBodySkeleton />}>
         <TelevisionCalendarBody year={year} month={month} types={types} />
       </Suspense>
     </>
@@ -88,7 +86,7 @@ async function TelevisionCalendarBody({
       <InfiniteTelevisionSeasonsCalendar
         month={month}
         year={year}
-        initialTelevisionSeasons={televisionSeasons as TelevisionSeasons}
+        initialSeasons={televisionSeasons as TelevisionSeasons}
         types={types}
       />
     </div>

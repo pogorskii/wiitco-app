@@ -6,7 +6,7 @@ import { TelevisionSeasons } from "@/app/tv/lib/definitions";
 import { InfiniteAnimeSeasonsCalendar } from "./infinte-anime-seasons-calendar";
 import { Breadcrumbs } from "@/app/ui/breadcrumbs";
 import { Suspense } from "react";
-import { GamesCalendarBodySkeleton } from "@/app/ui/video-games/skeletons";
+import { CalendarBodySkeleton } from "@/app/ui/skeletons";
 import { getMonthYearName } from "@/app/lib/utils";
 import type { Metadata, ResolvingMetadata } from "next";
 import { MonthSwitcher } from "@/app/ui/month-switcher";
@@ -59,7 +59,7 @@ export default async function Page({
       <div className="relative sm:sticky top-[-1px] bg-background z-20 py-1 px-6 mx-[-24px] sm:px-10 sm:mx-[-40px] lg:px-20 lg:mx-[-80px]">
         <MonthSwitcher year={year} month={month} />
       </div>
-      <Suspense fallback={<GamesCalendarBodySkeleton />}>
+      <Suspense fallback={<CalendarBodySkeleton />}>
         <TelevisionCalendarBody year={year} month={month} types={types} />
       </Suspense>
     </>
@@ -78,7 +78,6 @@ async function TelevisionCalendarBody({
   const seasons = await fetchAnimeSeasonsByMonth({
     year,
     month,
-    types,
   });
 
   if (!seasons.length)

@@ -4,9 +4,9 @@ import { v4 as uuid } from "uuid";
 import { fetchAnimeShowsSearch } from "../lib/actions";
 import InfiniteAnimeShowsSearch from "../infinite-anime-shows-search";
 import { Breadcrumbs } from "@/app/ui/breadcrumbs";
-import { SectionNav } from "@/app/ui/tv/section-nav";
+import { AnimeSearchNav } from "@/app/ui/anime/anime-search-nav";
 import { Suspense } from "react";
-import { GamesSearchBodySkeleton } from "@/app/ui/video-games/skeletons";
+import { SearchBodySkeleton } from "@/app/ui/skeletons";
 import type { Metadata, ResolvingMetadata } from "next";
 
 export async function generateMetadata(
@@ -25,13 +25,12 @@ export async function generateMetadata(
 export default async function Page({
   searchParams,
 }: {
-  searchParams?: {
+  searchParams: {
     search?: string;
     genre?: string;
   };
 }) {
-  const search = searchParams?.search;
-  const genre = searchParams?.genre;
+  const { search, genre } = searchParams;
 
   return (
     <div>
@@ -44,8 +43,8 @@ export default async function Page({
       <h1 className="scroll-m-20 border-b pb-2 text-3xl font-semibold tracking-tight first:mt-0">
         All Anime shows
       </h1>
-      <SectionNav />
-      <Suspense fallback={<GamesSearchBodySkeleton />}>
+      <AnimeSearchNav />
+      <Suspense fallback={<SearchBodySkeleton />}>
         <PageContent search={search} genre={genre} />
       </Suspense>
     </div>
@@ -61,7 +60,7 @@ async function PageContent({
 }) {
   const shows = await fetchAnimeShowsSearch({
     search,
-    // genre,
+    genre,
   });
 
   return (

@@ -7,10 +7,10 @@ export default function Loading() {
       <Breadcrumbs
         breadcrumbs={[
           { label: "Home", href: "/" },
-          { label: "TV Shows", href: "/tv/shows" },
+          { label: "Anime", href: "/anime/shows" },
           {
             label: "Loading...",
-            href: `"/tv/shows"`,
+            href: `"/anime/shows"`,
             active: true,
           },
         ]}
@@ -44,7 +44,6 @@ export default function Loading() {
           </div>
 
           <Skeleton className="mt-4 mb-6 w-full h-10" />
-
           <Skeleton className="mt-1 mb-4 h-[1px] w-full" />
 
           {/* Info First Column */}

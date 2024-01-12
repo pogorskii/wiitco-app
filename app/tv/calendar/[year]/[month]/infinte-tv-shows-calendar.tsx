@@ -11,49 +11,47 @@ import { TelevisionDay } from "@/app/ui/tv/television-day";
 export function InfiniteTelevisionSeasonsCalendar({
   month,
   year,
-  initialTelevisionSeasons,
+  initialSeasons,
   types,
 }: {
   month: string;
   year: string;
-  initialTelevisionSeasons?: TelevisionSeasons;
+  initialSeasons?: TelevisionSeasons;
   types?: string;
 }) {
-  const [televisionSeasons, setTelevisionSeasons] = useState(
-    initialTelevisionSeasons
-  );
+  const [seasons, setSeasons] = useState(initialSeasons);
   const page = useRef(1);
   const [loadingActive, setLoadingActive] = useState(true);
   const [ref, inView] = useInView({ rootMargin: "1000px" });
-  const itemsPerPage = 40;
+  const itemsPerPage = 20;
 
-  const loadMoreTelevisionSeasons = useCallback(async () => {
+  const loadMoreSeasons = useCallback(async () => {
     const next = page.current + 1;
-    const televisionSeasons = await fetchTelevisionSeasonsByMonth({
+    const seasons = await fetchTelevisionSeasonsByMonth({
       page: next,
       year,
       month,
       types,
     });
-    if (televisionSeasons?.length) {
+    if (seasons?.length) {
       page.current = next;
-      setTelevisionSeasons((prev) => [
+      setSeasons((prev) => [
         ...(prev?.length ? prev : []),
-        ...(televisionSeasons as TelevisionSeasons),
+        ...(seasons as TelevisionSeasons),
       ]);
-      if (televisionSeasons.length < itemsPerPage) setLoadingActive(false);
+      if (seasons.length < itemsPerPage) setLoadingActive(false);
     } else {
       setLoadingActive(false);
     }
-  }, [month, year, initialTelevisionSeasons, types]);
+  }, [month, year, initialSeasons, types]);
 
   useEffect(() => {
     if (inView) {
-      loadMoreTelevisionSeasons();
+      loadMoreSeasons();
     }
-  }, [inView, loadMoreTelevisionSeasons]);
+  }, [inView, loadMoreSeasons]);
 
-  if (!televisionSeasons)
+  if (!seasons)
     return (
       <>
         <h2>No TV Shows currently scheduled for this month.</h2>
@@ -63,13 +61,13 @@ export function InfiniteTelevisionSeasonsCalendar({
   return (
     <>
       {/* Movies calendar */}
-      {(!televisionSeasons || televisionSeasons?.length === 0) && (
+      {(!seasons || seasons?.length === 0) && (
         <p className="col-span-2 w-full text-center">No TV Shows found.</p>
       )}
       <TelevisionCalendar
         month={month}
         year={year}
-        televisionSeasons={televisionSeasons}
+        televisionSeasons={seasons}
       />
       {/* Loading spinner */}
       {loadingActive && (

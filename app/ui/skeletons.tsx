@@ -1,7 +1,7 @@
 import { Skeleton } from "@/components/ui/skeleton";
 
-export function GamesSearchBodySkeleton() {
-  const GameSearchCardSkeleton = (
+export function SearchBodySkeleton() {
+  const SearchCardSkeleton = (
     <>
       {/* Desktop version */}
       <div className="rounded-lg border border-slate-200 bg-white text-slate-950 dark:border-slate-800 dark:bg-slate-950 dark:text-slate-50 col-span-2 md:col-span-1 hidden sm:grid min-h-[212px] grid-cols-3 shadow-md overflow-hidden">
@@ -37,16 +37,16 @@ export function GamesSearchBodySkeleton() {
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 sm:gap-6">
-      {GameSearchCardSkeleton}
-      {GameSearchCardSkeleton}
-      {GameSearchCardSkeleton}
-      {GameSearchCardSkeleton}
+      {SearchCardSkeleton}
+      {SearchCardSkeleton}
+      {SearchCardSkeleton}
+      {SearchCardSkeleton}
     </div>
   );
 }
 
-export function GamesCalendarBodySkeleton() {
-  const GameCardSkeleton = (
+export function CalendarBodySkeleton() {
+  const CardSkeleton = (
     <>
       <div className="hidden sm:flex col-span-1 shadow border border-gray-200 dark:border-gray-800 flex-col overflow-hidden h-auto max-w-full rounded-lg">
         <div className="grow-0 ">
@@ -55,7 +55,7 @@ export function GamesCalendarBodySkeleton() {
         <div className="p-6">
           <Skeleton className="w-3/4 h-7 mb-5" />
           <div>
-            {/* platforms */}
+            {/* Platforms */}
             <div className="flex gap-2">
               <Skeleton className="h-4 w-7" />
               <Skeleton className="h-4 w-10" />
@@ -92,13 +92,13 @@ export function GamesCalendarBodySkeleton() {
 
   return (
     <section className="relative grid grid-cols-4 gap-5">
-      {/* day header mobile */}
+      {/* Day header mobile */}
       <div className="sm:hidden py-2 col-span-4 sticky z-20 top-0 bg-background">
         <Skeleton className="h-8 w-[80px] col-span-1" />
         <Skeleton className="mt-4 w-full h-[2px]" />
       </div>
       <div className="hidden sm:block">
-        {/* day header */}
+        {/* Day header */}
         <div>
           <Skeleton className="h-10 w-[80px] col-span-1" />
           <Skeleton className="mt-4 w-full h-[2px]" />
@@ -106,10 +106,10 @@ export function GamesCalendarBodySkeleton() {
       </div>
       <div className="col-span-4 sm:col-span-3">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 sm:gap-5">
-          {GameCardSkeleton}
-          {GameCardSkeleton}
-          {GameCardSkeleton}
-          {GameCardSkeleton}
+          {CardSkeleton}
+          {CardSkeleton}
+          {CardSkeleton}
+          {CardSkeleton}
         </div>
       </div>
     </section>

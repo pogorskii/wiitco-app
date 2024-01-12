@@ -61,15 +61,15 @@ export const fetchTelevisionShowJustWatchInfo = async (id: number) => {
 
 export const fetchAnimeShowsSearch = async ({
   search,
-  // genre,
   page = 1,
+  genre,
 }: {
   search?: string;
-  // genre?: string;
   page?: number;
+  genre?: string;
 }) => {
   try {
-    // If search query is empty, fetch popular TV Shows instead
+    // If search query is empty, fetch popular shows instead
     const response = search
       ? await fetch(
           `https://api.themoviedb.org/3/search/tv?query=${search}%20&include_adult=false&language=en-US&page=${page}`,
@@ -83,13 +83,11 @@ export const fetchAnimeShowsSearch = async ({
     const parsedData = TelevisionShowsSearch.parse(result.results).filter(
       (e) => e.genre_ids?.includes(16) && e.origin_country.includes("JP")
     );
+    const filteredData = genre
+      ? parsedData.filter((e) => e.genre_ids?.includes(Number(genre)))
+      : parsedData;
 
-    // const parsedData = genre
-    //   ? TelevisionShowsSearch.parse(result.results).filter(
-    //       (e) => e.genre_ids?.includes(16) && e.origin_country.includes("JP")
-    //     )
-    //   : TelevisionShowsSearch.parse(result.results);
-    return parsedData;
+    return filteredData;
   } catch (err) {
     console.error(err);
   }
@@ -99,62 +97,38 @@ export const fetchAnimeSeasonsByMonth = async ({
   page = 1,
   year,
   month,
-  types = "documentary,news,miniseries,reality,scripted,talkshow,video",
+  itemsPerPage = 40,
 }: {
   page?: number;
   year: string;
   month: string;
-  types?: string;
+  itemsPerPage?: number;
 }) => {
-  const typesEnum: { [key: string]: string } = {
-    documentary: "Documentary",
-    news: "News",
-    miniseries: "Miniseries",
-    reality: "Reality",
-    scripted: "Scripted",
-    talkshow: "Talk Show",
-    video: "Video",
-  };
-  const typesQuery = types.split(",").map((x) => typesEnum[x]);
-
   const yearInt = Number(year);
   const monthInt = Number(month);
   const startDate = new Date(yearInt, monthInt - 1);
   const endDate = new Date(yearInt, monthInt, 0);
 
-  const releaseDates = await prisma.tVSeason.findMany({
-    take: 40,
-    skip: 40 * (page - 1),
+  const seasons = await prisma.tVSeason.findMany({
+    take: itemsPerPage,
+    skip: itemsPerPage * (page - 1),
     where: {
-      AND: [
-        {
-          airDate: {
-            gte: startDate,
-            lte: endDate,
+      airDate: {
+        gte: startDate,
+        lte: endDate,
+      },
+      show: {
+        genres: {
+          some: {
+            genreId: 16,
           },
         },
-        {
-          show: {
-            AND: [
-              { type: { in: typesQuery } },
-              {
-                genres: {
-                  some: {
-                    genreId: 16,
-                  },
-                },
-              },
-              {
-                originCountries: {
-                  some: {
-                    countryIso: "JP",
-                  },
-                },
-              },
-            ],
+        originCountries: {
+          some: {
+            countryIso: "JP",
           },
         },
-      ],
+      },
     },
     orderBy: [{ airDate: "asc" }, { id: "asc" }],
     select: {
@@ -205,5 +179,6 @@ export const fetchAnimeSeasonsByMonth = async ({
       },
     },
   });
-  return releaseDates;
+
+  return seasons;
 };

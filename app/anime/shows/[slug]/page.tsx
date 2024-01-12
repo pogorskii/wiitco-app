@@ -31,24 +31,46 @@ export async function generateMetadata(
   },
   parent: ResolvingMetadata
 ): Promise<Metadata> {
-  const televisionShow = await fetchTelevisionShowDetails(params.slug);
+  const show = await fetchTelevisionShowDetails(params.slug);
 
-  if (!televisionShow)
+  if (!show)
     return {
-      title: "TV Show Details",
+      title: "Anime Show Details",
     };
 
   return {
-    title: `${televisionShow.name}`,
+    title: `${show.name}`,
   };
 }
 
 export default async function Page({ params }: { params: { slug: string } }) {
-  const televisionShow = await fetchTelevisionShowDetails(params.slug);
-  if (!televisionShow) return <p>Anime not found.</p>;
+  const show = await fetchTelevisionShowDetails(params.slug);
+  if (!show) return <p>Anime not found.</p>;
 
-  const coverUrl = televisionShow.poster_path
-    ? `https://image.tmdb.org/t/p/w600_and_h900_bestv2${televisionShow.poster_path}`
+  const {
+    id,
+    poster_path,
+    name,
+    vote_average,
+    vote_count,
+    in_production,
+    first_air_date,
+    last_air_date,
+    genres,
+    episode_run_time,
+    production_countries,
+    production_companies,
+    networks,
+    overview,
+    external_ids,
+    homepage,
+    seasons,
+    credits,
+    videos,
+  } = show;
+
+  const coverUrl = poster_path
+    ? `https://image.tmdb.org/t/p/w600_and_h900_bestv2${poster_path}`
     : "/television-placeholder.webp";
 
   const toHoursAndMinutes = (totalMinutes: number) => {
@@ -66,7 +88,7 @@ export default async function Page({ params }: { params: { slug: string } }) {
           { label: "Home", href: "/" },
           { label: "Anime", href: "/anime/shows" },
           {
-            label: televisionShow.name,
+            label: name,
             href: `/anime/shows/${params.slug}`,
             active: true,
           },
@@ -79,7 +101,7 @@ export default async function Page({ params }: { params: { slug: string } }) {
         <div className="hidden md:block col-span-1">
           <Image
             src={coverUrl}
-            alt={`${televisionShow.name} poster`}
+            alt={`${name} poster`}
             width={600}
             height={900}
             style={{
@@ -94,10 +116,7 @@ export default async function Page({ params }: { params: { slug: string } }) {
 
           <div className="mb-8 flex col-span-1 lg:hidden flex-col items-center">
             {/* Reviews */}
-            <RatingCircle
-              rating={televisionShow.vote_average * 10}
-              reviewCount={televisionShow.vote_count}
-            />
+            <RatingCircle rating={vote_average * 10} reviewCount={vote_count} />
           </div>
         </div>
 
@@ -107,7 +126,7 @@ export default async function Page({ params }: { params: { slug: string } }) {
             <div className="col-span-2 block me-4 md:hidden">
               <Image
                 src={coverUrl}
-                alt={`${televisionShow.name} poster`}
+                alt={`${name} poster`}
                 width={600}
                 height={900}
                 style={{
@@ -119,22 +138,19 @@ export default async function Page({ params }: { params: { slug: string } }) {
 
             <div className="col-span-3 md:col-span-1">
               <Badge variant="outline" className="mb-2">
-                {televisionShow.in_production ? "On Air" : "Finished"}
+                {in_production ? "On Air" : "Finished"}
               </Badge>
               <h1 className="mb-2 scroll-m-20 text-xl md:text-2xl font-semibold first:mt-0">
-                {televisionShow.name}
+                {name}
               </h1>
-              {televisionShow.first_air_date && (
+              {first_air_date && (
                 <span>
-                  {televisionShow.in_production && (
+                  {in_production && (
                     <span className="font-semibold">Since: </span>
                   )}
-                  {format(televisionShow.first_air_date, "MMMM d yyyy")}{" "}
-                  {televisionShow.last_air_date && (
-                    <>
-                      {" "}
-                      – {format(televisionShow.last_air_date, "MMMM d yyyy")}
-                    </>
+                  {format(first_air_date, "MMMM d yyyy")}{" "}
+                  {last_air_date && (
+                    <> – {format(last_air_date, "MMMM d yyyy")}</>
                   )}
                 </span>
               )}
@@ -152,8 +168,8 @@ export default async function Page({ params }: { params: { slug: string } }) {
             <div className="flex md:hidden col-span-5 lg:hidden flex-col items-center">
               {/* Reviews */}
               <RatingCircle
-                rating={televisionShow.vote_average * 10}
-                reviewCount={televisionShow.vote_count}
+                rating={vote_average * 10}
+                reviewCount={vote_count}
               />
             </div>
 
@@ -161,17 +177,15 @@ export default async function Page({ params }: { params: { slug: string } }) {
             <div className="col-span-4 lg:col-span-3">
               {/* Main Info List */}
               <ul className="mb-4 [&>*+*]:mt-2">
-                {televisionShow.genres && televisionShow.genres.length > 0 && (
+                {genres && genres.length > 0 && (
                   <li>
                     <span className="font-semibold">
-                      {televisionShow.genres.length === 1
-                        ? `Genre:`
-                        : `Genres:`}
+                      {genres.length === 1 ? `Genre:` : `Genres:`}
                     </span>
                     <TagsRow
                       type="tv"
                       category="genres"
-                      tags={televisionShow.genres
+                      tags={genres
                         .filter((g) => g)
                         .map((g) => {
                           return {
@@ -182,10 +196,10 @@ export default async function Page({ params }: { params: { slug: string } }) {
                     />
                   </li>
                 )}
-                {televisionShow.episode_run_time.length > 0 && (
+                {episode_run_time.length > 0 && (
                   <li>
                     <span className="font-semibold">Episode runtime: </span>
-                    {televisionShow.episode_run_time.map((runTime, i, arr) => {
+                    {episode_run_time.map((runTime, i, arr) => {
                       if (runTime && i < arr.length - 1) {
                         return (
                           <span key={i}>{toHoursAndMinutes(runTime)}, </span>
@@ -198,17 +212,17 @@ export default async function Page({ params }: { params: { slug: string } }) {
                     })}
                   </li>
                 )}
-                {televisionShow.production_countries.length > 0 && (
+                {production_countries.length > 0 && (
                   <li>
                     <span className="font-semibold">
-                      {televisionShow.production_countries.length === 1
+                      {production_countries.length === 1
                         ? `Country:`
                         : `Countries:`}
                     </span>
                     <TagsRow
                       type="cinema"
                       category="country"
-                      tags={televisionShow.production_countries.map((e) => {
+                      tags={production_countries.map((e) => {
                         return {
                           name: e?.name,
                           slug: e?.iso_3166_1,
@@ -217,17 +231,17 @@ export default async function Page({ params }: { params: { slug: string } }) {
                     />
                   </li>
                 )}
-                {televisionShow.production_companies.length > 0 && (
+                {production_companies.length > 0 && (
                   <li>
                     <span className="font-semibold">
-                      {televisionShow.production_companies.length === 1
+                      {production_companies.length === 1
                         ? `Company:`
                         : `Companies:`}
                     </span>
                     <TagsRow
                       type="cinema"
                       category="company"
-                      tags={televisionShow.production_companies.map((e) => {
+                      tags={production_companies.map((e) => {
                         return {
                           name: e?.name,
                           slug: e?.id,
@@ -236,17 +250,15 @@ export default async function Page({ params }: { params: { slug: string } }) {
                     />
                   </li>
                 )}
-                {televisionShow.networks.length > 0 && (
+                {networks.length > 0 && (
                   <li>
                     <span className="font-semibold">
-                      {televisionShow.networks.length === 1
-                        ? `Network:`
-                        : `Networks:`}
+                      {networks.length === 1 ? `Network:` : `Networks:`}
                     </span>
                     <TagsRow
                       type="cinema"
                       category="company"
-                      tags={televisionShow.networks.map((e) => {
+                      tags={networks.map((e) => {
                         return {
                           name: e?.name,
                           slug: e?.id,
@@ -258,57 +270,43 @@ export default async function Page({ params }: { params: { slug: string } }) {
               </ul>
 
               {/* Truncated Summary */}
-              {televisionShow.overview && (
-                <TruncText text={televisionShow.overview} />
-              )}
+              {overview && <TruncText text={overview} />}
 
               {/* Links table */}
-              {Object.values(televisionShow.external_ids).some(
-                (e) => e !== null
-              ) && (
+              {Object.values(external_ids).some((e) => e !== null) && (
                 <div className="mb-8">
-                  <LinksList
-                    homepage={televisionShow.homepage}
-                    links={televisionShow.external_ids}
-                  />
+                  <LinksList homepage={homepage} links={external_ids} />
                 </div>
               )}
 
               {/* Seasons Carousel */}
-              {televisionShow.seasons.length > 0 && (
-                <SeasonsCarousel seasons={televisionShow.seasons} />
-              )}
+              {seasons.length > 0 && <SeasonsCarousel seasons={seasons} />}
 
               {/* JustWatch Info */}
               <Suspense fallback={<p>Loading...</p>}>
-                <JustWatchSection
-                  title={televisionShow.name}
-                  id={televisionShow.id}
-                />
+                <JustWatchSection title={name} id={id} />
               </Suspense>
 
               {/* Cast Carousel */}
-              {televisionShow.credits.cast.length > 0 && (
-                <CastCarousel actors={televisionShow.credits.cast} />
+              {credits.cast.length > 0 && (
+                <CastCarousel actors={credits.cast} />
               )}
 
               {/* YouTube Video Embed */}
-              {televisionShow.videos.results.length > 0 && (
+              {videos.results.length > 0 && (
                 <section className="mb-8" id="trailer">
                   <h2 className="mb-2 scroll-m-20 text-lg font-semibold">
-                    {televisionShow.name}&apos;s Trailer
+                    {name}&apos;s Trailer
                   </h2>
                   <Suspense fallback={<p>loading...</p>}>
-                    <YouTubePlayer
-                      videoId={televisionShow.videos.results[0].key}
-                    />
+                    <YouTubePlayer videoId={videos.results[0].key} />
                   </Suspense>
                 </section>
               )}
 
               {/* Screenshots Slider */}
               <Suspense fallback={<p>loading...</p>}>
-                <Gallery title={televisionShow.name} id={televisionShow.id} />
+                <Gallery title={name} id={id} />
               </Suspense>
             </div>
 
@@ -317,8 +315,8 @@ export default async function Page({ params }: { params: { slug: string } }) {
             <div className="hidden col-span-1 lg:flex flex-col items-center">
               {/* Reviews */}
               <RatingCircle
-                rating={televisionShow.vote_average * 10}
-                reviewCount={televisionShow.vote_count}
+                rating={vote_average * 10}
+                reviewCount={vote_count}
               />
             </div>
           </div>

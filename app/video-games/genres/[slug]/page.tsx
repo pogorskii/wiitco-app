@@ -7,7 +7,7 @@ import InfiniteGamesSearch from "../../infinite-games-search";
 import { Breadcrumbs } from "@/app/ui/breadcrumbs";
 import { GameSearch } from "../../lib/definitions";
 import { Suspense } from "react";
-import { GamesSearchBodySkeleton } from "@/app/ui/video-games/skeletons";
+import { GamesSearchBodySkeleton } from "@/app/ui/skeletons";
 import type { Metadata, ResolvingMetadata } from "next";
 
 export async function generateMetadata(
