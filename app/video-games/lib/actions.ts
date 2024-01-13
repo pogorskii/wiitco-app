@@ -17,6 +17,7 @@ export async function fetchHLTBInfo({ search }: { search: string }) {
     .filter((entry) => entry.similarity > 0.9)
     .sort((a, b) => b.similarity - a.similarity);
   if (!result) return null;
+
   return result[0];
 }
 

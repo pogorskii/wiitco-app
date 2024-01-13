@@ -54,12 +54,7 @@ export function InfiniteMoviesCalendar({
     }
   }, [inView, loadMoreMovies]);
 
-  if (!movies)
-    return (
-      <>
-        <h2>No movies currently scheduled for this month.</h2>
-      </>
-    );
+  if (!movies) return <h2>No movies currently scheduled for this month.</h2>;
 
   return (
     <>

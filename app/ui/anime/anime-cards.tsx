@@ -2,7 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { TelevisionShowsSearch } from "@/app/tv/lib/zod-schemas";
 import { TelevisionSeasonFormatted } from "@/app/tv/lib/definitions";
-import { parse, format } from "date-fns";
+import { format } from "date-fns";
 import {
   Card,
   CardContent,
@@ -21,17 +21,10 @@ export function AnimeSeasonCardCalendar({
     showId,
     showName,
     seasonName,
-    seasonNumber,
     showPoster,
     seasonPoster,
-    airDate,
-    episodeCount,
     genres,
     creatorNames,
-    networks,
-    originCountries,
-    status,
-    type,
   } = season;
 
   const coverUrl = seasonPoster
@@ -178,10 +171,9 @@ export function AnimeShowSearchCard({
 }) {
   const { id, name, poster_path, genre_ids, first_air_date } = anime;
 
-  const coverUrl =
-    poster_path && poster_path !== ""
-      ? `https://image.tmdb.org/t/p/w600_and_h900_bestv2${poster_path}`
-      : "/television-placeholder.webp";
+  const coverUrl = poster_path
+    ? `https://image.tmdb.org/t/p/w600_and_h900_bestv2${poster_path}`
+    : "/television-placeholder.webp";
 
   const genresEnum: { [key: number]: string } = {
     10759: "Adventure",
@@ -204,11 +196,6 @@ export function AnimeShowSearchCard({
   const genreNames = genre_ids
     ?.filter((e) => e !== 16)
     .map((e) => genresEnum[e]);
-
-  function getDate(dateString: string) {
-    const date = parse(dateString, "yyyy-MM-dd", new Date());
-    return date.toDateString();
-  }
 
   return (
     <>

@@ -42,6 +42,7 @@ export const groupMovieReleasesAndSortByDay = (
         releaseTypes: [movieRelease.type],
       });
     }
+
     groupedByDay.set(day, bucket);
   }
 

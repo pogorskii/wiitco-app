@@ -8,17 +8,14 @@ import { Breadcrumbs } from "@/app/ui/breadcrumbs";
 import { Suspense } from "react";
 import { CalendarBodySkeleton } from "@/app/ui/skeletons";
 import { getMonthYearName } from "@/app/lib/utils";
-import type { Metadata, ResolvingMetadata } from "next";
+import type { Metadata } from "next";
 import { MonthSwitcher } from "@/app/ui/month-switcher";
 
-export async function generateMetadata(
-  {
-    params,
-  }: {
-    params: { year: string; month: string };
-  },
-  parent: ResolvingMetadata
-): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: {
+  params: { year: string; month: string };
+}): Promise<Metadata> {
   const displayDate = getMonthYearName(params.month, params.year);
 
   return {
@@ -31,12 +28,12 @@ export default async function Page({
   searchParams,
 }: {
   params: { year: string; month: string };
-  searchParams?: {
+  searchParams: {
     types?: string;
     platforms?: string;
   };
 }) {
-  const types = searchParams?.types;
+  const types = searchParams.types;
   const { year, month } = params;
   const displayDate = getMonthYearName(month, year);
 

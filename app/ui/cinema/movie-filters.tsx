@@ -17,12 +17,10 @@ import {
 type Checked = DropdownMenuCheckboxItemProps["checked"];
 
 export function MovieReleaseTypeFilter() {
-  // Hooks
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const { replace } = useRouter();
 
-  // Initial states based on URL params
   const categories = searchParams.get("types") || "";
   const [checkboxesArr, setCheckboxesArr] = useState<Checked[]>([
     categories.includes("premiere"),
@@ -131,12 +129,10 @@ import {
 } from "@/components/ui/select";
 
 export function MovieLengthFilter() {
-  // Hooks
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const { replace } = useRouter();
 
-  // Initial states based on URL params
   const filter = searchParams.get("lengthfilter") || "feature";
   const rules = [
     {
@@ -185,12 +181,10 @@ export function MovieLengthFilter() {
 }
 
 export function MovieGenreFilter() {
-  // Hooks
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const { replace } = useRouter();
 
-  // Initial states based on URL params
   const filter = searchParams.get("genre") || "all";
   const genres = [
     {

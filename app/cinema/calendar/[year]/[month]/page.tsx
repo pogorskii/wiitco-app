@@ -7,18 +7,15 @@ import { InfiniteMoviesCalendar } from "./infinite-movies-calendar";
 import { Breadcrumbs } from "@/app/ui/breadcrumbs";
 import { CalendarNav } from "@/app/ui/cinema/calendar-nav";
 import { Suspense } from "react";
-import { GamesCalendarBodySkeleton } from "@/app/ui/skeletons";
+import { CalendarBodySkeleton } from "@/app/ui/skeletons";
 import { getMonthYearName } from "@/app/lib/utils";
 import type { Metadata, ResolvingMetadata } from "next";
 
-export async function generateMetadata(
-  {
-    params,
-  }: {
-    params: { year: string; month: string };
-  },
-  parent: ResolvingMetadata
-): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: {
+  params: { year: string; month: string };
+}): Promise<Metadata> {
   const displayDate = getMonthYearName(params.month, params.year);
 
   return {
@@ -60,7 +57,7 @@ export default async function Page({
         All Movies Releasing in {displayDate}
       </h1>
       <CalendarNav year={year} month={month} />
-      <Suspense fallback={<GamesCalendarBodySkeleton />}>
+      <Suspense fallback={<CalendarBodySkeleton />}>
         <MoviesCalendarBody
           year={year}
           month={month}

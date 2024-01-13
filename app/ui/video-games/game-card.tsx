@@ -1,9 +1,9 @@
 import Image from "next/image";
 import Link from "next/link";
+import { format } from "date-fns";
 import { GamePlatforms } from "./game-platforms";
 import { GameSearch } from "@/app/video-games/lib/definitions";
 
-// shadcn
 import {
   Card,
   CardContent,
@@ -49,7 +49,6 @@ export function GameCardCalendar({
     13: "Pack",
     14: "Update",
   };
-
   const categoryName = categoryEnum[category];
 
   return (
@@ -113,24 +112,9 @@ export function GameCardCalendar({
             <h2 className="text-base font-semibold">{title}</h2>
           </Link>
           {platforms && <GamePlatforms platforms={platforms} />}
-          <div className="mt-auto p-0 text-xs">
-            <Badge className="p-0.5 font-normal leading-none rounded-sm">
-              {categoryName}
-            </Badge>
-            {/* {parentGame && (
-              <span>
-                {" "}
-                of{" "}
-                <Link
-                  className="hover:underline hover:underline-offset-2 hover:decoration-solid"
-                  href={`/video-games/games/${game.parentGame.slug}`}
-                >
-                  {game.parentGame.name}
-                  {parentReleaseYear && ` (${parentReleaseYear})`}
-                </Link>
-              </span>
-            )} */}
-          </div>
+          <Badge className="self-start mt-auto text-xs p-0.5 font-normal leading-none rounded-sm">
+            {categoryName}
+          </Badge>
         </div>
       </div>
     </>
@@ -141,9 +125,10 @@ type ArrayElement<T extends Array<any>> = T[number];
 type SingleGameSearch = ArrayElement<GameSearch>;
 
 export function GameSearchCard({ game }: { game: SingleGameSearch }) {
-  // const parentReleaseYear = game.parentGame?.releaseDate?.getFullYear();
-  const coverUrl = game.cover
-    ? `https://images.igdb.com/igdb/image/upload/t_cover_big/${game.cover.imageId}.jpg`
+  const { name, slug, cover, category, platforms, firstReleaseDate } = game;
+
+  const coverUrl = cover
+    ? `https://images.igdb.com/igdb/image/upload/t_cover_big/${cover.imageId}.jpg`
     : "/game-placeholder.webp";
 
   const categoryEnum: { [key: number]: string } = {
@@ -163,8 +148,7 @@ export function GameSearchCard({ game }: { game: SingleGameSearch }) {
     13: "Pack",
     14: "Update",
   };
-
-  const categoryName = categoryEnum[game.category];
+  const categoryName = categoryEnum[category];
 
   return (
     <>
@@ -174,47 +158,30 @@ export function GameSearchCard({ game }: { game: SingleGameSearch }) {
           <CardHeader className="p-0">
             <Link
               className="hover:text-blue-400 hover:underline hover:underline-offset-2 hover:decoration-solid"
-              href={`/video-games/games/${game.slug}`}
+              href={`/video-games/games/${slug}`}
             >
-              <CardTitle className="text-xl font-semibold">
-                {game.name}
-              </CardTitle>
+              <CardTitle className="text-xl font-semibold">{name}</CardTitle>
             </Link>
-            {game.platforms && (
-              <GamePlatforms
-                platforms={game.platforms.map((p) => p.platformId)}
-              />
+            {platforms && (
+              <GamePlatforms platforms={platforms.map((p) => p.platformId)} />
             )}
           </CardHeader>
           <CardFooter className="flex flex-col items-start mt-auto p-0 text-base">
-            <p className="mt-2 mb-1">{game.firstReleaseDate?.toDateString()}</p>
-            <div>
-              <Badge>{categoryName}</Badge>
-              {/* {game.parentGame && (
-                <span>
-                  {" "}
-                  of{" "}
-                  <Link
-                    className="hover:underline hover:underline-offset-2 hover:decoration-solid"
-                    href={`/video-games/games/${game.parentGame.slug}`}
-                  >
-                    {game.parentGame.name}
-                    {parentReleaseYear && ` (${parentReleaseYear})`}
-                  </Link>
-                </span>
-              )} */}
-            </div>
+            <p className="mt-2 mb-1">
+              {firstReleaseDate ? format(firstReleaseDate, "MMMM d yyyy") : ""}
+            </p>
+            <Badge>{categoryName}</Badge>
           </CardFooter>
         </CardContent>
         <div className="col-span-1 w-full">
-          <Link href={`/video-games/games/${game.slug}`}>
+          <Link href={`/video-games/games/${slug}`}>
             <div className="overflow-hidden ms-auto w-fit h-full">
               <Image
                 className="hover:scale-105 duration-200 ease-in-out h-full"
                 src={coverUrl}
-                width={game.cover?.width || 1080}
-                height={game.cover?.height || 1920}
-                alt={`${game.name} game cover`}
+                width={cover?.width || 1080}
+                height={cover?.height || 1920}
+                alt={`${name} game cover`}
                 style={{
                   objectFit: "cover",
                 }}
@@ -227,14 +194,14 @@ export function GameSearchCard({ game }: { game: SingleGameSearch }) {
       {/* Mobile version */}
       <div className="col-span-2 md:col-span-1 flex sm:hidden py-4">
         <div className="w-24 grow-0 shrink-0">
-          <Link href={`/video-games/games/${game.slug}`}>
+          <Link href={`/video-games/games/${slug}`}>
             <div className="overflow-hidden ms-auto w-fit">
               <Image
                 className="hover:scale-105 duration-200 ease-in-out"
                 src={coverUrl}
-                width={game.cover?.width || 540}
-                height={game.cover?.height || 960}
-                alt={`${game.name} game cover`}
+                width={cover?.width || 540}
+                height={cover?.height || 960}
+                alt={`${name} game cover`}
                 style={{
                   width: "100%",
                   height: "auto",
@@ -247,34 +214,20 @@ export function GameSearchCard({ game }: { game: SingleGameSearch }) {
         <div className="ps-2 flex flex-col justify-between">
           <Link
             className="mb-2 hover:text-blue-400 hover:underline hover:underline-offset-2 hover:decoration-solid"
-            href={`/video-games/games/${game.slug}`}
+            href={`/video-games/games/${slug}`}
           >
-            <h2 className="text-base font-semibold">{game.name}</h2>
+            <h2 className="text-base font-semibold">{name}</h2>
           </Link>
-          {game.platforms && (
-            <GamePlatforms
-              platforms={game.platforms.map((p) => p.platformId)}
-            />
+          {platforms && (
+            <GamePlatforms platforms={platforms.map((p) => p.platformId)} />
           )}
           <div className="mt-auto p-0 text-xs">
-            <p className="mb-1">{game.firstReleaseDate?.toDateString()}</p>
-
+            <p className="mb-1">
+              {firstReleaseDate ? format(firstReleaseDate, "MMMM d yyyy") : ""}
+            </p>
             <Badge className="p-0.5 font-normal leading-none rounded-sm">
               {categoryName}
             </Badge>
-            {/* {game.parentGame && (
-              <span>
-                {" "}
-                of{" "}
-                <Link
-                  className="hover:underline hover:underline-offset-2 hover:decoration-solid"
-                  href={`/video-games/games/${game.parentGame.slug}`}
-                >
-                  {game.parentGame.name}
-                  {parentReleaseYear && ` (${parentReleaseYear})`}
-                </Link>
-              </span>
-            )} */}
           </div>
         </div>
       </div>

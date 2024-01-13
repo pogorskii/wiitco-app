@@ -6,17 +6,10 @@ import InfiniteTelevisionShowsSearch from "../infinite-television-shows-search";
 import { Breadcrumbs } from "@/app/ui/breadcrumbs";
 import { SectionNav } from "@/app/ui/tv/section-nav";
 import { Suspense } from "react";
-import { GamesSearchBodySkeleton } from "@/app/ui/skeletons";
+import { SearchBodySkeleton } from "@/app/ui/skeletons";
 import type { Metadata, ResolvingMetadata } from "next";
 
-export async function generateMetadata(
-  {
-    params,
-  }: {
-    params: { slug: string };
-  },
-  parent: ResolvingMetadata
-): Promise<Metadata> {
+export async function generateMetadata(): Promise<Metadata> {
   return {
     title: `TV Shows Search`,
   };
@@ -25,13 +18,12 @@ export async function generateMetadata(
 export default async function Page({
   searchParams,
 }: {
-  searchParams?: {
+  searchParams: {
     search?: string;
     genre?: string;
   };
 }) {
-  const search = searchParams?.search;
-  const genre = searchParams?.genre;
+  const { search, genre } = searchParams;
 
   return (
     <div>
@@ -45,7 +37,7 @@ export default async function Page({
         All TV Shows
       </h1>
       <SectionNav />
-      <Suspense fallback={<GamesSearchBodySkeleton />}>
+      <Suspense fallback={<SearchBodySkeleton />}>
         <PageContent search={search} genre={genre} />
       </Suspense>
     </div>

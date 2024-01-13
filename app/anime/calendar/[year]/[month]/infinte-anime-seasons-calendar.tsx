@@ -52,11 +52,7 @@ export function InfiniteAnimeSeasonsCalendar({
   }, [inView, loadMoreSeasons]);
 
   if (!seasons)
-    return (
-      <>
-        <h2>No Anime shows currently scheduled for this month.</h2>
-      </>
-    );
+    return <h2>No Anime shows currently scheduled for this month.</h2>;
 
   return (
     <>

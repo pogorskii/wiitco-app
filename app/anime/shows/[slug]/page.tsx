@@ -12,7 +12,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { FaPlus } from "react-icons/fa";
 import { Separator } from "@/components/ui/separator";
-import type { Metadata, ResolvingMetadata } from "next";
+import type { Metadata } from "next";
 import {
   fetchTelevisionShowDetails,
   fetchTelevisionShowImages,
@@ -23,23 +23,15 @@ import { CastCarousel } from "@/app/ui/cinema/cast-carousel";
 import { SeasonsCarousel } from "@/app/ui/tv/seasons-carousel";
 import { JustWatchInfo } from "@/app/ui/cinema/just-watch-info";
 
-export async function generateMetadata(
-  {
-    params,
-  }: {
-    params: { slug: string };
-  },
-  parent: ResolvingMetadata
-): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: {
+  params: { slug: string };
+}): Promise<Metadata> {
   const show = await fetchTelevisionShowDetails(params.slug);
 
-  if (!show)
-    return {
-      title: "Anime Show Details",
-    };
-
   return {
-    title: `${show.name}`,
+    title: show ? `${show.name}` : "Anime Show Details",
   };
 }
 
@@ -462,7 +454,6 @@ async function JustWatchSection({ title, id }: { title: string; id: number }) {
   }
 
   if (Object.entries(availableCountries).length === 0) return;
-  console.log(availableCountries);
 
   return <JustWatchInfo title={title} watchProviders={availableCountries} />;
 }

@@ -9,16 +9,13 @@ import { TelevisionCalendarNav } from "@/app/ui/tv/television-calendar-nav";
 import { Suspense } from "react";
 import { CalendarBodySkeleton } from "@/app/ui/skeletons";
 import { getMonthYearName } from "@/app/lib/utils";
-import type { Metadata, ResolvingMetadata } from "next";
+import type { Metadata } from "next";
 
-export async function generateMetadata(
-  {
-    params,
-  }: {
-    params: { year: string; month: string };
-  },
-  parent: ResolvingMetadata
-): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: {
+  params: { year: string; month: string };
+}): Promise<Metadata> {
   const displayDate = getMonthYearName(params.month, params.year);
 
   return {

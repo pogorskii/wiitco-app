@@ -91,8 +91,7 @@ export const fetchTest = async () => {
       cache: "no-store",
     });
     const result = await data.json();
-    // console.log(result);
-    console.log(new Date(result[0].updated_at * 1000));
+
     if (!result) throw new Error(`Couldn't fetch TEST`);
     if (result.length === 0) return [];
     return result;

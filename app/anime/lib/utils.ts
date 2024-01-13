@@ -11,33 +11,22 @@ export const groupTelevisionSeasonsAndSortByDay = (
       (existingSeason) => existingSeason.showId === season.show.id
     );
     if (existingSeasonIndex === -1) {
-      const {
-        name,
-        posterPath,
-        genres,
-        creators,
-        networks,
-        originCountries,
-        status,
-        type,
-      } = season.show;
-
       bucket.push({
         seasonId: season.id,
         showId: season.show.id,
-        showName: name,
+        showName: season.show.name,
         seasonName: season.name,
         seasonNumber: season.seasonNumber,
-        showPoster: posterPath,
+        showPoster: season.show.posterPath,
         seasonPoster: season.posterPath,
         airDate: season.airDate,
         episodeCount: season.episodeCount,
-        genres: genres.map((g) => g.genreId),
-        creatorNames: creators.map((c) => c.creator.name),
-        networks: networks.map((n) => n.network),
-        originCountries: originCountries.map((c) => c.countryIso),
-        status,
-        type,
+        genres: season.show.genres.map((g) => g.genreId),
+        creatorNames: season.show.creators.map((c) => c.creator.name),
+        networks: season.show.networks.map((n) => n.network),
+        originCountries: season.show.originCountries.map((c) => c.countryIso),
+        status: season.show.status,
+        type: season.show.type,
       });
     }
 

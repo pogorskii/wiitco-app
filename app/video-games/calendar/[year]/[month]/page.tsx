@@ -6,18 +6,15 @@ import { InfiniteGamesCalendar } from "./infinite-games-calendar";
 import { Breadcrumbs } from "@/app/ui/breadcrumbs";
 import { CalendarNav } from "@/app/ui/video-games/calendar-nav";
 import { Suspense } from "react";
-import { GamesCalendarBodySkeleton } from "@/app/ui/skeletons";
+import { CalendarBodySkeleton } from "@/app/ui/skeletons";
 import { getMonthYearName } from "@/app/lib/utils";
-import type { Metadata, ResolvingMetadata } from "next";
+import type { Metadata } from "next";
 
-export async function generateMetadata(
-  {
-    params,
-  }: {
-    params: { year: string; month: string };
-  },
-  parent: ResolvingMetadata
-): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: {
+  params: { year: string; month: string };
+}): Promise<Metadata> {
   const displayDate = getMonthYearName(params.month, params.year);
 
   return {
@@ -30,17 +27,14 @@ export default async function Page({
   searchParams,
 }: {
   params: { year: string; month: string };
-  searchParams?: {
+  searchParams: {
     categories?: string;
     platforms?: string;
-    filterunknown?: string;
+    filterUnknown?: string;
   };
 }) {
-  const categories = searchParams?.categories;
-  const platforms = searchParams?.platforms;
-  const filterUnknown = searchParams?.filterunknown;
-  const year = params.year;
-  const month = params.month;
+  const { categories, platforms, filterUnknown } = searchParams;
+  const { year, month } = params;
   const displayDate = getMonthYearName(month, year);
 
   return (
@@ -60,7 +54,7 @@ export default async function Page({
         All Games Releasing in {displayDate}
       </h1>
       <CalendarNav year={year} month={month} />
-      <Suspense fallback={<GamesCalendarBodySkeleton />}>
+      <Suspense fallback={<CalendarBodySkeleton />}>
         <GamesCalendarBody
           year={year}
           month={month}

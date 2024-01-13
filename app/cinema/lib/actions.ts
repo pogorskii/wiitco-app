@@ -26,6 +26,7 @@ export const fetchMovieDetails = async (id: string) => {
     );
     const result = await response.json();
     const parsedData = MovieDetails.parse(result);
+
     return parsedData;
   } catch (err) {
     console.error(err);
@@ -40,6 +41,7 @@ export const fetchMovieCollection = async (id: number) => {
     );
     const result = await response.json();
     const parsedData = MovieCollection.parse(result);
+
     return parsedData;
   } catch (err) {
     console.error(err);
@@ -54,6 +56,7 @@ export const fetchMovieImages = async (id: number) => {
     );
     const result = await response.json();
     const parsedData = MovieImages.parse(result);
+
     return parsedData;
   } catch (err) {
     console.error(err);
@@ -68,6 +71,7 @@ export const fetchMovieJustWatchInfo = async (id: number) => {
     );
     const result = await response.json();
     const parsedData = MovieJustWatch.parse(result.results);
+
     return parsedData;
   } catch (err) {
     console.error(err);
@@ -100,6 +104,7 @@ export const fetchMoviesSearch = async ({
           e.genre_ids?.includes(Number(genre))
         )
       : MoviesSearch.parse(result.results);
+
     return parsedData;
   } catch (err) {
     console.error(err);

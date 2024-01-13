@@ -54,12 +54,7 @@ export function InfiniteGamesCalendar({
     }
   }, [inView, loadMoreGames]);
 
-  if (!games)
-    return (
-      <>
-        <h2>No games currently scheduled for this month.</h2>
-      </>
-    );
+  if (!games) return <h2>No games currently scheduled for this month.</h2>;
 
   return (
     <>

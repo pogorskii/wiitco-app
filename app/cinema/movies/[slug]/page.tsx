@@ -13,7 +13,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { FaPlus } from "react-icons/fa";
 import { Separator } from "@/components/ui/separator";
-import type { Metadata, ResolvingMetadata } from "next";
+import type { Metadata } from "next";
 import {
   fetchMovieDetails,
   fetchMovieCollection,
@@ -24,23 +24,15 @@ import { ImagesCarousel } from "@/app/ui/cinema/images-carousel";
 import { CastCarousel } from "@/app/ui/cinema/cast-carousel";
 import { JustWatchInfo } from "@/app/ui/cinema/just-watch-info";
 
-export async function generateMetadata(
-  {
-    params,
-  }: {
-    params: { slug: string };
-  },
-  parent: ResolvingMetadata
-): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: {
+  params: { slug: string };
+}): Promise<Metadata> {
   const movie = await fetchMovieDetails(params.slug);
 
-  if (!movie)
-    return {
-      title: "Movie Details",
-    };
-
   return {
-    title: `${movie.title}`,
+    title: movie ? `${movie.title}` : "Movie Details",
   };
 }
 
@@ -607,7 +599,6 @@ async function JustWatchSection({
   }
 
   if (Object.entries(availableCountries).length === 0) return;
-  console.log(availableCountries);
 
   return (
     <JustWatchInfo title={movieTitle} watchProviders={availableCountries} />

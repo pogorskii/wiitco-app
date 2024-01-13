@@ -24,9 +24,6 @@ export function TelevisionCalendarNav({
         <div className="me-2">
           <TelevisionShowTypeFilter />
         </div>
-        {/* <div className="ms-auto">
-          <MovieLengthFilter />
-        </div> */}
       </div>
       {/* Mobile filters */}
       <motion.div
@@ -35,7 +32,6 @@ export function TelevisionCalendarNav({
         style={{ height: filtersOpen ? "auto" : "0px" }}
       >
         <TelevisionShowTypeFilter />
-        {/* <MovieLengthFilter /> */}
       </motion.div>
       <Button
         variant="ghost"

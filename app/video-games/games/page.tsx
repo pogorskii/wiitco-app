@@ -7,17 +7,10 @@ import { Breadcrumbs } from "@/app/ui/breadcrumbs";
 import { SectionNav } from "@/app/ui/video-games/section-nav";
 import { GameSearch } from "../lib/definitions";
 import { Suspense } from "react";
-import { GamesSearchBodySkeleton } from "@/app/ui/skeletons";
-import type { Metadata, ResolvingMetadata } from "next";
+import { SearchBodySkeleton } from "@/app/ui/skeletons";
+import type { Metadata } from "next";
 
-export async function generateMetadata(
-  {
-    params,
-  }: {
-    params: { slug: string };
-  },
-  parent: ResolvingMetadata
-): Promise<Metadata> {
+export async function generateMetadata(): Promise<Metadata> {
   return {
     title: `Games Search`,
   };
@@ -26,17 +19,14 @@ export async function generateMetadata(
 export default async function Page({
   searchParams,
 }: {
-  searchParams?: {
+  searchParams: {
     search?: string;
     categories?: string;
     platforms?: string;
     sort?: string;
   };
 }) {
-  const search = searchParams?.search;
-  const categories = searchParams?.categories;
-  const platforms = searchParams?.platforms;
-  const sort = searchParams?.sort;
+  const { search, categories, platforms, sort } = searchParams;
 
   return (
     <div>
@@ -50,7 +40,7 @@ export default async function Page({
         All Games
       </h1>
       <SectionNav />
-      <Suspense fallback={<GamesSearchBodySkeleton />}>
+      <Suspense fallback={<SearchBodySkeleton />}>
         <PageContent
           search={search}
           categories={categories}

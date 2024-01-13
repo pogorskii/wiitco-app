@@ -51,12 +51,7 @@ export function InfiniteTelevisionSeasonsCalendar({
     }
   }, [inView, loadMoreSeasons]);
 
-  if (!seasons)
-    return (
-      <>
-        <h2>No TV Shows currently scheduled for this month.</h2>
-      </>
-    );
+  if (!seasons) return <h2>No TV Shows currently scheduled for this month.</h2>;
 
   return (
     <>

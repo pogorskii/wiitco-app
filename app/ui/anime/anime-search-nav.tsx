@@ -52,7 +52,6 @@ import {
 } from "@/components/ui/select";
 
 function AnimeShowGenreFilter() {
-  // Hooks
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const { replace } = useRouter();

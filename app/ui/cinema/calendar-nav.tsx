@@ -18,7 +18,6 @@ export function CalendarNav({ year, month }: { year: string; month: string }) {
         <div className="me-2">
           <MovieReleaseTypeFilter />
         </div>
-        {/* <GameCategoryFilter /> */}
         <div className="ms-auto">
           <MovieLengthFilter />
         </div>

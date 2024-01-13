@@ -25,6 +25,7 @@ export const fetchTelevisionShowDetails = async (id: string) => {
     );
     const result = await response.json();
     const parsedData = TelevisionShowDetails.parse(result);
+
     return parsedData;
   } catch (err) {
     console.error(err);
@@ -39,6 +40,7 @@ export const fetchTelevisionShowImages = async (id: number) => {
     );
     const result = await response.json();
     const parsedData = TelevisionShowImages.parse(result);
+
     return parsedData;
   } catch (err) {
     console.error(err);
@@ -53,6 +55,7 @@ export const fetchTelevisionShowJustWatchInfo = async (id: number) => {
     );
     const result = await response.json();
     const parsedData = TelevisionShowJustWatch.parse(result.results);
+
     return parsedData;
   } catch (err) {
     console.error(err);
@@ -85,6 +88,7 @@ export const fetchTelevisionShowsSearch = async ({
           e.genre_ids?.includes(Number(genre))
         )
       : TelevisionShowsSearch.parse(result.results);
+
     return parsedData;
   } catch (err) {
     console.error(err);
@@ -179,5 +183,6 @@ export const fetchTelevisionSeasonsByMonth = async ({
       },
     },
   });
+
   return releaseDates;
 };

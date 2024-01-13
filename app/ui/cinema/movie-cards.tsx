@@ -1,9 +1,8 @@
 import Image from "next/image";
 import Link from "next/link";
 import { MoviesSearch } from "@/app/cinema/lib/zod-schemas";
-import { parse } from "date-fns";
+import { parse, format } from "date-fns";
 
-// shadcn
 import {
   Card,
   CardContent,
@@ -204,11 +203,11 @@ type ArrayElement<T extends Array<any>> = T[number];
 type MovieSearch = ArrayElement<MoviesSearch>;
 
 export function MovieSearchCard({ movie }: { movie: MovieSearch }) {
-  // const parentReleaseYear = game.parentGame?.releaseDate?.getFullYear();
-  const coverUrl =
-    movie.poster_path && movie.poster_path !== ""
-      ? `https://image.tmdb.org/t/p/w600_and_h900_bestv2${movie.poster_path}`
-      : "/movie-placeholder.webp";
+  const { id, title, poster_path, genre_ids, release_date } = movie;
+
+  const coverUrl = poster_path
+    ? `https://image.tmdb.org/t/p/w600_and_h900_bestv2${poster_path}`
+    : "/movie-placeholder.webp";
 
   const genresEnum: { [key: number]: string } = {
     28: "Action",
@@ -231,7 +230,7 @@ export function MovieSearchCard({ movie }: { movie: MovieSearch }) {
     10752: "War",
     37: "Western",
   };
-  const genreNames = movie.genre_ids?.map((e) => genresEnum[e]);
+  const genreNames = genre_ids?.map((e) => genresEnum[e]);
 
   function getMovieDate(dateString: string) {
     const date = parse(dateString, "yyyy-MM-dd", new Date());
@@ -246,11 +245,9 @@ export function MovieSearchCard({ movie }: { movie: MovieSearch }) {
           <CardHeader className="p-0">
             <Link
               className="hover:text-blue-400 hover:underline hover:underline-offset-2 hover:decoration-solid"
-              href={`/cinema/movies/${movie.id}`}
+              href={`/cinema/movies/${id}`}
             >
-              <CardTitle className="text-xl font-semibold">
-                {movie.title}
-              </CardTitle>
+              <CardTitle className="text-xl font-semibold">{title}</CardTitle>
             </Link>
             <div className="mt-auto mb-0 inline-flex flex-wrap self-start gap-1">
               {genreNames &&
@@ -268,22 +265,20 @@ export function MovieSearchCard({ movie }: { movie: MovieSearch }) {
             </div>
           </CardHeader>
           <CardFooter className="flex flex-col items-start mt-auto p-0 text-base">
-            <p className="mt-2 mb-1">
-              {movie.release_date &&
-                movie.release_date !== "" &&
-                getMovieDate(movie.release_date)}
-            </p>
+            {release_date && (
+              <p className="mt-2 mb-1">{format(release_date, "MMMM d yyyy")}</p>
+            )}
           </CardFooter>
         </CardContent>
         <div className="col-span-1 w-full">
-          <Link href={`/cinema/movies/${movie.id}`}>
+          <Link href={`/cinema/movies/${id}`}>
             <div className="overflow-hidden ms-auto w-fit h-full">
               <Image
                 className="hover:scale-105 duration-200 ease-in-out h-full"
                 src={coverUrl}
                 width={600}
                 height={900}
-                alt={`${movie.title} poster`}
+                alt={`${title} poster`}
                 style={{
                   objectFit: "cover",
                 }}
@@ -296,14 +291,14 @@ export function MovieSearchCard({ movie }: { movie: MovieSearch }) {
       {/* Mobile version */}
       <div className="col-span-2 md:col-span-1 flex sm:hidden py-4">
         <div className="w-24 grow-0 shrink-0">
-          <Link href={`/cinema/movies/${movie.id}`}>
+          <Link href={`/cinema/movies/${id}`}>
             <div className="overflow-hidden ms-auto w-fit">
               <Image
                 className="hover:scale-105 duration-200 ease-in-out"
                 src={coverUrl}
                 width={600}
                 height={900}
-                alt={`${movie.title} poster`}
+                alt={`${title} poster`}
                 style={{
                   width: "100%",
                   height: "auto",
@@ -316,9 +311,9 @@ export function MovieSearchCard({ movie }: { movie: MovieSearch }) {
         <div className="ps-2 flex flex-col justify-between">
           <Link
             className="mb-2 hover:text-blue-400 hover:underline hover:underline-offset-2 hover:decoration-solid"
-            href={`/cinema/movies/${movie.id}`}
+            href={`/cinema/movies/${id}`}
           >
-            <h2 className="text-base font-semibold">{movie.title}</h2>
+            <h2 className="text-base font-semibold">{title}</h2>
           </Link>
           <div className="inline-flex flex-wrap self-start gap-1.5">
             {genreNames &&
@@ -332,11 +327,9 @@ export function MovieSearchCard({ movie }: { movie: MovieSearch }) {
               ))}
           </div>
           <div className="mt-auto p-0 text-xs">
-            <p className="mb-1">
-              {movie.release_date &&
-                movie.release_date !== "" &&
-                getMovieDate(movie.release_date)}
-            </p>
+            {release_date && (
+              <p className="mb-1">{format(release_date, "MMMM d yyyy")}</p>
+            )}
           </div>
         </div>
       </div>

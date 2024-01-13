@@ -1,7 +1,7 @@
 "use server";
 
 import { Suspense } from "react";
-import { formatDistanceToNow } from "date-fns";
+import { formatDistanceToNow, format } from "date-fns";
 import { fetchHLTBInfo } from "../../lib/actions";
 import Image from "next/image";
 import { GamePlatforms } from "@/app/ui/video-games/game-platforms";
@@ -20,17 +20,13 @@ import { LanguagesTable } from "@/app/ui/video-games/languages-table";
 import { Separator } from "@/components/ui/separator";
 import prisma from "@/app/lib/prisma";
 import { Game, GCover } from "@prisma/client";
-import type { Metadata, ResolvingMetadata } from "next";
+import type { Metadata } from "next";
 
-export async function generateMetadata(
-  {
-    params,
-  }: {
-    params: { slug: string };
-  },
-  parent: ResolvingMetadata
-): Promise<Metadata> {
-  // read route params
+export async function generateMetadata({
+  params,
+}: {
+  params: { slug: string };
+}): Promise<Metadata> {
   const gameName = params.slug
     .split("-")
     .map((w) => w.slice(0, 1).toLocaleUpperCase() + w.slice(1))
@@ -111,8 +107,29 @@ export default async function Page({ params }: { params: { slug: string } }) {
   });
   if (!game) return <p>No game found.</p>;
 
-  const coverUrl = game.cover
-    ? `https://images.igdb.com/igdb/image/upload/t_original/${game.cover?.imageId}.png`
+  const {
+    name,
+    slug,
+    cover,
+    rating,
+    reviewsCount,
+    ageRatings,
+    languageSupports,
+    category,
+    firstReleaseDate,
+    developers,
+    publishers,
+    genres,
+    engines,
+    platforms,
+    summary,
+    websites,
+    videos,
+    screenshots,
+  } = game;
+
+  const coverUrl = cover
+    ? `https://images.igdb.com/igdb/image/upload/t_original/${cover?.imageId}.png`
     : "/game-placeholder.webp";
 
   return (
@@ -122,8 +139,8 @@ export default async function Page({ params }: { params: { slug: string } }) {
           { label: "Home", href: "/" },
           { label: "Games", href: "/video-games/games" },
           {
-            label: game.name,
-            href: `/video-games/games/${params.slug}`,
+            label: name,
+            href: `/video-games/games/${slug}`,
             active: true,
           },
         ]}
@@ -136,9 +153,9 @@ export default async function Page({ params }: { params: { slug: string } }) {
           <Suspense fallback={<p>loading...</p>}>
             <Image
               src={coverUrl}
-              alt={`${game.name} game cover`}
-              width={game.cover?.width || 1200}
-              height={game.cover?.height || 1600}
+              alt={`${name} game cover`}
+              width={cover?.width || 1200}
+              height={cover?.height || 1600}
               style={{
                 width: "100%",
               }}
@@ -152,29 +169,24 @@ export default async function Page({ params }: { params: { slug: string } }) {
 
           <div className="flex col-span-1 lg:hidden flex-col items-center">
             {/* Reviews */}
-            <RatingCircle
-              rating={game.rating}
-              reviewCount={game.reviewsCount}
-            />
+            <RatingCircle rating={rating} reviewCount={reviewsCount} />
 
             {/* Age Ratings */}
-            {game.ageRatings.length > 0 && (
-              <AgeRatings ageRatings={game.ageRatings} />
-            )}
+            {ageRatings.length > 0 && <AgeRatings ageRatings={ageRatings} />}
 
             {/* Languages Table */}
-            {game.languageSupports.length > 0 && (
-              <LanguagesTable languageSupports={game.languageSupports} />
+            {languageSupports.length > 0 && (
+              <LanguagesTable languageSupports={languageSupports} />
             )}
           </div>
 
           {/* HowLongToBeat Table */}
           <Suspense fallback={<p>Loading...</p>}>
-            <HLTBTable query={game.name} />
+            <HLTBTable query={name} />
           </Suspense>
 
           <Suspense fallback={<p>Loading...</p>}>
-            <RelatedSeries gameSlug={game.slug} />
+            <RelatedSeries gameSlug={slug} />
           </Suspense>
         </div>
 
@@ -184,9 +196,9 @@ export default async function Page({ params }: { params: { slug: string } }) {
             <div className="col-span-2 block me-4 md:hidden">
               <Image
                 src={coverUrl}
-                alt={`${game.name} game cover`}
-                width={game.cover?.width || 1200}
-                height={game.cover?.height || 1600}
+                alt={`${name} game cover`}
+                width={cover?.width || 1200}
+                height={cover?.height || 1600}
                 style={{
                   width: "100%",
                 }}
@@ -196,15 +208,15 @@ export default async function Page({ params }: { params: { slug: string } }) {
 
             <div className="col-span-3 md:col-span-1">
               <Suspense fallback={<p>Loading...</p>}>
-                <GameCategory category={game.category} slug={game.slug} />
+                <GameCategory category={category} slug={slug} />
               </Suspense>
               <h1 className="mb-2 scroll-m-20 text-xl md:text-2xl font-semibold first:mt-0">
-                {game.name}
+                {name}
               </h1>
-              {game.firstReleaseDate && (
+              {firstReleaseDate && (
                 <p>
-                  {game.firstReleaseDate.toDateString()} (
-                  {formatDistanceToNow(game.firstReleaseDate, {
+                  {format(firstReleaseDate, "MMMM d yyyy")} (
+                  {formatDistanceToNow(firstReleaseDate, {
                     addSuffix: true,
                   })}
                   )
@@ -223,19 +235,14 @@ export default async function Page({ params }: { params: { slug: string } }) {
           <div className="col-span-3 grid grid-cols-4 gap-6">
             <div className="flex md:hidden col-span-5 lg:hidden flex-col items-center">
               {/* Reviews */}
-              <RatingCircle
-                rating={game.rating}
-                reviewCount={game.reviewsCount}
-              />
+              <RatingCircle rating={rating} reviewCount={reviewsCount} />
 
               {/* Age Ratings */}
-              {game.ageRatings.length > 0 && (
-                <AgeRatings ageRatings={game.ageRatings} />
-              )}
+              {ageRatings.length > 0 && <AgeRatings ageRatings={ageRatings} />}
 
               {/* Languages Table */}
-              {game.languageSupports.length > 0 && (
-                <LanguagesTable languageSupports={game.languageSupports} />
+              {languageSupports.length > 0 && (
+                <LanguagesTable languageSupports={languageSupports} />
               )}
             </div>
 
@@ -243,127 +250,118 @@ export default async function Page({ params }: { params: { slug: string } }) {
             <div className="col-span-4 lg:col-span-3">
               {/* Main Info List */}
               <ul className="mb-4 [&>*+*]:mt-2">
-                {game.developers.length > 0 && (
+                {developers.length > 0 && (
                   <li>
                     <span className="font-semibold">
-                      {game.developers.length === 1
-                        ? "Developer:"
-                        : "Developers:"}
+                      {developers.length === 1 ? "Developer:" : "Developers:"}
                     </span>
                     <TagsRow
                       type="video-games"
                       category="companies"
-                      tags={game.developers.map((d) => d.developer)}
+                      tags={developers.map((d) => d.developer)}
                     ></TagsRow>
                   </li>
                 )}
-                {game.publishers.length > 0 && (
+                {publishers.length > 0 && (
                   <li>
                     <span className="font-semibold">
-                      {game.publishers.length === 1
-                        ? "Publisher:"
-                        : "Publishers:"}
+                      {publishers.length === 1 ? "Publisher:" : "Publishers:"}
                     </span>
                     <TagsRow
                       type="video-games"
                       category="companies"
-                      tags={game.publishers.map((p) => p.publisher)}
+                      tags={publishers.map((p) => p.publisher)}
                     ></TagsRow>
                   </li>
                 )}
-                {game.genres.length > 0 && (
+                {genres.length > 0 && (
                   <li>
                     <span className="font-semibold">
-                      {game.genres.length === 1 ? `Genre:` : `Genres:`}
+                      {genres.length === 1 ? `Genre:` : `Genres:`}
                     </span>
                     <TagsRow
                       type="video-games"
                       category="genres"
-                      tags={game.genres.map((g) => g.genre)}
+                      tags={genres.map((g) => g.genre)}
                     />
                   </li>
                 )}
-                {game.engines.length > 0 && (
+                {engines.length > 0 && (
                   <li>
                     <span className="font-semibold">
-                      {game.engines.length === 1 ? `Engine:` : `Engines:`}
+                      {engines.length === 1 ? `Engine:` : `Engines:`}
                     </span>
                     <TagsRow
                       type="video-games"
                       category="game-engines"
-                      tags={game.engines.map((e) => e.engine)}
+                      tags={engines.map((e) => e.engine)}
                     />
                   </li>
                 )}
-                {game.platforms.length > 0 && (
+                {platforms.length > 0 && (
                   <li className="flex justify-start gap-2">
                     <span className="font-semibold">
-                      {game.platforms.length === 1
-                        ? "Platform: "
-                        : "Platforms: "}
+                      {platforms.length === 1 ? "Platform: " : "Platforms: "}
                     </span>
                     <GamePlatforms
-                      platforms={game.platforms.map((p) => p.platform.id)}
+                      platforms={platforms.map((p) => p.platform.id)}
                     />
                   </li>
                 )}
               </ul>
 
               {/* Truncated Summary */}
-              {game.summary && <TruncText text={game.summary} />}
+              {summary && <TruncText text={summary} />}
 
               {/* Links table */}
-              {game.websites.length > 0 && (
+              {websites.length > 0 && (
                 <div className="mb-8">
-                  <LinksList links={game.websites} />
+                  <LinksList links={websites} />
                 </div>
               )}
 
               {/* Related Games Tabs */}
               <Suspense fallback={<p>Loading...</p>}>
-                <ChildGamesTabs slug={game.slug} />
+                <ChildGamesTabs slug={slug} />
               </Suspense>
 
               {/* YouTube Video Embed */}
-              {game.videos.length > 0 && (
+              {videos.length > 0 && (
                 <section className="mb-8" id="trailer">
                   <h2 className="mb-2 scroll-m-20 text-lg font-semibold">
-                    {game.name}&apos;s Trailer
+                    {name}&apos;s Trailer
                   </h2>
                   <Suspense fallback={<p>loading...</p>}>
-                    <YouTubePlayer videoId={game.videos[0].videoId} />
+                    <YouTubePlayer videoId={videos[0].videoId} />
                   </Suspense>
                 </section>
               )}
 
               {/* Screenshots Slider */}
-              {game.screenshots.length > 0 && (
+              {screenshots.length > 0 && (
                 <section className="mb-8" id="screenshots">
                   <h2 className="mb-2 scroll-m-20 text-lg font-semibold">
-                    {game.name}&apos;s Screenshots
+                    {name}&apos;s Screenshots
                   </h2>
                   <Suspense fallback={<p>loading...</p>}>
-                    <ImageCarousel
-                      images={game.screenshots}
-                      altBase={game.name}
-                    />
+                    <ImageCarousel images={screenshots} altBase={name} />
                   </Suspense>
                 </section>
               )}
 
               <div className="md:hidden">
                 <Suspense fallback={<p>Loading...</p>}>
-                  <HLTBTable query={game.name} />
+                  <HLTBTable query={name} />
                 </Suspense>
 
                 <Suspense fallback={<p>Loading...</p>}>
-                  <RelatedSeries gameSlug={game.slug} />
+                  <RelatedSeries gameSlug={slug} />
                 </Suspense>
               </div>
 
               {/* Similar Games Slider */}
               <Suspense fallback={<p>Loading...</p>}>
-                <SimilarGames slug={game.slug} />
+                <SimilarGames slug={slug} />
               </Suspense>
             </div>
 
@@ -371,19 +369,14 @@ export default async function Page({ params }: { params: { slug: string } }) {
             {/* Shows Here Only above LG Breakpoint */}
             <div className="hidden col-span-1 lg:flex flex-col items-center">
               {/* Reviews */}
-              <RatingCircle
-                rating={game.rating}
-                reviewCount={game.reviewsCount}
-              />
+              <RatingCircle rating={rating} reviewCount={reviewsCount} />
 
               {/* Age Ratings */}
-              {game.ageRatings.length > 0 && (
-                <AgeRatings ageRatings={game.ageRatings} />
-              )}
+              {ageRatings.length > 0 && <AgeRatings ageRatings={ageRatings} />}
 
               {/* Languages Table */}
-              {game.languageSupports.length > 0 && (
-                <LanguagesTable languageSupports={game.languageSupports} />
+              {languageSupports.length > 0 && (
+                <LanguagesTable languageSupports={languageSupports} />
               )}
             </div>
           </div>

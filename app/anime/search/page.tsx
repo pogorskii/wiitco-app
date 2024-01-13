@@ -9,14 +9,7 @@ import { Suspense } from "react";
 import { SearchBodySkeleton } from "@/app/ui/skeletons";
 import type { Metadata, ResolvingMetadata } from "next";
 
-export async function generateMetadata(
-  {
-    params,
-  }: {
-    params: { slug: string };
-  },
-  parent: ResolvingMetadata
-): Promise<Metadata> {
+export async function generateMetadata(): Promise<Metadata> {
   return {
     title: `Anime Shows Search`,
   };

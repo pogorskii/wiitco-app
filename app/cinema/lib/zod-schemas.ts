@@ -63,7 +63,10 @@ export const MovieCollection = z.object({
       media_type: z.string(),
       genre_ids: z.array(z.number().optional()),
       popularity: z.number(),
-      release_date: z.string().nullable(),
+      release_date: z
+        .string()
+        .transform((e) => new Date(e))
+        .nullable(),
       video: z.boolean(),
       vote_average: z.number(),
       vote_count: z.number(),
@@ -118,7 +121,10 @@ export const MovieDetails = z.object({
       })
       .optional()
   ),
-  release_date: z.string().nullable(),
+  release_date: z
+    .string()
+    .transform((e) => new Date(e))
+    .nullable(),
   revenue: z.number(),
   runtime: z.number(),
   spoken_languages: z.array(
@@ -232,7 +238,7 @@ export const MoviesSearch = z.array(
     overview: z.string().nullable(),
     popularity: z.number(),
     poster_path: z.string().nullable(),
-    release_date: z.string(),
+    release_date: z.string().transform((e) => new Date(e)),
     title: z.string(),
     video: z.boolean(),
     vote_average: z.number(),
@@ -246,7 +252,7 @@ export const movieReleasesSchema = z.array(
     id: z.number(),
     original_title: z.string(),
     original_language: z.string(),
-    release_date: z.string(),
+    release_date: z.string().transform((e) => new Date(e)),
     poster_path: z.string().nullable(),
     genre_ids: z.array(z.number()),
     popularity: z.number(),

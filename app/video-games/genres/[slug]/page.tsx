@@ -7,18 +7,14 @@ import InfiniteGamesSearch from "../../infinite-games-search";
 import { Breadcrumbs } from "@/app/ui/breadcrumbs";
 import { GameSearch } from "../../lib/definitions";
 import { Suspense } from "react";
-import { GamesSearchBodySkeleton } from "@/app/ui/skeletons";
-import type { Metadata, ResolvingMetadata } from "next";
+import { SearchBodySkeleton } from "@/app/ui/skeletons";
+import type { Metadata } from "next";
 
-export async function generateMetadata(
-  {
-    params,
-  }: {
-    params: { slug: string };
-  },
-  parent: ResolvingMetadata
-): Promise<Metadata> {
-  // read route params
+export async function generateMetadata({
+  params,
+}: {
+  params: { slug: string };
+}): Promise<Metadata> {
   const genreName = params.slug
     .split("-")
     .map((w) => w.slice(0, 1).toLocaleUpperCase() + w.slice(1))
@@ -34,7 +30,7 @@ export default async function Page({
   searchParams,
 }: {
   params: { slug: string };
-  searchParams?: {
+  searchParams: {
     search?: string;
     categories?: string;
     platforms?: string;
@@ -70,7 +66,7 @@ export default async function Page({
         {genreLabel} Games
       </h1>
       <SectionNav />
-      <Suspense fallback={<GamesSearchBodySkeleton />}>
+      <Suspense fallback={<SearchBodySkeleton />}>
         <PageContent
           genre={genre}
           search={search}

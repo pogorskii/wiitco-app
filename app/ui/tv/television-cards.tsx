@@ -2,9 +2,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { TelevisionShowsSearch } from "@/app/tv/lib/zod-schemas";
 import { TelevisionSeasonFormatted } from "@/app/tv/lib/definitions";
-import { parse } from "date-fns";
+import { format } from "date-fns";
 
-// shadcn
 import {
   Card,
   CardContent,
@@ -23,16 +22,10 @@ export function TelevisionSeasonCardCalendar({
     showId,
     showName,
     seasonName,
-    seasonNumber,
     showPoster,
     seasonPoster,
-    airDate,
-    episodeCount,
     genres,
     creatorNames,
-    networks,
-    originCountries,
-    status,
     type,
   } = televisionSeason;
 
@@ -185,15 +178,15 @@ type ArrayElement<T extends Array<any>> = T[number];
 type TelevisionShowSearch = ArrayElement<TelevisionShowsSearch>;
 
 export function TelevisionShowSearchCard({
-  televisionShow,
+  show,
 }: {
-  televisionShow: TelevisionShowSearch;
+  show: TelevisionShowSearch;
 }) {
-  // const parentReleaseYear = game.parentGame?.releaseDate?.getFullYear();
-  const coverUrl =
-    televisionShow.poster_path && televisionShow.poster_path !== ""
-      ? `https://image.tmdb.org/t/p/w600_and_h900_bestv2${televisionShow.poster_path}`
-      : "/television-placeholder.webp";
+  const { id, name, poster_path, genre_ids, first_air_date } = show;
+
+  const coverUrl = poster_path
+    ? `https://image.tmdb.org/t/p/w600_and_h900_bestv2${poster_path}`
+    : "/television-placeholder.webp";
 
   const genresEnum: { [key: number]: string } = {
     10759: "Adventure",
@@ -213,12 +206,7 @@ export function TelevisionShowSearchCard({
     10768: "Politics",
     37: "Western",
   };
-  const genreNames = televisionShow.genre_ids?.map((e) => genresEnum[e]);
-
-  function getDate(dateString: string) {
-    const date = parse(dateString, "yyyy-MM-dd", new Date());
-    return date.toDateString();
-  }
+  const genreNames = genre_ids?.map((e) => genresEnum[e]);
 
   return (
     <>
@@ -228,11 +216,9 @@ export function TelevisionShowSearchCard({
           <CardHeader className="p-0">
             <Link
               className="hover:text-blue-400 hover:underline hover:underline-offset-2 hover:decoration-solid"
-              href={`/tv/shows/${televisionShow.id}`}
+              href={`/tv/shows/${id}`}
             >
-              <CardTitle className="text-xl font-semibold">
-                {televisionShow.name}
-              </CardTitle>
+              <CardTitle className="text-xl font-semibold">{name}</CardTitle>
             </Link>
             <div className="mt-auto mb-0 inline-flex flex-wrap self-start gap-1">
               {genreNames &&
@@ -251,21 +237,19 @@ export function TelevisionShowSearchCard({
           </CardHeader>
           <CardFooter className="flex flex-col items-start mt-auto p-0 text-base">
             <p className="mt-2 mb-1">
-              {televisionShow.first_air_date &&
-                televisionShow.first_air_date !== "" &&
-                getDate(televisionShow.first_air_date)}
+              {first_air_date && format(first_air_date, "MMMM d yyyy")}
             </p>
           </CardFooter>
         </CardContent>
         <div className="col-span-1 w-full">
-          <Link href={`/tv/shows/${televisionShow.id}`}>
+          <Link href={`/tv/shows/${id}`}>
             <div className="overflow-hidden ms-auto w-fit h-full">
               <Image
                 className="hover:scale-105 duration-200 ease-in-out h-full"
                 src={coverUrl}
                 width={600}
                 height={900}
-                alt={`${televisionShow.name} poster`}
+                alt={`${name} poster`}
                 style={{
                   objectFit: "cover",
                 }}
@@ -278,14 +262,14 @@ export function TelevisionShowSearchCard({
       {/* Mobile version */}
       <div className="col-span-2 md:col-span-1 flex sm:hidden py-4">
         <div className="w-24 grow-0 shrink-0">
-          <Link href={`/tv/shows/${televisionShow.id}`}>
+          <Link href={`/tv/shows/${id}`}>
             <div className="overflow-hidden ms-auto w-fit">
               <Image
                 className="hover:scale-105 duration-200 ease-in-out"
                 src={coverUrl}
                 width={600}
                 height={900}
-                alt={`${televisionShow.name} poster`}
+                alt={`${name} poster`}
                 style={{
                   width: "100%",
                   height: "auto",
@@ -298,9 +282,9 @@ export function TelevisionShowSearchCard({
         <div className="ps-2 flex flex-col justify-between">
           <Link
             className="mb-2 hover:text-blue-400 hover:underline hover:underline-offset-2 hover:decoration-solid"
-            href={`/tv/shows/${televisionShow.id}`}
+            href={`/tv/shows/${id}`}
           >
-            <h2 className="text-base font-semibold">{televisionShow.name}</h2>
+            <h2 className="text-base font-semibold">{name}</h2>
           </Link>
           <div className="inline-flex flex-wrap self-start gap-1.5">
             {genreNames &&
@@ -315,9 +299,7 @@ export function TelevisionShowSearchCard({
           </div>
           <div className="mt-auto p-0 text-xs">
             <p className="mb-1">
-              {televisionShow.first_air_date &&
-                televisionShow.first_air_date !== "" &&
-                getDate(televisionShow.first_air_date)}
+              {first_air_date && format(first_air_date, "MMMM d yyyy")}
             </p>
           </div>
         </div>

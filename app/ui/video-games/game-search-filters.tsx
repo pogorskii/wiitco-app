@@ -326,7 +326,7 @@ export function FilterUnknownGames() {
   const { replace } = useRouter();
 
   // Initial states based on URL params
-  const filter = searchParams.get("filterunknown") || "true";
+  const filter = searchParams.get("filterUnknown") || "true";
   const rules = [
     {
       value: "false",
@@ -342,9 +342,9 @@ export function FilterUnknownGames() {
     const params = new URLSearchParams(searchParams);
 
     if (currentValue === "true") {
-      params.delete("filterunknown");
+      params.delete("filterUnknown");
     } else {
-      params.set("filterunknown", currentValue);
+      params.set("filterUnknown", currentValue);
     }
     replace(`${pathname}?${params.toString()}`);
     return;
