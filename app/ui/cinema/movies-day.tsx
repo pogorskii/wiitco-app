@@ -2,8 +2,8 @@
 
 import { DayHeader, DayHeaderMobile } from "../day-headers";
 import { MovieCardCalendar } from "./movie-cards";
-import { getShortDayMonthName } from "@/app/lib/utils";
-import { MovieRelease } from "@/app/cinema/lib/definitions";
+import { getShortDayMonthName } from "@/lib/utils";
+import { MovieRelease } from "@/lib/definitions";
 
 export function MoviesDay({
   day,

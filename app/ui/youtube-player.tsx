@@ -1,5 +1,3 @@
-"use client";
-
 export function YouTubePlayer({ videoId }: { videoId: string | undefined }) {
   if (!videoId) return;
 

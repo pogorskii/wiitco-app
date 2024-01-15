@@ -1,13 +1,13 @@
 "use client";
 
-import { TelevisionShowsSearch } from "@/lib/zod-schemas";
 import { useEffect, useState, useCallback, useRef } from "react";
-import { useInView } from "react-intersection-observer";
-import { fetchAnimeShowsSearch } from "@/lib/actions";
-import { Spinner } from "@/app/ui/spinner";
 import Image from "next/image";
 import Link from "next/link";
 import { format } from "date-fns";
+import { TelevisionShowsSearch } from "@/lib/zod-schemas";
+import { useInView } from "react-intersection-observer";
+import { fetchAnimeShowsSearch } from "@/lib/actions";
+import { Spinner } from "@/app/ui/spinner";
 import {
   Card,
   CardContent,

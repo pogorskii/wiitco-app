@@ -3,8 +3,8 @@ import Link from "next/link";
 import { Card, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { DayHeader, DayHeaderMobile } from "../day-headers";
-import { getShortDayMonthName } from "@/app/lib/utils";
-import { TelevisionSeasonFormatted } from "@/app/tv/lib/definitions";
+import { getShortDayMonthName } from "@/lib/utils";
+import { TelevisionSeasonFormatted } from "@/lib/definitions";
 
 export function AnimeDay({
   day,

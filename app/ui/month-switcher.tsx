@@ -7,7 +7,7 @@ import {
   getMonthYearName,
   getPrevMonthURL,
   getNextMonthURL,
-} from "@/app/lib/utils";
+} from "@/lib/utils";
 
 export function MonthSwitcher({
   year,

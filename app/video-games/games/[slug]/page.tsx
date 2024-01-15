@@ -1,31 +1,34 @@
 "use server";
 
 import { Suspense } from "react";
-import { formatDistanceToNow, format } from "date-fns";
-import { fetchHLTBInfo } from "../../lib/actions";
 import Image from "next/image";
+import Link from "next/link";
+import { formatDistanceToNow, format } from "date-fns";
 import { GamePlatforms } from "@/app/ui/video-games/game-platforms";
 import { TagsRow } from "@/app/ui/tags-row";
 import { TruncText } from "@/app/ui/trunc-text";
 import { RatingCircle } from "@/app/ui/rating-circle";
-import { ImageCarousel } from "@/app/ui/image-carousel";
-import { SimilarItemsCarousel } from "@/app/ui/similar-items-carousel";
+import { ImagesCarousel } from "@/app/ui/images-carousel";
+import { SimilarGamesCarousel } from "@/app/ui/video-games/similar-games-carousel";
 import { YouTubePlayer } from "@/app/ui/youtube-player";
 import { Breadcrumbs } from "@/app/ui/breadcrumbs";
 import { Badge } from "@/components/ui/badge";
-import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { FaPlus } from "react-icons/fa";
 import { LanguagesTable } from "@/app/ui/video-games/languages-table";
 import { Separator } from "@/components/ui/separator";
-import prisma from "@/lib/prisma";
 import { Game, GCover } from "@prisma/client";
-import type { Metadata } from "next";
 import {
+  fetchHLTBInfo,
   fetchGameDetails,
   fetchGameCategory,
   fetchChildGames,
+  fetchRelatedGameSeries,
+  fetchGamesOfCollection,
+  fetchGamesOfFranchise,
+  fetchSimilarGames,
 } from "../../lib/actions";
+import type { Metadata } from "next";
 
 export async function generateMetadata({
   params,
@@ -125,7 +128,7 @@ export default async function Page({ params }: { params: { slug: string } }) {
           </Suspense>
 
           <Suspense fallback={<p>Loading...</p>}>
-            <RelatedSeries gameSlug={slug} />
+            <RelatedSeries slug={slug} />
           </Suspense>
         </div>
 
@@ -253,11 +256,7 @@ export default async function Page({ params }: { params: { slug: string } }) {
               {summary && <TruncText text={summary} />}
 
               {/* Links table */}
-              {websites.length > 0 && (
-                <div className="mb-8">
-                  <LinksList links={websites} />
-                </div>
-              )}
+              {websites.length > 0 && <LinksList links={websites} />}
 
               {/* Related Games Tabs */}
               <Suspense fallback={<p>Loading...</p>}>
@@ -270,9 +269,7 @@ export default async function Page({ params }: { params: { slug: string } }) {
                   <h2 className="mb-2 scroll-m-20 text-lg font-semibold">
                     {name}&apos;s Trailer
                   </h2>
-                  <Suspense fallback={<p>loading...</p>}>
-                    <YouTubePlayer videoId={videos[0].videoId} />
-                  </Suspense>
+                  <YouTubePlayer videoId={videos[0].videoId} />
                 </section>
               )}
 
@@ -283,7 +280,7 @@ export default async function Page({ params }: { params: { slug: string } }) {
                     {name}&apos;s Screenshots
                   </h2>
                   <Suspense fallback={<p>loading...</p>}>
-                    <ImageCarousel images={screenshots} altBase={name} />
+                    <ImagesCarousel images={screenshots} title={name} />
                   </Suspense>
                 </section>
               )}
@@ -294,7 +291,7 @@ export default async function Page({ params }: { params: { slug: string } }) {
                 </Suspense>
 
                 <Suspense fallback={<p>Loading...</p>}>
-                  <RelatedSeries gameSlug={slug} />
+                  <RelatedSeries slug={slug} />
                 </Suspense>
               </div>
 
@@ -349,7 +346,6 @@ async function GameCategory({
     13: "Pack",
     14: "Update",
   };
-
   const categoryName = categoryEnum[category];
 
   if (category === 0 || category === 3)
@@ -408,7 +404,6 @@ type AgeRatingsType = {
   checksum: string;
 }[];
 
-// Age Ratings Component
 async function AgeRatings({ ageRatings }: { ageRatings: AgeRatingsType }) {
   const ratingEnum: { [key: number]: string } = {
     1: "Three",
@@ -452,7 +447,6 @@ async function AgeRatings({ ageRatings }: { ageRatings: AgeRatingsType }) {
   );
 }
 
-// HowLongToBeat Table Info Component
 import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
 
 async function HLTBTable({ query }: { query: string }) {
@@ -504,7 +498,6 @@ async function HLTBTable({ query }: { query: string }) {
   );
 }
 
-// Related Games Tabs
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
@@ -516,7 +509,6 @@ type ChildGame = {
 
 async function ChildGamesTabs({ slug }: { slug: string }) {
   const game = await fetchChildGames({ slug });
-
   if (
     !game ||
     (!game.remakes.length &&
@@ -646,7 +638,6 @@ async function RelatedTab({
   );
 }
 
-// Links Table Component
 import {
   FaExternalLinkAlt,
   FaWikipediaW,
@@ -707,10 +698,11 @@ function LinksList({
     );
   });
 
-  return <ul className="grid grid-cols-2 md:grid-cols-3 gap-2">{listItems}</ul>;
+  return (
+    <ul className="mb-8 grid grid-cols-2 md:grid-cols-3 gap-2">{listItems}</ul>
+  );
 }
 
-// Franchise / Series Popover Component
 import {
   Dialog,
   DialogContent,
@@ -721,35 +713,8 @@ import {
 } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
-async function RelatedSeries({ gameSlug }: { gameSlug: string }) {
-  const game = await prisma.game.findUnique({
-    where: {
-      slug: gameSlug,
-    },
-    select: {
-      franchises: {
-        select: {
-          franchise: {
-            select: {
-              name: true,
-              slug: true,
-            },
-          },
-        },
-      },
-      collections: {
-        select: {
-          collection: {
-            select: {
-              name: true,
-              slug: true,
-            },
-          },
-        },
-      },
-    },
-  });
-
+async function RelatedSeries({ slug }: { slug: string }) {
+  const game = await fetchRelatedGameSeries(slug);
   if (!game || (!game.collections.length && !game.franchises.length)) return;
 
   return (
@@ -806,76 +771,10 @@ async function SeriesModalContent({
   type: string;
   slug: string;
 }) {
-  let collection = null;
-
-  if (type === "Series") {
-    collection = await prisma.gCollection.findUnique({
-      where: {
-        slug,
-      },
-      include: {
-        mainGames: {
-          include: {
-            cover: true,
-            platforms: {
-              include: {
-                platform: true,
-              },
-            },
-          },
-        },
-        secondaryGames: {
-          include: {
-            game: {
-              include: {
-                cover: true,
-                platforms: {
-                  include: {
-                    platform: true,
-                  },
-                },
-              },
-            },
-          },
-        },
-      },
-    });
-  }
-
-  if (type === "Franchise") {
-    collection = await prisma.gFranchise.findUnique({
-      where: {
-        slug,
-      },
-      include: {
-        mainGames: {
-          include: {
-            cover: true,
-            platforms: {
-              include: {
-                platform: true,
-              },
-            },
-          },
-        },
-        secondaryGames: {
-          include: {
-            game: {
-              include: {
-                cover: true,
-                platforms: {
-                  include: {
-                    platform: true,
-                  },
-                },
-              },
-            },
-          },
-        },
-      },
-    });
-  }
-
+  const collection =
+    type === "Series"
+      ? await fetchGamesOfCollection(slug)
+      : await fetchGamesOfFranchise(slug);
   if (!collection) return;
 
   const uniqueGames = collection.mainGames
@@ -967,35 +866,16 @@ async function SeriesModalContent({
 }
 
 async function SimilarGames({ slug }: { slug: string }) {
-  const game = await prisma.game.findUnique({
-    where: {
-      slug,
-    },
-    select: {
-      name: true,
-      similarOf: {
-        select: {
-          similar: {
-            select: {
-              name: true,
-              slug: true,
-              cover: true,
-            },
-          },
-        },
-      },
-    },
-  });
-
+  const game = await fetchSimilarGames(slug);
   if (!game) return;
 
   return (
     <>
-      <h2 className="mb-2 lg:mb-[340px] scroll-m-20 text-lg font-semibold">
+      <h2 className="mb-2 lg:mb-[310px] scroll-m-20 text-lg font-semibold">
         More games like {game.name}
       </h2>
       <div className="lg:absolute bottom-0 left-1/2 lg:translate-x-[-50%] lg:w-[90vw]">
-        <SimilarItemsCarousel
+        <SimilarGamesCarousel
           games={
             game.similarOf.map((e) => e.similar) as (Game & {
               cover: GCover;

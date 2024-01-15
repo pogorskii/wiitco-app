@@ -16,7 +16,6 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-
 import { FaCheck } from "react-icons/fa";
 
 type LanguageSupports = {

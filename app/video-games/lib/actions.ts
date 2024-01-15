@@ -558,3 +558,131 @@ export const fetchGameReleaseDatesByMonth = async ({
 
   return releaseDates;
 };
+
+export const fetchRelatedGameSeries = async (slug: string) => {
+  const game = await prisma.game.findUnique({
+    where: {
+      slug,
+    },
+    select: {
+      franchises: {
+        select: {
+          franchise: {
+            select: {
+              name: true,
+              slug: true,
+            },
+          },
+        },
+      },
+      collections: {
+        select: {
+          collection: {
+            select: {
+              name: true,
+              slug: true,
+            },
+          },
+        },
+      },
+    },
+  });
+
+  return game;
+};
+
+export const fetchGamesOfCollection = async (slug: string) => {
+  const games = await prisma.gCollection.findUnique({
+    where: {
+      slug,
+    },
+    include: {
+      mainGames: {
+        include: {
+          cover: true,
+          platforms: {
+            include: {
+              platform: true,
+            },
+          },
+        },
+      },
+      secondaryGames: {
+        include: {
+          game: {
+            include: {
+              cover: true,
+              platforms: {
+                include: {
+                  platform: true,
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  });
+
+  return games;
+};
+
+export const fetchGamesOfFranchise = async (slug: string) => {
+  const games = await prisma.gFranchise.findUnique({
+    where: {
+      slug,
+    },
+    include: {
+      mainGames: {
+        include: {
+          cover: true,
+          platforms: {
+            include: {
+              platform: true,
+            },
+          },
+        },
+      },
+      secondaryGames: {
+        include: {
+          game: {
+            include: {
+              cover: true,
+              platforms: {
+                include: {
+                  platform: true,
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  });
+
+  return games;
+};
+
+export const fetchSimilarGames = async (slug: string) => {
+  const games = await prisma.game.findUnique({
+    where: {
+      slug,
+    },
+    select: {
+      name: true,
+      similarOf: {
+        select: {
+          similar: {
+            select: {
+              name: true,
+              slug: true,
+              cover: true,
+            },
+          },
+        },
+      },
+    },
+  });
+
+  return games;
+};

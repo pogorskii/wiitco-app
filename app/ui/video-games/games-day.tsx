@@ -2,7 +2,7 @@
 
 import { DayHeader, DayHeaderMobile } from "../day-headers";
 import { GameCardCalendar } from "./game-card";
-import { getShortDayMonthName } from "@/app/lib/utils";
+import { getShortDayMonthName } from "@/lib/utils";
 import { GameRelease } from "@/app/video-games/lib/definitions";
 
 export function GamesDay({

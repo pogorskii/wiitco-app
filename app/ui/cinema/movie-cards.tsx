@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { MoviesSearch } from "@/app/cinema/lib/zod-schemas";
+import { MoviesSearch } from "@/lib/zod-schemas";
 import { parse, format } from "date-fns";
 
 import {

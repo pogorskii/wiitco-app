@@ -2,8 +2,8 @@
 
 import { DayHeader, DayHeaderMobile } from "../day-headers";
 import { TelevisionSeasonCardCalendar } from "./television-cards";
-import { getShortDayMonthName } from "@/app/lib/utils";
-import { TelevisionSeasonFormatted } from "@/app/tv/lib/definitions";
+import { getShortDayMonthName } from "@/lib/utils";
+import { TelevisionSeasonFormatted } from "@/lib/definitions";
 
 export function TelevisionDay({
   day,

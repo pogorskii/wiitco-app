@@ -3,7 +3,6 @@ import Link from "next/link";
 import { format } from "date-fns";
 import { GamePlatforms } from "./game-platforms";
 import { GameSearch } from "@/app/video-games/lib/definitions";
-
 import {
   Card,
   CardContent,

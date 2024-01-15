@@ -15,7 +15,7 @@ import { Separator } from "@/components/ui/separator";
 import type { Metadata } from "next";
 import { fetchTelevisionShowDetails } from "@/lib/actions";
 import { CastCarousel } from "@/app/ui/cinema/cast-carousel";
-import { SeasonsCarousel } from "@/app/ui/tv/seasons-carousel";
+import { SeasonsCarousel } from "@/app/ui/tmdb/seasons-carousel";
 import { convertMinutesToHoursAndMinutes } from "@/lib/utils";
 import { JustWatchSection } from "@/app/ui/tmdb/just-watch-section";
 import { CinemaLinksList } from "@/app/ui/tmdb/cinema-links-list";

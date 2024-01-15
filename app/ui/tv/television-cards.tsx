@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
-import { TelevisionShowsSearch } from "@/app/tv/lib/zod-schemas";
-import { TelevisionSeasonFormatted } from "@/app/tv/lib/definitions";
+import { TelevisionShowsSearch } from "@/lib/zod-schemas";
+import { TelevisionSeasonFormatted } from "@/lib/definitions";
 import { format } from "date-fns";
 
 import {
