@@ -1,7 +1,7 @@
 "use server";
 
 import { Suspense } from "react";
-import { formatDistanceToNow, parse } from "date-fns";
+import { formatDistanceToNow, format } from "date-fns";
 import Image from "next/image";
 import { TagsRow } from "@/app/ui/tags-row";
 import { TruncText } from "@/app/ui/trunc-text";
@@ -14,15 +14,12 @@ import { Button } from "@/components/ui/button";
 import { FaPlus } from "react-icons/fa";
 import { Separator } from "@/components/ui/separator";
 import type { Metadata } from "next";
-import {
-  fetchMovieDetails,
-  fetchMovieCollection,
-  fetchMovieImages,
-  fetchMovieJustWatchInfo,
-} from "../../lib/actions";
-import { ImagesCarousel } from "@/app/ui/cinema/images-carousel";
+import { fetchMovieDetails, fetchMovieCollection } from "@/lib/actions";
 import { CastCarousel } from "@/app/ui/cinema/cast-carousel";
-import { JustWatchInfo } from "@/app/ui/cinema/just-watch-info";
+import { JustWatchSection } from "@/app/ui/tmdb/just-watch-section";
+import { CinemaStillsGallery } from "@/app/ui/tmdb/cinema-stills-gallery";
+import { CinemaLinksList } from "@/app/ui/tmdb/cinema-links-list";
+import { convertMinutesToHoursAndMinutes } from "@/lib/utils";
 
 export async function generateMetadata({
   params,
@@ -40,17 +37,32 @@ export default async function Page({ params }: { params: { slug: string } }) {
   const movie = await fetchMovieDetails(params.slug);
   if (!movie) return <p>Movie not found.</p>;
 
-  const coverUrl = movie.poster_path
-    ? `https://image.tmdb.org/t/p/w600_and_h900_bestv2${movie.poster_path}`
+  const {
+    id,
+    title,
+    status,
+    poster_path,
+    vote_average,
+    vote_count,
+    belongs_to_collection,
+    release_date,
+    tagline,
+    credits,
+    genres,
+    runtime,
+    budget,
+    revenue,
+    production_companies,
+    production_countries,
+    overview,
+    homepage,
+    external_ids,
+    videos,
+  } = movie;
+
+  const coverUrl = poster_path
+    ? `https://image.tmdb.org/t/p/w600_and_h900_bestv2${poster_path}`
     : "/movie-placeholder.webp";
-
-  const toHoursAndMinutes = (totalMinutes: number) => {
-    const hours =
-      totalMinutes > 60 ? Math.floor(totalMinutes / 60) + " h " : "";
-    const minutes = totalMinutes % 60;
-
-    return `${hours}${minutes > 0 ? ` ${minutes} m` : ""}`;
-  };
 
   return (
     <>
@@ -59,7 +71,7 @@ export default async function Page({ params }: { params: { slug: string } }) {
           { label: "Home", href: "/" },
           { label: "Movies", href: "/cinema/movies" },
           {
-            label: movie.title,
+            label: title,
             href: `/cinema/movies/${params.slug}`,
             active: true,
           },
@@ -72,7 +84,7 @@ export default async function Page({ params }: { params: { slug: string } }) {
         <div className="hidden md:block col-span-1">
           <Image
             src={coverUrl}
-            alt={`${movie.title} poster`}
+            alt={`${title} poster`}
             width={600}
             height={900}
             style={{
@@ -87,14 +99,11 @@ export default async function Page({ params }: { params: { slug: string } }) {
 
           <div className="mb-8 flex col-span-1 lg:hidden flex-col items-center">
             {/* Reviews */}
-            <RatingCircle
-              rating={movie.vote_average * 10}
-              reviewCount={movie.vote_count}
-            />
+            <RatingCircle rating={vote_average * 10} reviewCount={vote_count} />
           </div>
 
-          {movie.belongs_to_collection && (
-            <RelatedSeries series={movie.belongs_to_collection} />
+          {belongs_to_collection && (
+            <RelatedSeries series={belongs_to_collection} />
           )}
         </div>
 
@@ -104,7 +113,7 @@ export default async function Page({ params }: { params: { slug: string } }) {
             <div className="col-span-2 block me-4 md:hidden">
               <Image
                 src={coverUrl}
-                alt={`${movie.title} poster`}
+                alt={`${title} poster`}
                 width={600}
                 height={900}
                 style={{
@@ -115,28 +124,20 @@ export default async function Page({ params }: { params: { slug: string } }) {
             </div>
 
             <div className="col-span-3 md:col-span-1">
-              {movie.status && (
+              {status && (
                 <Badge variant="outline" className="mb-2">
-                  {movie.status}
+                  {status}
                 </Badge>
               )}
               <h1 className="mb-2 scroll-m-20 text-xl md:text-2xl font-semibold first:mt-0">
-                {movie.title}
+                {title}
               </h1>
-              {movie.release_date && movie.release_date !== "" && (
+              {release_date && (
                 <span>
-                  {parse(
-                    movie.release_date,
-                    "yyyy-MM-dd",
-                    new Date()
-                  ).toDateString()}{" "}
-                  (
-                  {formatDistanceToNow(
-                    parse(movie.release_date, "yyyy-MM-dd", new Date()),
-                    {
-                      addSuffix: true,
-                    }
-                  )}
+                  {format(release_date, "MMMM d yyyy")} (
+                  {formatDistanceToNow(release_date, {
+                    addSuffix: true,
+                  })}
                   )
                 </span>
               )}
@@ -154,22 +155,22 @@ export default async function Page({ params }: { params: { slug: string } }) {
             <div className="flex md:hidden col-span-5 lg:hidden flex-col items-center">
               {/* Reviews */}
               <RatingCircle
-                rating={movie.vote_average * 10}
-                reviewCount={movie.vote_count}
+                rating={vote_average * 10}
+                reviewCount={vote_count}
               />
             </div>
 
             {/* Below LG breakpoint changes into single column */}
             <div className="col-span-4 lg:col-span-3">
-              {movie.tagline && <div className="mb-2">{movie.tagline}</div>}
+              {tagline && <div className="mb-2">{tagline}</div>}
               {/* Main Info List */}
               <ul className="mb-4 [&>*+*]:mt-2">
-                {movie.credits &&
-                  movie.credits.crew.filter((e) => e?.job === "Director")
-                    .length > 0 && (
+                {credits &&
+                  credits.crew.filter((e) => e?.job === "Director").length >
+                    0 && (
                     <li>
                       <span className="font-semibold">
-                        {movie.credits.crew.filter((e) => e?.job === "Director")
+                        {credits.crew.filter((e) => e?.job === "Director")
                           .length === 1
                           ? `Director:`
                           : `Directors:`}
@@ -177,7 +178,7 @@ export default async function Page({ params }: { params: { slug: string } }) {
                       <TagsRow
                         type="cinema"
                         category="people"
-                        tags={movie.credits.crew
+                        tags={credits.crew
                           .filter((e) => e?.job === "Director")
                           .map((g) => {
                             return {
@@ -188,21 +189,20 @@ export default async function Page({ params }: { params: { slug: string } }) {
                       />
                     </li>
                   )}
-                {movie.credits &&
-                  movie.credits.crew.filter((e) => e?.job === "Screenplay")
-                    .length > 0 && (
+                {credits &&
+                  credits.crew.filter((e) => e?.job === "Screenplay").length >
+                    0 && (
                     <li>
                       <span className="font-semibold">
-                        {movie.credits.crew.filter(
-                          (e) => e?.job === "Screenplay"
-                        ).length === 1
+                        {credits.crew.filter((e) => e?.job === "Screenplay")
+                          .length === 1
                           ? `Writer:`
                           : `Writers:`}
                       </span>
                       <TagsRow
                         type="cinema"
                         category="people"
-                        tags={movie.credits.crew
+                        tags={credits.crew
                           .filter((e) => e?.job === "Screenplay")
                           .map((g) => {
                             return {
@@ -213,15 +213,15 @@ export default async function Page({ params }: { params: { slug: string } }) {
                       />
                     </li>
                   )}
-                {movie.genres && movie.genres.length > 0 && (
+                {genres && genres.length > 0 && (
                   <li>
                     <span className="font-semibold">
-                      {movie.genres.length === 1 ? `Genre:` : `Genres:`}
+                      {genres.length === 1 ? `Genre:` : `Genres:`}
                     </span>
                     <TagsRow
                       type="cinema"
                       category="genres"
-                      tags={movie.genres.map((g) => {
+                      tags={genres.map((g) => {
                         return {
                           name: g.name,
                           slug: g.id.toString(),
@@ -230,43 +230,43 @@ export default async function Page({ params }: { params: { slug: string } }) {
                     />
                   </li>
                 )}
-                {movie.runtime > 0 && (
+                {runtime > 0 && (
                   <li>
                     <span className="font-semibold">Runtime: </span>
-                    {toHoursAndMinutes(movie.runtime)}
+                    {convertMinutesToHoursAndMinutes(runtime)}
                   </li>
                 )}
-                {movie.budget > 0 && (
+                {budget > 0 && (
                   <li>
                     <span className="font-semibold">Budget: </span>
-                    {movie.budget.toLocaleString("en-US", {
+                    {budget.toLocaleString("en-US", {
                       style: "currency",
                       currency: "USD",
                       maximumFractionDigits: 0,
                     })}
                   </li>
                 )}
-                {movie.revenue > 0 && (
+                {revenue > 0 && (
                   <li>
                     <span className="font-semibold">Box office: </span>
-                    {movie.revenue.toLocaleString("en-US", {
+                    {revenue.toLocaleString("en-US", {
                       style: "currency",
                       currency: "USD",
                       maximumFractionDigits: 0,
                     })}
                   </li>
                 )}
-                {movie.production_countries.length > 0 && (
+                {production_countries.length > 0 && (
                   <li>
                     <span className="font-semibold">
-                      {movie.production_countries.length === 1
+                      {production_countries.length === 1
                         ? `Country:`
                         : `Countries:`}
                     </span>
                     <TagsRow
                       type="cinema"
                       category="country"
-                      tags={movie.production_countries.map((e) => {
+                      tags={production_countries.map((e) => {
                         return {
                           name: e?.name,
                           slug: e?.iso_3166_1,
@@ -275,17 +275,17 @@ export default async function Page({ params }: { params: { slug: string } }) {
                     />
                   </li>
                 )}
-                {movie.production_companies.length > 0 && (
+                {production_companies.length > 0 && (
                   <li>
                     <span className="font-semibold">
-                      {movie.production_companies.length === 1
+                      {production_companies.length === 1
                         ? `Company:`
                         : `Companies:`}
                     </span>
                     <TagsRow
                       type="cinema"
                       category="company"
-                      tags={movie.production_companies.map((e) => {
+                      tags={production_companies.map((e) => {
                         return {
                           name: e?.name,
                           slug: e?.id,
@@ -297,39 +297,34 @@ export default async function Page({ params }: { params: { slug: string } }) {
               </ul>
 
               {/* Truncated Summary */}
-              {movie.overview && <TruncText text={movie.overview} />}
+              {overview && <TruncText text={overview} />}
 
               {/* Links table */}
-              {Object.values(movie.external_ids).some((e) => e !== null) && (
+              {Object.values(external_ids).some((e) => e !== null) && (
                 <div className="mb-8">
-                  <LinksList
-                    homepage={movie.homepage}
-                    links={movie.external_ids}
-                  />
+                  <CinemaLinksList homepage={homepage} links={external_ids} />
                 </div>
               )}
 
               {/* JustWatch Info */}
               <Suspense fallback={<p>Loading...</p>}>
-                <JustWatchSection movieTitle={movie.title} id={movie.id} />
+                <JustWatchSection title={title} id={id} type="movie" />
               </Suspense>
 
               {/* Cast Carousel */}
-              {movie.credits.cast.length > 0 && (
-                <CastCarousel actors={movie.credits.cast} />
+              {credits.cast.length > 0 && (
+                <CastCarousel actors={credits.cast} />
               )}
 
               {/* YouTube Video Embed */}
-              {movie.videos.results.length > 0 && (
+              {videos.results.length > 0 && (
                 <section className="mb-8" id="trailer">
                   <h2 className="mb-2 scroll-m-20 text-lg font-semibold">
-                    {movie.title}&apos;s Trailer
+                    {title}&apos;s Trailer
                   </h2>
                   <Suspense fallback={<p>loading...</p>}>
                     <YouTubePlayer
-                      videoId={
-                        movie.videos.results[0] && movie.videos.results[0].key
-                      }
+                      videoId={videos.results[0] && videos.results[0].key}
                     />
                   </Suspense>
                 </section>
@@ -337,7 +332,7 @@ export default async function Page({ params }: { params: { slug: string } }) {
 
               {/* Screenshots Slider */}
               <Suspense fallback={<p>loading...</p>}>
-                <Gallery movieTitle={movie.title} id={movie.id} />
+                <CinemaStillsGallery title={title} id={id} type="movie" />
               </Suspense>
             </div>
 
@@ -346,8 +341,8 @@ export default async function Page({ params }: { params: { slug: string } }) {
             <div className="hidden col-span-1 lg:flex flex-col items-center">
               {/* Reviews */}
               <RatingCircle
-                rating={movie.vote_average * 10}
-                reviewCount={movie.vote_count}
+                rating={vote_average * 10}
+                reviewCount={vote_count}
               />
             </div>
           </div>
@@ -357,78 +352,6 @@ export default async function Page({ params }: { params: { slug: string } }) {
   );
 }
 
-// Links Table Component
-import {
-  FaExternalLinkAlt,
-  FaWikipediaW,
-  FaFacebookSquare,
-  FaInstagramSquare,
-  FaImdb,
-} from "react-icons/fa";
-import { FaXTwitter } from "react-icons/fa6";
-import { IconType } from "react-icons/lib";
-
-function LinksList({
-  homepage,
-  links,
-}: {
-  homepage: string | null;
-  links: {
-    imdb_id: string | null;
-    wikidata_id: string | null;
-    facebook_id: string | null;
-    instagram_id: string | null;
-    twitter_id: string | null;
-  };
-}) {
-  const categoryEnum: { [key: string]: [string, IconType, string] } = {
-    imdb_id: ["IMDb", FaImdb, "https://www.imdb.com/title/"],
-    wikidata_id: ["Wikipedia", FaWikipediaW, "https://www.wikidata.org/wiki/"],
-    facebook_id: ["Facebook", FaFacebookSquare, "https://www.facebook.com/"],
-    twitter_id: ["X (Twitter)", FaXTwitter, "https://twitter.com/"],
-    instagram_id: [
-      "Instagram",
-      FaInstagramSquare,
-      "https://www.instagram.com/",
-    ],
-  };
-
-  const listItems = Object.entries(links).map((link, i) => {
-    if (!link[1]) return;
-    const Icon = categoryEnum[link[0]][1];
-    return (
-      <li key={i}>
-        <a
-          className="hover:underline hover:underline-offset-4"
-          href={`${categoryEnum[link[0]][2]}${link[1]}`}
-        >
-          <Icon className="inline-block me-1.5" />
-          <span>{categoryEnum[link[0]][0]}</span>
-        </a>
-      </li>
-    );
-  });
-
-  return (
-    <ul className="grid grid-cols-2 md:grid-cols-3 gap-2">
-      {homepage && (
-        <li>
-          <a
-            className="hover:underline hover:underline-offset-4"
-            href={homepage}
-          >
-            <FaExternalLinkAlt className="inline-block me-1.5" />
-            <span>Official site</span>
-          </a>
-        </li>
-      )}
-
-      {listItems}
-    </ul>
-  );
-}
-
-// Franchise / Series Popover Component
 import {
   Dialog,
   DialogContent,
@@ -527,80 +450,5 @@ async function SeriesModalContent({ seriesId }: { seriesId: number }) {
         </div>
       </ScrollArea>
     </DialogContent>
-  );
-}
-
-// Screenshots carousel
-async function Gallery({ movieTitle, id }: { movieTitle: string; id: number }) {
-  const images = await fetchMovieImages(id);
-  if (!images) return;
-
-  const validBackdrops = [];
-
-  for (const backdrop of images.backdrops) {
-    if (backdrop) validBackdrops.push(backdrop);
-  }
-  if (validBackdrops.length === 0) return;
-
-  return (
-    <section className="mb-8" id="screenshots">
-      <h2 className="mb-2 scroll-m-20 text-lg font-semibold">
-        {movieTitle}&apos;s Images
-      </h2>
-      <ImagesCarousel title={movieTitle} images={validBackdrops} />
-    </section>
-  );
-}
-
-async function JustWatchSection({
-  movieTitle,
-  id,
-}: {
-  movieTitle: string;
-  id: number;
-}) {
-  const providers = await fetchMovieJustWatchInfo(id);
-  if (!providers) return;
-
-  const availableCountries: {
-    [key: string]: {
-      link?: string | undefined;
-      buy?:
-        | {
-            logo_path: string;
-            provider_id: number;
-            provider_name: string;
-            display_priority: number;
-          }[]
-        | undefined;
-      rent?:
-        | {
-            logo_path: string;
-            provider_id: number;
-            provider_name: string;
-            display_priority: number;
-          }[]
-        | undefined;
-      flatrate?:
-        | {
-            logo_path: string;
-            provider_id: number;
-            provider_name: string;
-            display_priority: number;
-          }[]
-        | undefined;
-    };
-  } = {};
-
-  for (const entry of Object.entries(providers)) {
-    const [country, data] = entry;
-    if (data.buy || data.rent || data.flatrate)
-      availableCountries[country] = data;
-  }
-
-  if (Object.entries(availableCountries).length === 0) return;
-
-  return (
-    <JustWatchInfo title={movieTitle} watchProviders={availableCountries} />
   );
 }

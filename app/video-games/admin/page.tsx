@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { fetchTwitchToken } from "@/app/lib/data";
+import { fetchTwitchToken } from "@/lib/data";
 import {
   drop,
   fetchTest,

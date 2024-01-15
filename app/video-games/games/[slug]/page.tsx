@@ -18,9 +18,14 @@ import { Button } from "@/components/ui/button";
 import { FaPlus } from "react-icons/fa";
 import { LanguagesTable } from "@/app/ui/video-games/languages-table";
 import { Separator } from "@/components/ui/separator";
-import prisma from "@/app/lib/prisma";
+import prisma from "@/lib/prisma";
 import { Game, GCover } from "@prisma/client";
 import type { Metadata } from "next";
+import {
+  fetchGameDetails,
+  fetchGameCategory,
+  fetchChildGames,
+} from "../../lib/actions";
 
 export async function generateMetadata({
   params,
@@ -38,73 +43,7 @@ export async function generateMetadata({
 }
 
 export default async function Page({ params }: { params: { slug: string } }) {
-  const game = await prisma.game.findUnique({
-    where: {
-      slug: params.slug,
-    },
-    include: {
-      cover: true,
-      ageRatings: true,
-      languageSupports: {
-        include: {
-          language: true,
-          supportType: true,
-        },
-      },
-      developers: {
-        select: {
-          developer: {
-            select: {
-              name: true,
-              slug: true,
-            },
-          },
-        },
-      },
-      publishers: {
-        select: {
-          publisher: {
-            select: {
-              name: true,
-              slug: true,
-            },
-          },
-        },
-      },
-      genres: {
-        select: {
-          genre: {
-            select: {
-              name: true,
-              slug: true,
-            },
-          },
-        },
-      },
-      engines: {
-        select: {
-          engine: {
-            select: {
-              name: true,
-              slug: true,
-            },
-          },
-        },
-      },
-      platforms: {
-        include: {
-          platform: {
-            select: {
-              id: true,
-            },
-          },
-        },
-      },
-      screenshots: true,
-      videos: true,
-      websites: true,
-    },
-  });
+  const game = await fetchGameDetails({ slug: params.slug });
   if (!game) return <p>No game found.</p>;
 
   const {
@@ -420,92 +359,7 @@ async function GameCategory({
       </Badge>
     );
 
-  const game = await prisma.game.findUnique({
-    where: {
-      slug,
-    },
-    select: {
-      dlcOf: {
-        select: {
-          name: true,
-          slug: true,
-        },
-      },
-      expansionOf: {
-        select: {
-          name: true,
-          slug: true,
-        },
-      },
-      standaloneDlcOf: {
-        select: {
-          name: true,
-          slug: true,
-        },
-      },
-      modOf: {
-        select: {
-          name: true,
-          slug: true,
-        },
-      },
-      episodeOf: {
-        select: {
-          name: true,
-          slug: true,
-        },
-      },
-      seasonOf: {
-        select: {
-          name: true,
-          slug: true,
-        },
-      },
-      remakeOf: {
-        select: {
-          name: true,
-          slug: true,
-        },
-      },
-      remasterOf: {
-        select: {
-          name: true,
-          slug: true,
-        },
-      },
-      expandedFrom: {
-        select: {
-          name: true,
-          slug: true,
-        },
-      },
-      portOf: {
-        select: {
-          name: true,
-          slug: true,
-        },
-      },
-      forkOf: {
-        select: {
-          name: true,
-          slug: true,
-        },
-      },
-      packOf: {
-        select: {
-          name: true,
-          slug: true,
-        },
-      },
-      updateOf: {
-        select: {
-          name: true,
-          slug: true,
-        },
-      },
-    },
-  });
-
+  const game = await fetchGameCategory({ slug });
   if (!game) return;
 
   const parentGame =
@@ -661,49 +515,7 @@ type ChildGame = {
 };
 
 async function ChildGamesTabs({ slug }: { slug: string }) {
-  const game = await prisma.game.findUnique({
-    where: {
-      slug,
-    },
-    select: {
-      name: true,
-      remakes: {
-        select: {
-          name: true,
-          slug: true,
-          cover: true,
-        },
-      },
-      remasters: {
-        select: {
-          name: true,
-          slug: true,
-          cover: true,
-        },
-      },
-      dlcs: {
-        select: {
-          name: true,
-          slug: true,
-          cover: true,
-        },
-      },
-      expansions: {
-        select: {
-          name: true,
-          slug: true,
-          cover: true,
-        },
-      },
-      standaloneDlcs: {
-        select: {
-          name: true,
-          slug: true,
-          cover: true,
-        },
-      },
-    },
-  });
+  const game = await fetchChildGames({ slug });
 
   if (
     !game ||
@@ -1126,23 +938,9 @@ async function SeriesModalContent({
                       />
                     )}
                   </div>
-                  <div>
-                    <Badge className="inline-block">
-                      {categoryEnum[game.category]}
-                    </Badge>
-                    {/* {game.parentGame && (
-                  <>
-                    {" "}
-                    of{" "}
-                    <a
-                      className="hover:underline hover:underline-offset-2"
-                      href={`/video-games/games/${game.parentGame.slug}`}
-                    >
-                      {game.parentGame.name}
-                    </a>
-                  </>
-                )} */}
-                  </div>
+                  <Badge className="inline-block">
+                    {categoryEnum[game.category]}
+                  </Badge>
                 </div>
                 <Link
                   className="col-span-1 block mb-1 hover:underline hover:underline-offset-2"

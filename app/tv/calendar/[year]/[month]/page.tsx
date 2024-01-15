@@ -1,14 +1,14 @@
 "use server";
 
 import { v4 as uuid } from "uuid";
-import { fetchTelevisionSeasonsByMonth } from "@/app/tv/lib/actions";
-import { TelevisionSeasons } from "@/app/tv/lib/definitions";
+import { fetchTelevisionSeasonsByMonth } from "@/lib/actions";
+import { TelevisionSeasons } from "@/lib/definitions";
 import { InfiniteTelevisionSeasonsCalendar } from "./infinte-tv-shows-calendar";
 import { Breadcrumbs } from "@/app/ui/breadcrumbs";
 import { TelevisionCalendarNav } from "@/app/ui/tv/television-calendar-nav";
 import { Suspense } from "react";
 import { CalendarBodySkeleton } from "@/app/ui/skeletons";
-import { getMonthYearName } from "@/app/lib/utils";
+import { getMonthYearName } from "@/lib/utils";
 import type { Metadata } from "next";
 
 export async function generateMetadata({

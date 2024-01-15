@@ -3,5 +3,5 @@
 import { redirect } from "next/navigation";
 
 export default async function Page() {
-  redirect(`/tv/search/`);
+  redirect(`/anime/search/`);
 }

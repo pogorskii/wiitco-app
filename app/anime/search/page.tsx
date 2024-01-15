@@ -1,13 +1,13 @@
 "use server";
 
 import { v4 as uuid } from "uuid";
-import { fetchAnimeShowsSearch } from "../lib/actions";
-import InfiniteAnimeShowsSearch from "../infinite-anime-shows-search";
+import { fetchAnimeShowsSearch } from "@/lib/actions";
+import InfiniteAnimeShowsSearch from "./infinite-anime-shows-search";
 import { Breadcrumbs } from "@/app/ui/breadcrumbs";
 import { AnimeSearchNav } from "@/app/ui/anime/anime-search-nav";
 import { Suspense } from "react";
 import { SearchBodySkeleton } from "@/app/ui/skeletons";
-import type { Metadata, ResolvingMetadata } from "next";
+import type { Metadata } from "next";
 
 export async function generateMetadata(): Promise<Metadata> {
   return {

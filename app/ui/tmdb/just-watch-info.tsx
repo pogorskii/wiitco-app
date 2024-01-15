@@ -16,7 +16,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { convertCountryCodeToName } from "@/app/lib/utils";
+import { convertCountryCodeToName } from "@/lib/utils";
 
 type WatchProviders = {
   [key: string]: {

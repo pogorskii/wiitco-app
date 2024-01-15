@@ -1,15 +1,15 @@
 "use server";
 
 import { v4 as uuid } from "uuid";
-import { fetchMovieReleaseDatesByMonth } from "@/app/cinema/lib/actions";
-import { MovieReleasesByMonth } from "@/app/cinema/lib/definitions";
+import { fetchMovieReleaseDatesByMonth } from "@/lib/actions";
+import { MovieReleasesByMonth } from "@/lib/definitions";
 import { InfiniteMoviesCalendar } from "./infinite-movies-calendar";
 import { Breadcrumbs } from "@/app/ui/breadcrumbs";
 import { CalendarNav } from "@/app/ui/cinema/calendar-nav";
 import { Suspense } from "react";
 import { CalendarBodySkeleton } from "@/app/ui/skeletons";
-import { getMonthYearName } from "@/app/lib/utils";
-import type { Metadata, ResolvingMetadata } from "next";
+import { getMonthYearName } from "@/lib/utils";
+import type { Metadata } from "next";
 
 export async function generateMetadata({
   params,

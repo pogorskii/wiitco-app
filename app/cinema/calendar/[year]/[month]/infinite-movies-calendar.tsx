@@ -2,10 +2,10 @@
 
 import { useEffect, useState, useCallback, useRef } from "react";
 import { useInView } from "react-intersection-observer";
-import { fetchMovieReleaseDatesByMonth } from "@/app/cinema/lib/actions";
-import { groupMovieReleasesAndSortByDay } from "@/app/cinema/lib/utils";
+import { fetchMovieReleaseDatesByMonth } from "@/lib/actions";
+import { groupMovieReleasesAndSortByDay } from "@/lib/utils";
 import { Spinner } from "@/app/ui/spinner";
-import { MovieReleasesByMonth } from "@/app/cinema/lib/definitions";
+import { MovieReleasesByMonth } from "@/lib/definitions";
 import { MoviesDay } from "@/app/ui/cinema/movies-day";
 
 export function InfiniteMoviesCalendar({

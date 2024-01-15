@@ -1,9 +1,9 @@
 "use client";
 
-import { TelevisionShowsSearch } from "./lib/zod-schemas";
+import { TelevisionShowsSearch } from "@/lib/zod-schemas";
 import { useEffect, useState, useCallback, useRef } from "react";
 import { useInView } from "react-intersection-observer";
-import { fetchTelevisionShowsSearch } from "./lib/actions";
+import { fetchTelevisionShowsSearch } from "@/lib/actions";
 import { TelevisionShowSearchCard } from "../ui/tv/television-cards";
 import { Spinner } from "@/app/ui/spinner";
 
@@ -60,7 +60,7 @@ export default function InfiniteTelevisionShowsSearch({
       {televisionShows?.map((televisionShow) => (
         <TelevisionShowSearchCard
           key={televisionShow.id}
-          televisionShow={televisionShow}
+          show={televisionShow}
         />
       ))}
       {/* Loading spinner */}

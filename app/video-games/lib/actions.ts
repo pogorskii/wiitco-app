@@ -1,9 +1,219 @@
 "use server";
 
-import prisma from "../../lib/prisma";
-import { createFuzzySearchQuery } from "@/app/lib/utils";
+import prisma from "../../../lib/prisma";
+import { createFuzzySearchQuery } from "@/lib/utils";
 import { HowLongToBeatService } from "howlongtobeat";
 import { hltbArrSchema } from "./zod-schemas";
+
+export async function fetchGameDetails({ slug }: { slug: string }) {
+  const game = await prisma.game.findUnique({
+    where: {
+      slug,
+    },
+    include: {
+      cover: true,
+      ageRatings: true,
+      languageSupports: {
+        include: {
+          language: true,
+          supportType: true,
+        },
+      },
+      developers: {
+        select: {
+          developer: {
+            select: {
+              name: true,
+              slug: true,
+            },
+          },
+        },
+      },
+      publishers: {
+        select: {
+          publisher: {
+            select: {
+              name: true,
+              slug: true,
+            },
+          },
+        },
+      },
+      genres: {
+        select: {
+          genre: {
+            select: {
+              name: true,
+              slug: true,
+            },
+          },
+        },
+      },
+      engines: {
+        select: {
+          engine: {
+            select: {
+              name: true,
+              slug: true,
+            },
+          },
+        },
+      },
+      platforms: {
+        include: {
+          platform: {
+            select: {
+              id: true,
+            },
+          },
+        },
+      },
+      screenshots: true,
+      videos: true,
+      websites: true,
+    },
+  });
+
+  return game;
+}
+
+export async function fetchGameCategory({ slug }: { slug: string }) {
+  const game = await prisma.game.findUnique({
+    where: {
+      slug,
+    },
+    select: {
+      dlcOf: {
+        select: {
+          name: true,
+          slug: true,
+        },
+      },
+      expansionOf: {
+        select: {
+          name: true,
+          slug: true,
+        },
+      },
+      standaloneDlcOf: {
+        select: {
+          name: true,
+          slug: true,
+        },
+      },
+      modOf: {
+        select: {
+          name: true,
+          slug: true,
+        },
+      },
+      episodeOf: {
+        select: {
+          name: true,
+          slug: true,
+        },
+      },
+      seasonOf: {
+        select: {
+          name: true,
+          slug: true,
+        },
+      },
+      remakeOf: {
+        select: {
+          name: true,
+          slug: true,
+        },
+      },
+      remasterOf: {
+        select: {
+          name: true,
+          slug: true,
+        },
+      },
+      expandedFrom: {
+        select: {
+          name: true,
+          slug: true,
+        },
+      },
+      portOf: {
+        select: {
+          name: true,
+          slug: true,
+        },
+      },
+      forkOf: {
+        select: {
+          name: true,
+          slug: true,
+        },
+      },
+      packOf: {
+        select: {
+          name: true,
+          slug: true,
+        },
+      },
+      updateOf: {
+        select: {
+          name: true,
+          slug: true,
+        },
+      },
+    },
+  });
+
+  return game;
+}
+
+export async function fetchChildGames({ slug }: { slug: string }) {
+  const game = await prisma.game.findUnique({
+    where: {
+      slug,
+    },
+    select: {
+      name: true,
+      remakes: {
+        select: {
+          name: true,
+          slug: true,
+          cover: true,
+        },
+      },
+      remasters: {
+        select: {
+          name: true,
+          slug: true,
+          cover: true,
+        },
+      },
+      dlcs: {
+        select: {
+          name: true,
+          slug: true,
+          cover: true,
+        },
+      },
+      expansions: {
+        select: {
+          name: true,
+          slug: true,
+          cover: true,
+        },
+      },
+      standaloneDlcs: {
+        select: {
+          name: true,
+          slug: true,
+          cover: true,
+        },
+      },
+    },
+  });
+
+  return game;
+}
 
 // HowLongToBeat
 export async function fetchHLTBInfo({ search }: { search: string }) {

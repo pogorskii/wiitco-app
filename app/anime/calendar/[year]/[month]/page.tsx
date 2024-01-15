@@ -1,13 +1,13 @@
 "use server";
 
 import { v4 as uuid } from "uuid";
-import { fetchAnimeSeasonsByMonth } from "@/app/anime/lib/actions";
-import { TelevisionSeasons } from "@/app/tv/lib/definitions";
+import { fetchAnimeSeasonsByMonth } from "@/lib/actions";
+import { TelevisionSeasons } from "@/lib/definitions";
 import { InfiniteAnimeSeasonsCalendar } from "./infinte-anime-seasons-calendar";
 import { Breadcrumbs } from "@/app/ui/breadcrumbs";
 import { Suspense } from "react";
 import { CalendarBodySkeleton } from "@/app/ui/skeletons";
-import { getMonthYearName } from "@/app/lib/utils";
+import { getMonthYearName } from "@/lib/utils";
 import type { Metadata } from "next";
 import { MonthSwitcher } from "@/app/ui/month-switcher";
 

@@ -7,7 +7,7 @@ import { Breadcrumbs } from "@/app/ui/breadcrumbs";
 import { CalendarNav } from "@/app/ui/video-games/calendar-nav";
 import { Suspense } from "react";
 import { CalendarBodySkeleton } from "@/app/ui/skeletons";
-import { getMonthYearName } from "@/app/lib/utils";
+import { getMonthYearName } from "@/lib/utils";
 import type { Metadata } from "next";
 
 export async function generateMetadata({

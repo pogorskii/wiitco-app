@@ -1,13 +1,13 @@
 "use server";
 
 import { v4 as uuid } from "uuid";
-import { fetchTelevisionShowsSearch } from "../lib/actions";
+import { fetchTelevisionShowsSearch } from "@/lib/actions";
 import InfiniteTelevisionShowsSearch from "../infinite-television-shows-search";
 import { Breadcrumbs } from "@/app/ui/breadcrumbs";
 import { SectionNav } from "@/app/ui/tv/section-nav";
 import { Suspense } from "react";
 import { SearchBodySkeleton } from "@/app/ui/skeletons";
-import type { Metadata, ResolvingMetadata } from "next";
+import type { Metadata } from "next";
 
 export async function generateMetadata(): Promise<Metadata> {
   return {
