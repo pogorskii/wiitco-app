@@ -9,6 +9,7 @@ import {
   MoviesSearch,
   TelevisionShowDetails,
   TelevisionShowsSearch,
+  CinemaPersonDetails,
 } from "./zod-schemas";
 
 const headersTMDB = new Headers();
@@ -180,6 +181,21 @@ export const fetchTelevisionShowDetails = async (id: string) => {
     );
     const result = await response.json();
     const parsedData = TelevisionShowDetails.parse(result);
+
+    return parsedData;
+  } catch (err) {
+    console.error(err);
+  }
+};
+
+export const fetchCinemaPersonDetails = async (id: string) => {
+  try {
+    const response = await fetch(
+      `https://api.themoviedb.org/3/person/${id}?append_to_response=external_ids%2Cmovie_credits%2Ctv_credits&language=en-US`,
+      optionsTMDB
+    );
+    const result = await response.json();
+    const parsedData = CinemaPersonDetails.parse(result);
 
     return parsedData;
   } catch (err) {
