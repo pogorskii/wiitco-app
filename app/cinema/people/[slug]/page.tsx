@@ -1,7 +1,7 @@
 "use server";
 
 import { Suspense } from "react";
-import { format } from "date-fns";
+import { format, formatDistanceToNow } from "date-fns";
 import Image from "next/image";
 import { TagsRow } from "@/app/ui/tags-row";
 import { TruncText } from "@/app/ui/trunc-text";
@@ -29,49 +29,52 @@ export async function generateMetadata({
   const person = await fetchCinemaPersonDetails(params.slug);
 
   return {
-    title: show ? `${show.name}` : "Anime Show Details",
+    title: person ? `${person.name}` : "Cinema Persona Details",
   };
 }
 
 export default async function Page({ params }: { params: { slug: string } }) {
-  const show = await fetchTelevisionShowDetails(params.slug);
-  if (!show) return <p>Anime not found.</p>;
+  const person = await fetchCinemaPersonDetails(params.slug);
+  if (!person || person.adult) return <p>Person not found.</p>;
+
+  const gendersEnum: { [key: number]: string } = {
+    0: "Not specified",
+    1: "Female",
+    2: "Male",
+    3: "Non-binary",
+  };
 
   const {
     id,
-    poster_path,
+    also_known_as,
+    biography,
+    birthday,
+    deathday,
+    gender,
     name,
-    vote_average,
-    vote_count,
-    in_production,
-    first_air_date,
-    last_air_date,
-    genres,
-    episode_run_time,
-    production_countries,
-    production_companies,
-    networks,
-    overview,
     external_ids,
     homepage,
-    seasons,
-    credits,
-    videos,
-  } = show;
+    known_for_department,
+    place_of_birth,
+    popularity,
+    profile_path,
+    movie_credits,
+    tv_credits,
+  } = person;
 
-  const coverUrl = poster_path
-    ? `https://image.tmdb.org/t/p/w600_and_h900_bestv2${poster_path}`
-    : "/television-placeholder.webp";
+  const coverUrl = profile_path
+    ? `https://image.tmdb.org/t/p/w600_and_h900_bestv2${profile_path}`
+    : "/movie-placeholder.webp";
 
   return (
     <>
       <Breadcrumbs
         breadcrumbs={[
           { label: "Home", href: "/" },
-          { label: "Anime", href: "/anime/shows" },
+          { label: "Cinema", href: "/cinema/" },
           {
             label: name,
-            href: `/anime/shows/${params.slug}`,
+            href: `/`,
             active: true,
           },
         ]}
@@ -93,13 +96,8 @@ export default async function Page({ params }: { params: { slug: string } }) {
           />
           {/* TODO: Change appearance if added */}
           <Button className="mt-4 mb-6 w-full">
-            <FaPlus className="me-1" /> Watch this Anime
+            <FaPlus className="me-1" /> Set birthday reminder
           </Button>
-
-          <div className="mb-8 flex col-span-1 lg:hidden flex-col items-center">
-            {/* Reviews */}
-            <RatingCircle rating={vote_average * 10} reviewCount={vote_count} />
-          </div>
         </div>
 
         {/* Second column */}
@@ -119,20 +117,32 @@ export default async function Page({ params }: { params: { slug: string } }) {
             </div>
 
             <div className="col-span-3 md:col-span-1">
-              <Badge variant="outline" className="mb-2">
-                {in_production ? "On Air" : "Finished"}
-              </Badge>
+              {known_for_department && (
+                <Badge variant="outline" className="mb-2">
+                  {known_for_department}
+                </Badge>
+              )}
               <h1 className="mb-2 scroll-m-20 text-xl md:text-2xl font-semibold first:mt-0">
                 {name}
               </h1>
-              {first_air_date && (
+              {birthday && (
                 <span>
-                  {in_production && (
-                    <span className="font-semibold">Since: </span>
+                  {birthday && (
+                    <p>
+                      <span className="font-semibold">Birthday: </span>
+                      {format(birthday, "MMMM d yyyy")} (
+                      {!deathday &&
+                        formatDistanceToNow(birthday, {
+                          addSuffix: false,
+                        })}
+                      )
+                    </p>
                   )}
-                  {format(first_air_date, "MMMM d yyyy")}{" "}
-                  {last_air_date && (
-                    <> – {format(last_air_date, "MMMM d yyyy")}</>
+                  {deathday && (
+                    <p>
+                      <span className="font-semibold">Date of death:</span>{" "}
+                      {format(deathday, "MMMM d yyyy")}
+                    </p>
                   )}
                 </span>
               )}
@@ -140,123 +150,45 @@ export default async function Page({ params }: { params: { slug: string } }) {
           </div>
 
           <Button className="mb-2 mt-4 w-full md:hidden">
-            <FaPlus className="me-1" /> Watch this Anime
+            <FaPlus className="me-1" /> Set birthday reminder
           </Button>
 
           <Separator className="mt-1 mb-4" />
 
           {/* Info First Column */}
           <div className="col-span-3 grid grid-cols-4 gap-6">
-            <div className="flex md:hidden col-span-5 lg:hidden flex-col items-center">
-              {/* Reviews */}
-              <RatingCircle
-                rating={vote_average * 10}
-                reviewCount={vote_count}
-              />
-            </div>
-
             {/* Below LG breakpoint changes into single column */}
             <div className="col-span-4 lg:col-span-3">
               {/* Main Info List */}
               <ul className="mb-4 [&>*+*]:mt-2">
-                {genres && genres.length > 0 && (
+                {place_of_birth && (
                   <li>
-                    <span className="font-semibold">
-                      {genres.length === 1 ? `Genre:` : `Genres:`}
-                    </span>
-                    <TagsRow
-                      type="tv"
-                      category="genres"
-                      tags={genres
-                        .filter((g) => g)
-                        .map((g) => {
-                          return {
-                            name: g?.name,
-                            slug: g?.id.toString(),
-                          };
-                        })}
-                    />
+                    <span className="font-semibold">Place of birth: </span>
+                    <span>{place_of_birth}</span>
                   </li>
                 )}
-                {episode_run_time.length > 0 && (
+                {gender && gender !== 0 && (
                   <li>
-                    <span className="font-semibold">Episode runtime: </span>
-                    {episode_run_time.map((runTime, i, arr) => {
-                      if (runTime && i < arr.length - 1) {
-                        return (
-                          <span key={i}>
-                            {convertMinutesToHoursAndMinutes(runTime)},{" "}
-                          </span>
-                        );
-                      } else if (runTime) {
-                        return (
-                          <span key={i}>
-                            {convertMinutesToHoursAndMinutes(runTime)}
-                          </span>
-                        );
+                    <span className="font-semibold">Gender: </span>
+                    <span>{gendersEnum[gender]}</span>
+                  </li>
+                )}
+                {also_known_as && also_known_as.length > 0 && (
+                  <li>
+                    <span className="font-semibold">Also known as: </span>
+                    {also_known_as.map((name, i, arr) => {
+                      if (name && i < arr.length - 1) {
+                        return <span key={i}>{name}, </span>;
+                      } else {
+                        return <span key={i}>{name}</span>;
                       }
                     })}
-                  </li>
-                )}
-                {production_countries.length > 0 && (
-                  <li>
-                    <span className="font-semibold">
-                      {production_countries.length === 1
-                        ? `Country:`
-                        : `Countries:`}
-                    </span>
-                    <TagsRow
-                      type="cinema"
-                      category="country"
-                      tags={production_countries.map((e) => {
-                        return {
-                          name: e?.name,
-                          slug: e?.iso_3166_1,
-                        };
-                      })}
-                    />
-                  </li>
-                )}
-                {production_companies.length > 0 && (
-                  <li>
-                    <span className="font-semibold">
-                      {production_companies.length === 1
-                        ? `Company:`
-                        : `Companies:`}
-                    </span>
-                    <TagsRow
-                      type="cinema"
-                      category="company"
-                      tags={production_companies.map((e) => {
-                        return {
-                          name: e?.name,
-                          slug: e?.id,
-                        };
-                      })}
-                    />
-                  </li>
-                )}
-                {networks.length > 0 && (
-                  <li>
-                    <span className="font-semibold">
-                      {networks.length === 1 ? `Network:` : `Networks:`}
-                    </span>
-                    <TagsRow
-                      type="cinema"
-                      category="company"
-                      tags={networks.map((e) => {
-                        return {
-                          name: e?.name,
-                          slug: e?.id,
-                        };
-                      })}
-                    />
                   </li>
                 )}
               </ul>
 
               {/* Truncated Summary */}
-              {overview && <TruncText text={overview} />}
+              {biography && <TruncText text={biography} />}
 
               {/* Links table */}
               {Object.values(external_ids).some((e) => e !== null) && (
@@ -266,33 +198,16 @@ export default async function Page({ params }: { params: { slug: string } }) {
               )}
 
               {/* Seasons Carousel */}
-              {seasons.length > 0 && <SeasonsCarousel seasons={seasons} />}
-
-              {/* JustWatch Info */}
-              <Suspense fallback={<p>Loading...</p>}>
-                <JustWatchSection title={name} id={id} type="tv" />
-              </Suspense>
+              {/* {seasons.length > 0 && <SeasonsCarousel seasons={seasons} />} */}
 
               {/* Cast Carousel */}
-              {credits.cast.length > 0 && (
+              {/* {credits.cast.length > 0 && (
                 <CastCarousel actors={credits.cast} />
-              )}
-
-              {/* YouTube Video Embed */}
-              {videos.results.length > 0 && (
-                <section className="mb-8" id="trailer">
-                  <h2 className="mb-2 scroll-m-20 text-lg font-semibold">
-                    {name}&apos;s Trailer
-                  </h2>
-                  <Suspense fallback={<p>loading...</p>}>
-                    <YouTubePlayer videoId={videos.results[0].key} />
-                  </Suspense>
-                </section>
-              )}
+              )} */}
 
               {/* Screenshots Slider */}
               <Suspense fallback={<p>loading...</p>}>
-                <CinemaStillsGallery title={name} id={id} type="tv" />
+                <CinemaStillsGallery title={name} id={id} type="person" />
               </Suspense>
             </div>
 
@@ -300,10 +215,10 @@ export default async function Page({ params }: { params: { slug: string } }) {
             {/* Shows Here Only above LG Breakpoint */}
             <div className="hidden col-span-1 lg:flex flex-col items-center">
               {/* Reviews */}
-              <RatingCircle
+              {/* <RatingCircle
                 rating={vote_average * 10}
                 reviewCount={vote_count}
-              />
+              /> */}
             </div>
           </div>
         </div>

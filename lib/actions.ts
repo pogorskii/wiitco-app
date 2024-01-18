@@ -229,7 +229,7 @@ export const fetchTMDBImages = async ({
   type,
 }: {
   id: number;
-  type: "movie" | "tv";
+  type: "movie" | "tv" | "person";
 }) => {
   try {
     const response = await fetch(
