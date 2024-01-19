@@ -519,7 +519,7 @@ export const CinemaPersonDetails = z.object({
   profile_path: z.string().nullable(),
   external_ids: z.object({
     imdb_id: z.string().nullable(),
-    tvrage_id: z.string().nullable(),
+    tvrage_id: z.number().nullable(),
     wikidata_id: z.string().nullable(),
     facebook_id: z.string().nullable(),
     instagram_id: z.string().nullable(),
@@ -548,7 +548,7 @@ export const CinemaPersonDetails = z.object({
           video: z.boolean(),
           vote_average: z.number(),
           vote_count: z.number(),
-          character: z.string().nullable(),
+          character: z.string().default(""),
           credit_id: z.string(),
           order: z.number(),
         })
@@ -602,7 +602,7 @@ export const CinemaPersonDetails = z.object({
           name: z.string(),
           vote_average: z.number(),
           vote_count: z.number(),
-          character: z.string().nullable(),
+          character: z.string().default(""),
           credit_id: z.string(),
           episode_count: z.number().nullable(),
         })
@@ -630,14 +630,26 @@ export const CinemaPersonDetails = z.object({
           vote_count: z.number(),
           credit_id: z.string(),
           department: z.string().nullable(),
-          episode_count: z.number().optional(),
-          job: z.string().nullable(),
+          episode_count: z.number().nullable(),
+          job: z.string(),
         })
       )
       .optional(),
   }),
 });
 export type CinemaPersonDetails = z.infer<typeof CinemaPersonDetails>;
+export type PersonMovieActingCredits = z.infer<
+  typeof CinemaPersonDetails
+>["movie_credits"]["cast"];
+export type PersonMovieProducingCredits = z.infer<
+  typeof CinemaPersonDetails
+>["movie_credits"]["crew"];
+export type PersonTelevisionActingCredits = z.infer<
+  typeof CinemaPersonDetails
+>["tv_credits"]["cast"];
+export type PersonTelevisionProducingCredits = z.infer<
+  typeof CinemaPersonDetails
+>["tv_credits"]["crew"];
 
 const JustWatchBase = z.object({
   link: z.string().optional(),

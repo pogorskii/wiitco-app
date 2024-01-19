@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -46,25 +47,27 @@ export function CastCarousel({ actors }: { actors: Actors }) {
         <div className="flex w-max space-x-4 p-4">
           {sortedTopActors.map((actor, i) => (
             <figure key={i} className="shrink-0 w-[156px]">
-              <div className="h-[200px] overflow-hidden rounded-md">
-                <img
-                  className="object-fill"
-                  src={
-                    actor.profile_path
-                      ? `https://image.tmdb.org/t/p/w276_and_h350_face/${actor.profile_path}`
-                      : "/movie-placeholder.webp"
-                  }
-                  alt={`${actor.name} photo`}
-                />
-              </div>
-              <figcaption className="pt-2 text-xs">
-                <p className="mb-1 text-sm font-semibold text-ellipsis overflow-hidden">
-                  {actor.name}
-                </p>
-                <div className="text-xs text-muted-foreground text-ellipsis overflow-hidden">
-                  {actor.character}
+              <Link href={`/cinema/people/${actor.id}`}>
+                <div className="h-[200px] overflow-hidden rounded-md">
+                  <img
+                    className="object-fill"
+                    src={
+                      actor.profile_path
+                        ? `https://image.tmdb.org/t/p/w276_and_h350_face/${actor.profile_path}`
+                        : "/movie-placeholder.webp"
+                    }
+                    alt={`${actor.name} photo`}
+                  />
                 </div>
-              </figcaption>
+                <figcaption className="pt-2 text-xs">
+                  <p className="mb-1 text-sm font-semibold text-ellipsis overflow-hidden">
+                    {actor.name}
+                  </p>
+                  <div className="text-xs text-muted-foreground text-ellipsis overflow-hidden">
+                    {actor.character}
+                  </div>
+                </figcaption>
+              </Link>
             </figure>
           ))}
           {validActors.length > 19 && (
@@ -79,30 +82,32 @@ export function CastCarousel({ actors }: { actors: Actors }) {
                       <DialogTitle>Full Cast</DialogTitle>
                     </DialogHeader>
                     <ScrollArea className="h-full max-h-[70vh] w-auto rounded-md border">
-                      <div className="grid grid-cols-2 gap-4 p-4">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 p-4">
                         {validActors.map((actor, i) => (
                           <div key={i}>
                             {i > 1 && <Separator className="mb-4" />}
-                            <div className="grid grid-cols-4 gap-4">
-                              <div className="col-span-1 aspect-square overflow-hidden rounded-md">
-                                <img
-                                  src={
-                                    actor.profile_path
-                                      ? `https://image.tmdb.org/t/p/w132_and_h132_face/${actor.profile_path}`
-                                      : "/movie-placeholder.webp"
-                                  }
-                                  alt={`${actor.name} photo`}
-                                />
-                              </div>
-                              <div className="col-span-3 shrink-0 flex flex-col items-start">
-                                <h3 className="scroll-m-20 text-base font-medium tracking-tight">
-                                  {actor.name}
-                                </h3>
-                                <div className="text-sm text-muted-foreground">
-                                  {actor.character}
+                            <Link href={`/cinema/people/${actor.id}`}>
+                              <div className="grid grid-cols-4 gap-4">
+                                <div className="col-span-1 aspect-square overflow-hidden rounded-md">
+                                  <img
+                                    src={
+                                      actor.profile_path
+                                        ? `https://image.tmdb.org/t/p/w132_and_h132_face/${actor.profile_path}`
+                                        : "/movie-placeholder.webp"
+                                    }
+                                    alt={`${actor.name} photo`}
+                                  />
+                                </div>
+                                <div className="col-span-3 shrink-0 flex flex-col items-start">
+                                  <h3 className="scroll-m-20 text-base font-medium tracking-tight">
+                                    {actor.name}
+                                  </h3>
+                                  <div className="text-sm text-muted-foreground">
+                                    {actor.character}
+                                  </div>
                                 </div>
                               </div>
-                            </div>
+                            </Link>
                           </div>
                         ))}
                       </div>

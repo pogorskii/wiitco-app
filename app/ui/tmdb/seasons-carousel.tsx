@@ -83,7 +83,7 @@ export function SeasonsCarousel({ seasons }: { seasons: Seasons }) {
                       <DialogTitle>Full Seasons list</DialogTitle>
                     </DialogHeader>
                     <ScrollArea className="h-full max-h-[70vh] w-auto rounded-md border">
-                      <div className="grid grid-cols-2 gap-4 p-4">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 p-4">
                         {validSeasons.map((season, i) => {
                           if (i > 9) {
                             return (
@@ -106,7 +106,7 @@ export function SeasonsCarousel({ seasons }: { seasons: Seasons }) {
                                     </h3>
                                     {season.air_date && (
                                       <div className="text-sm text-muted-foreground">
-                                        {format(season.air_date, "mm-dd-yyyy")}
+                                        {format(season.air_date, "MMMM d yyyy")}
                                       </div>
                                     )}
                                   </div>

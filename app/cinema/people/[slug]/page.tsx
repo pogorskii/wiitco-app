@@ -1,12 +1,9 @@
 "use server";
 
 import { Suspense } from "react";
-import { format, formatDistanceToNow } from "date-fns";
+import { format, formatDistanceToNow, formatDistance } from "date-fns";
 import Image from "next/image";
-import { TagsRow } from "@/app/ui/tags-row";
 import { TruncText } from "@/app/ui/trunc-text";
-import { RatingCircle } from "@/app/ui/rating-circle";
-import { YouTubePlayer } from "@/app/ui/youtube-player";
 import { Breadcrumbs } from "@/app/ui/breadcrumbs";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -14,12 +11,10 @@ import { FaPlus } from "react-icons/fa";
 import { Separator } from "@/components/ui/separator";
 import type { Metadata } from "next";
 import { fetchCinemaPersonDetails } from "@/lib/actions";
-import { CastCarousel } from "@/app/ui/cinema/cast-carousel";
-import { SeasonsCarousel } from "@/app/ui/tmdb/seasons-carousel";
-import { JustWatchSection } from "@/app/ui/tmdb/just-watch-section";
+import { ActingCreditsCarousel } from "@/app/ui/tmdb/acting-credits-carousel";
+import { ProducingCreditsCarousel } from "@/app/ui/tmdb/producing-credits-carousel";
 import { CinemaStillsGallery } from "@/app/ui/tmdb/cinema-stills-gallery";
 import { CinemaLinksList } from "@/app/ui/tmdb/cinema-links-list";
-import { convertMinutesToHoursAndMinutes } from "@/lib/utils";
 
 export async function generateMetadata({
   params,
@@ -74,7 +69,7 @@ export default async function Page({ params }: { params: { slug: string } }) {
           { label: "Cinema", href: "/cinema/" },
           {
             label: name,
-            href: `/`,
+            href: `/cinema/people/${params.slug}`,
             active: true,
           },
         ]}
@@ -130,18 +125,15 @@ export default async function Page({ params }: { params: { slug: string } }) {
                   {birthday && (
                     <p>
                       <span className="font-semibold">Birthday: </span>
-                      {format(birthday, "MMMM d yyyy")} (
-                      {!deathday &&
-                        formatDistanceToNow(birthday, {
-                          addSuffix: false,
-                        })}
-                      )
+                      {format(birthday, "MMMM d yyyy")}
+                      {!deathday && <> ({formatDistanceToNow(birthday)})</>}
                     </p>
                   )}
                   {deathday && (
                     <p>
                       <span className="font-semibold">Date of death:</span>{" "}
-                      {format(deathday, "MMMM d yyyy")}
+                      {format(deathday, "MMMM d yyyy")} (
+                      {formatDistance(deathday, birthday)})
                     </p>
                   )}
                 </span>
@@ -156,70 +148,61 @@ export default async function Page({ params }: { params: { slug: string } }) {
           <Separator className="mt-1 mb-4" />
 
           {/* Info First Column */}
-          <div className="col-span-3 grid grid-cols-4 gap-6">
-            {/* Below LG breakpoint changes into single column */}
-            <div className="col-span-4 lg:col-span-3">
-              {/* Main Info List */}
-              <ul className="mb-4 [&>*+*]:mt-2">
-                {place_of_birth && (
-                  <li>
-                    <span className="font-semibold">Place of birth: </span>
-                    <span>{place_of_birth}</span>
-                  </li>
-                )}
-                {gender && gender !== 0 && (
-                  <li>
-                    <span className="font-semibold">Gender: </span>
-                    <span>{gendersEnum[gender]}</span>
-                  </li>
-                )}
-                {also_known_as && also_known_as.length > 0 && (
-                  <li>
-                    <span className="font-semibold">Also known as: </span>
-                    {also_known_as.map((name, i, arr) => {
-                      if (name && i < arr.length - 1) {
-                        return <span key={i}>{name}, </span>;
-                      } else {
-                        return <span key={i}>{name}</span>;
-                      }
-                    })}
-                  </li>
-                )}
-              </ul>
-
-              {/* Truncated Summary */}
-              {biography && <TruncText text={biography} />}
-
-              {/* Links table */}
-              {Object.values(external_ids).some((e) => e !== null) && (
-                <div className="mb-8">
-                  <CinemaLinksList homepage={homepage} links={external_ids} />
-                </div>
+          <div className="col-span-3">
+            {/* Main Info List */}
+            <ul className="mb-4 [&>*+*]:mt-2">
+              {place_of_birth && (
+                <li>
+                  <span className="font-semibold">Place of birth: </span>
+                  <span>{place_of_birth}</span>
+                </li>
               )}
+              {gender && gender !== 0 && (
+                <li>
+                  <span className="font-semibold">Gender: </span>
+                  <span>{gendersEnum[gender]}</span>
+                </li>
+              )}
+              {also_known_as && also_known_as.length > 0 && (
+                <li>
+                  <span className="font-semibold">Also known as: </span>
+                  {also_known_as.map((name, i, arr) => {
+                    if (name && i < arr.length - 1) {
+                      return <span key={i}>{name}, </span>;
+                    } else {
+                      return <span key={i}>{name}</span>;
+                    }
+                  })}
+                </li>
+              )}
+            </ul>
 
-              {/* Seasons Carousel */}
-              {/* {seasons.length > 0 && <SeasonsCarousel seasons={seasons} />} */}
+            {/* Truncated Summary */}
+            {biography && <TruncText text={biography} maxLength={400} />}
 
-              {/* Cast Carousel */}
-              {/* {credits.cast.length > 0 && (
-                <CastCarousel actors={credits.cast} />
-              )} */}
+            {/* Links table */}
+            {Object.values(external_ids).some((e) => e !== null) && (
+              <div className="mb-8">
+                <CinemaLinksList homepage={homepage} links={external_ids} />
+              </div>
+            )}
 
-              {/* Screenshots Slider */}
-              <Suspense fallback={<p>loading...</p>}>
-                <CinemaStillsGallery title={name} id={id} type="person" />
-              </Suspense>
-            </div>
+            {/* Acting Credits Carousel */}
+            <ActingCreditsCarousel
+              cinema={movie_credits.cast}
+              television={tv_credits.cast}
+            />
 
-            {/* Info Second Column */}
-            {/* Shows Here Only above LG Breakpoint */}
-            <div className="hidden col-span-1 lg:flex flex-col items-center">
-              {/* Reviews */}
-              {/* <RatingCircle
-                rating={vote_average * 10}
-                reviewCount={vote_count}
-              /> */}
-            </div>
+            {/* Producing Credits Carousel */}
+            <ProducingCreditsCarousel
+              cinema={movie_credits.crew}
+              television={tv_credits.crew}
+            />
+
+            {/* Screenshots Slider */}
+            <Suspense fallback={<p>loading...</p>}>
+              <CinemaStillsGallery title={name} id={id} type="person" />
+            </Suspense>
           </div>
         </div>
       </div>

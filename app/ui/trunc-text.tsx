@@ -4,8 +4,14 @@ import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import clsx from "clsx";
 
-export function TruncText({ text }: { text: string }) {
-  const [isTrunc, setIsTrunc] = useState(text.length > 360);
+export function TruncText({
+  text,
+  maxLength = 360,
+}: {
+  text: string;
+  maxLength?: number;
+}) {
+  const [isTrunc, setIsTrunc] = useState(text.length > maxLength);
 
   function handleClick() {
     setIsTrunc(!isTrunc);
@@ -26,7 +32,7 @@ export function TruncText({ text }: { text: string }) {
       >
         {text}
       </p>
-      {text.length > 360 && (
+      {text.length > maxLength && (
         <Button variant="link" onClick={handleClick} className="px-0 py-1">
           {isTrunc ? "Show More" : "Show Less"}
         </Button>
