@@ -27,10 +27,11 @@ export default function WIITCOLogo() {
         />
         <circle cx="12" cy="12" r="1" fill="#F97316" />
       </svg>
-      <p className="hidden lg:block text-xl font-medium">
+      {/* <p className="hidden lg:block text-xl font-medium">
         When Is It Coming Out?
-      </p>
-      <p className="lg:hidden text-xl font-medium">WIITCO</p>
+      </p> */}
+      {/* <p className="lg:hidden text-xl font-medium">WIITCO</p> */}
+      <p className="text-xl font-medium">WIITCO</p>
     </Link>
   );
 }

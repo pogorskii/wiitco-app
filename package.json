@@ -31,6 +31,7 @@
     "cmdk": "^0.2.0",
     "date-fns": "^2.30.0",
     "embla-carousel-react": "^8.0.0-rc18",
+    "fast-levenshtein": "^3.0.0",
     "framer-motion": "^10.16.4",
     "geist": "^1.1.0",
     "howlongtobeat": "^1.8.0",
@@ -52,6 +53,7 @@
     "zod": "^3.22.4"
   },
   "devDependencies": {
+    "@types/fast-levenshtein": "^0.0.4",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
