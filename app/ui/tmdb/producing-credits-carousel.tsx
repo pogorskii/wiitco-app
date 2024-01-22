@@ -57,9 +57,9 @@ export function ProducingCreditsCarousel({
           id,
           title: title || original_title,
           releaseDate: release_date,
-          posterPath:
-            `https://image.tmdb.org/t/p/w276_and_h350_face/${poster_path}` ||
-            "/movie-placeholder.webp",
+          posterPath: poster_path
+            ? `https://image.tmdb.org/t/p/w276_and_h350_face/${poster_path}`
+            : "/movie-placeholder.webp",
           jobs: [job],
           episodeCount: null,
           type: "movie",
@@ -91,9 +91,9 @@ export function ProducingCreditsCarousel({
           id,
           title: name || original_name,
           releaseDate: first_air_date,
-          posterPath:
-            `https://image.tmdb.org/t/p/w276_and_h350_face/${poster_path}` ||
-            "/television-placeholder.webp",
+          posterPath: poster_path
+            ? `https://image.tmdb.org/t/p/w276_and_h350_face/${poster_path}`
+            : "/television-placeholder.webp",
           jobs: [job],
           episodeCount: episode_count,
           type: "tv",

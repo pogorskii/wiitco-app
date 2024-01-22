@@ -125,7 +125,7 @@ export default async function Page({ params }: { params: { slug: string } }) {
               <h1 className="mb-2 scroll-m-20 text-xl md:text-2xl font-semibold first:mt-0">
                 {name}
               </h1>
-              {first_air_date && (
+              {first_air_date && !isNaN(first_air_date.getTime()) && (
                 <span>
                   {in_production && (
                     <span className="font-semibold">Since: </span>

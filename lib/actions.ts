@@ -10,6 +10,7 @@ import {
   TelevisionShowDetails,
   TelevisionShowsSearch,
   CinemaPersonDetails,
+  CinemaPeopleSearch,
 } from "./zod-schemas";
 
 const headersTMDB = new Headers();
@@ -181,6 +182,33 @@ export const fetchTelevisionShowDetails = async (id: string) => {
     );
     const result = await response.json();
     const parsedData = TelevisionShowDetails.parse(result);
+
+    return parsedData;
+  } catch (err) {
+    console.error(err);
+  }
+};
+
+export const fetchCinemaPeopleSearch = async ({
+  search,
+  page = 1,
+}: {
+  search?: string;
+  page?: number;
+}) => {
+  try {
+    // If search query is empty, fetch popular movies instead
+    const response = search
+      ? await fetch(
+          `https://api.themoviedb.org/3/search/person?query=${search}%20&include_adult=false&language=en-US&page=${page}`,
+          optionsTMDB
+        )
+      : await fetch(
+          `https://api.themoviedb.org/3/person/popular?language=en-US&page=${page}`,
+          optionsTMDB
+        );
+    const result = await response.json();
+    const parsedData = CinemaPeopleSearch.parse(result.results);
 
     return parsedData;
   } catch (err) {
