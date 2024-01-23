@@ -4,7 +4,7 @@ import { MoviesSearch } from "@/lib/zod-schemas";
 import { useEffect, useState, useCallback, useRef } from "react";
 import { useInView } from "react-intersection-observer";
 import { fetchMoviesSearch } from "@/lib/actions";
-import { MovieSearchCard } from "../ui/cinema/movie-cards";
+import { MovieSearchCard } from "./movie-cards";
 import { Spinner } from "@/app/ui/spinner";
 
 export default function InfiniteMoviesSearch({

@@ -1,9 +1,9 @@
 "use client";
 
-import { GameSearch } from "./lib/definitions";
+import { GameSearch } from "../../video-games/lib/definitions";
 import { useEffect, useState, useCallback, useRef } from "react";
 import { useInView } from "react-intersection-observer";
-import { fetchGamesSearchDB } from "./lib/actions";
+import { fetchGamesSearchDB } from "../../video-games/lib/actions";
 import { GameSearchCard } from "@/app/ui/video-games/game-card";
 import { Spinner } from "@/app/ui/spinner";
 

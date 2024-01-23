@@ -2,7 +2,7 @@
 
 import { v4 as uuid } from "uuid";
 import { fetchGamesSearchDB } from "../lib/actions";
-import InfiniteGamesSearch from "../infinite-games-search";
+import InfiniteGamesSearch from "@/app/ui/video-games/infinite-games-search";
 import { Breadcrumbs } from "@/app/ui/breadcrumbs";
 import { SectionNav } from "@/app/ui/video-games/section-nav";
 import { GameSearch } from "../lib/definitions";
@@ -41,7 +41,7 @@ export default async function Page({
       </h1>
       <SectionNav />
       <Suspense fallback={<SearchBodySkeleton />}>
-        <PageContent
+        <VideoGamesSearchPageContent
           search={search}
           categories={categories}
           platforms={platforms}
@@ -52,7 +52,7 @@ export default async function Page({
   );
 }
 
-async function PageContent({
+export async function VideoGamesSearchPageContent({
   search,
   categories,
   platforms,

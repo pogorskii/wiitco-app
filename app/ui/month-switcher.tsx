@@ -8,6 +8,7 @@ import {
   getPrevMonthURL,
   getNextMonthURL,
 } from "@/lib/utils";
+import { Separator } from "@/components/ui/separator";
 
 export function MonthSwitcher({
   year,
@@ -22,18 +23,16 @@ export function MonthSwitcher({
   const nextPagePath = getNextMonthURL(pathname, year, month);
 
   return (
-    <div className="py-2">
-      <div className="flex justify-center">
-        <div className="mb-4 flex items-center gap-2">
-          <Link href={prevPagePath}>
-            <ChevronLeft />
-          </Link>
-          <p>{dateString}</p>
-          <Link href={nextPagePath}>
-            <ChevronRight />
-          </Link>
-        </div>
-      </div>
+    <div className="sm:absolute sm:left-1/2 sm:translate-x-[-50%] mb-4 sm:mb-0 mx-auto w-fit flex justify-center items-center rounded-full border bg-background">
+      <Link className="inline-block p-2" href={prevPagePath}>
+        <ChevronLeft />
+      </Link>
+      <Separator orientation="vertical" />
+      <p className="px-4 text-lg">{dateString}</p>
+      <Separator orientation="vertical" />
+      <Link className="inline-block p-2" href={nextPagePath}>
+        <ChevronRight />
+      </Link>
     </div>
   );
 }

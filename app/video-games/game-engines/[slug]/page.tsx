@@ -3,7 +3,7 @@
 import { v4 as uuid } from "uuid";
 import { SectionNav } from "@/app/ui/video-games/section-nav";
 import { fetchGamesSearchDB } from "../../lib/actions";
-import InfiniteGamesSearch from "../../infinite-games-search";
+import InfiniteGamesSearch from "@/app/ui/video-games/infinite-games-search";
 import { Breadcrumbs } from "@/app/ui/breadcrumbs";
 import { GameSearch } from "../../lib/definitions";
 import { Suspense } from "react";

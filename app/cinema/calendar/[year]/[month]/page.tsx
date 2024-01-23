@@ -3,7 +3,7 @@
 import { v4 as uuid } from "uuid";
 import { fetchMovieReleaseDatesByMonth } from "@/lib/actions";
 import { MovieReleasesByMonth } from "@/lib/definitions";
-import { InfiniteMoviesCalendar } from "./infinite-movies-calendar";
+import { InfiniteMoviesCalendar } from "@/app/ui/cinema/infinite-movies-calendar";
 import { Breadcrumbs } from "@/app/ui/breadcrumbs";
 import { CalendarNav } from "@/app/ui/cinema/calendar-nav";
 import { Suspense } from "react";
@@ -19,7 +19,7 @@ export async function generateMetadata({
   const displayDate = getMonthYearName(params.month, params.year);
 
   return {
-    title: `Movies Releasing in ${displayDate}`,
+    title: `Every Movie Releasing in ${displayDate}`,
   };
 }
 
@@ -53,8 +53,8 @@ export default async function Page({
           },
         ]}
       />
-      <h1 className="scroll-m-20 border-b pb-2 text-3xl font-semibold tracking-tight first:mt-0">
-        All Movies Releasing in {displayDate}
+      <h1 className="mb-4 border-b pb-2 scroll-m-20 text-4xl font-semibold tracking-tight lg:text-5xl">
+        {displayDate} Movies
       </h1>
       <CalendarNav year={year} month={month} />
       <Suspense fallback={<CalendarBodySkeleton />}>
@@ -91,7 +91,7 @@ async function MoviesCalendarBody({
     return <h2>No movies currently scheduled for this month.</h2>;
 
   return (
-    <div key={uuid()} className="flex flex-col gap-6">
+    <div key={uuid()} className="py-8 flex flex-col gap-6">
       <InfiniteMoviesCalendar
         month={month}
         year={year}

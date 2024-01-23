@@ -2,7 +2,7 @@
 
 import { v4 as uuid } from "uuid";
 import { fetchTelevisionShowsSearch } from "@/lib/actions";
-import InfiniteTelevisionShowsSearch from "../infinite-television-shows-search";
+import InfiniteTelevisionShowsSearch from "@/app/ui/tv/infinite-television-shows-search";
 import { Breadcrumbs } from "@/app/ui/breadcrumbs";
 import { SectionNav } from "@/app/ui/tv/section-nav";
 import { Suspense } from "react";
@@ -38,13 +38,13 @@ export default async function Page({
       </h1>
       <SectionNav />
       <Suspense fallback={<SearchBodySkeleton />}>
-        <PageContent search={search} genre={genre} />
+        <TelevisionShowsSearchPageContent search={search} genre={genre} />
       </Suspense>
     </div>
   );
 }
 
-async function PageContent({
+export async function TelevisionShowsSearchPageContent({
   search,
   genre,
 }: {

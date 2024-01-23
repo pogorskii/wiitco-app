@@ -75,7 +75,11 @@ export function MovieCardCalendar({
           <div className="relative overflow-hidden">
             <div className="absolute z-10 top-2 left-2">
               {typeNames.map((type, i) => (
-                <Badge key={i} variant="secondary">
+                <Badge
+                  key={i}
+                  variant="secondary"
+                  className="rounded-md font-normal"
+                >
                   {type}
                 </Badge>
               ))}
@@ -91,9 +95,9 @@ export function MovieCardCalendar({
           </div>
           <div className="p-6 flex flex-col grow">
             <CardTitle className="mb-1 text-xl">{title}</CardTitle>
-            <div className="mb-2 bg-blue-400 w-full h-[1px]"></div>
+            <div className="mb-4 bg-blue-400 w-full h-[1px]"></div>
             {actors.length > 0 && (
-              <div className="mb-4 text-sm">
+              <div className="mb-8 text-sm">
                 {actors.map((e, i, arr) => {
                   if (i < 2 && i < 1 && arr.length > 1) {
                     return <span key={i}>{e}, </span>;
@@ -145,7 +149,7 @@ export function MovieCardCalendar({
             {typeNames.map((type, i) => (
               <Badge
                 key={i}
-                className="p-0.5 font-normal leading-none rounded-sm"
+                className="text-xs px-1 py-0.5 font-normal leading-none rounded-sm"
                 variant="outline"
               >
                 {type}

@@ -3,7 +3,7 @@
 import { v4 as uuid } from "uuid";
 import { fetchAnimeSeasonsByMonth } from "@/lib/actions";
 import { TelevisionSeasons } from "@/lib/definitions";
-import { InfiniteAnimeSeasonsCalendar } from "./infinte-anime-seasons-calendar";
+import { InfiniteAnimeSeasonsCalendar } from "@/app/ui/anime/infinte-anime-seasons-calendar";
 import { Breadcrumbs } from "@/app/ui/breadcrumbs";
 import { Suspense } from "react";
 import { CalendarBodySkeleton } from "@/app/ui/skeletons";

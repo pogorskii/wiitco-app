@@ -19,7 +19,7 @@ const links = [
   { name: "TV Shows", href: "/tv" },
   { name: "Anime", href: "/anime" },
   {
-    name: "Video Games",
+    name: "Games",
     href: "/video-games",
   },
 ];
@@ -28,12 +28,12 @@ const moviesLinks: { title: string; href: string; description: string }[] = [
   {
     title: "Calendar",
     href: "/cinema/calendar",
-    description: "Check what movies are scheduled to release on any date.",
+    description: "Schedule of movie releases.",
   },
   {
-    title: "Movies Database",
+    title: "Movies DB",
     href: "/cinema/search",
-    description: "Browse, search, and filter all movies.",
+    description: "Search and filter all movies.",
   },
 ];
 
@@ -42,12 +42,12 @@ const televisionLinks: { title: string; href: string; description: string }[] =
     {
       title: "Calendar",
       href: "/tv/calendar",
-      description: "Schedule of TV Shows seasons.",
+      description: "Schedule of TV shows seasons.",
     },
     {
-      title: "TV Shows Database",
+      title: "TV Shows DB",
       href: "/tv/search",
-      description: "Browse, search, and filter all TV shows.",
+      description: "Search and filter all TV shows.",
     },
   ];
 
@@ -58,9 +58,9 @@ const animeLinks: { title: string; href: string; description: string }[] = [
     description: "Schedule of Anime seasons.",
   },
   {
-    title: "Anime Database",
+    title: "Anime DB",
     href: "/anime/search",
-    description: "Browse, search, and filter all Anime.",
+    description: "Search and filter all Anime shows.",
   },
 ];
 
@@ -68,12 +68,12 @@ const gamesLinks: { title: string; href: string; description: string }[] = [
   {
     title: "Calendar",
     href: "/video-games/calendar",
-    description: "Check what games are scheduled to release on any date.",
+    description: "Schedule of game releases.",
   },
   {
-    title: "Games Database",
+    title: "Games DB",
     href: "/video-games/games",
-    description: "Browse, search, and filter all games.",
+    description: "Search and filter all Games.",
   },
 ];
 
@@ -155,7 +155,7 @@ export function NavLinks() {
               "bg-primary/10": pathname.includes(links[3].href),
             })}
           >
-            Video Games
+            Games
           </NavigationMenuTrigger>
           <NavigationMenuContent>
             <ul className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px]">

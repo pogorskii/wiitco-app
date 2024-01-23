@@ -11,7 +11,7 @@ type Breadcrumb = {
 export function Breadcrumbs({ breadcrumbs }: { breadcrumbs: Breadcrumb[] }) {
   return (
     <nav aria-label="Breadcrumb" className="mb-6 block">
-      <ol className={clsx("text-xl")}>
+      <ol className={clsx("text-lg")}>
         {breadcrumbs.map((breadcrumb, index) => (
           <li
             key={breadcrumb.href}

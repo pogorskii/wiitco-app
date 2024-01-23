@@ -2,7 +2,7 @@
 
 import { v4 as uuid } from "uuid";
 import { fetchMoviesSearch } from "@/lib/actions";
-import InfiniteMoviesSearch from "../infinite-movies-search";
+import InfiniteMoviesSearch from "@/app/ui/cinema/infinite-movies-search";
 import { Breadcrumbs } from "@/app/ui/breadcrumbs";
 import { SectionNav } from "../../ui/cinema/section-nav";
 import { Suspense } from "react";
@@ -38,13 +38,13 @@ export default async function Page({
       </h1>
       <SectionNav />
       <Suspense fallback={<SearchBodySkeleton />}>
-        <PageContent search={search} genre={genre} />
+        <MoviesSearchPageContent search={search} genre={genre} />
       </Suspense>
     </div>
   );
 }
 
-async function PageContent({
+export async function MoviesSearchPageContent({
   search,
   genre,
 }: {

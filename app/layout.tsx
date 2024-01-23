@@ -1,12 +1,14 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+// import { Inter } from "next/font/google";
+import { firaSans } from "./ui/fonts";
 import "./globals.css";
 import { ThemeProvider } from "@/app/ui/theme-provider";
 import { ReduxProvider } from "@/redux/provider";
 import { BackToTop } from "./ui/back-to-top";
 import Header from "./ui/header";
+import { Footer } from "./ui/footer";
 
-const inter = Inter({ subsets: ["latin"] });
+// const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: {
@@ -24,7 +26,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${inter.className} `}>
+      <body className={`${firaSans.className} `}>
         <ReduxProvider>
           <ThemeProvider
             attribute="class"
@@ -35,8 +37,9 @@ export default function RootLayout({
             <div className="relative px-6 sm:px-10 lg:px-20">
               <BackToTop />
               <Header />
-              <div className="flex-grow">{children}</div>
+              <main className="flex-grow pt-4 pb-8">{children}</main>
             </div>
+            <Footer />
           </ThemeProvider>
         </ReduxProvider>
       </body>

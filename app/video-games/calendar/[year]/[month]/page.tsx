@@ -2,7 +2,7 @@
 
 import { v4 as uuid } from "uuid";
 import { fetchGameReleaseDatesByMonth } from "@/app/video-games/lib/actions";
-import { InfiniteGamesCalendar } from "./infinite-games-calendar";
+import { InfiniteGamesCalendar } from "@/app/ui/video-games/infinite-games-calendar";
 import { Breadcrumbs } from "@/app/ui/breadcrumbs";
 import { CalendarNav } from "@/app/ui/video-games/calendar-nav";
 import { Suspense } from "react";

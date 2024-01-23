@@ -330,7 +330,7 @@ export const TelevisionShowDetails = z.object({
           .string()
           .transform((e) => new Date(e))
           .nullable(),
-        episode_count: z.number(),
+        episode_count: z.number().nullable().default(null),
         id: z.number(),
         name: z.string(),
         overview: z.string().nullable(),
@@ -1204,7 +1204,7 @@ export const CinemaPersonDetails = z.object({
           vote_count: z.number(),
           character: z.string().default(""),
           credit_id: z.string(),
-          episode_count: z.number().nullable(),
+          episode_count: z.number().nullable().default(null),
         })
       )
       .optional(),
@@ -1230,7 +1230,7 @@ export const CinemaPersonDetails = z.object({
           vote_count: z.number(),
           credit_id: z.string(),
           department: z.string().nullable(),
-          episode_count: z.number().nullable(),
+          episode_count: z.number().nullable().default(null),
           job: z.string(),
         })
       )

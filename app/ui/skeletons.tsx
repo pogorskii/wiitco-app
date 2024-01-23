@@ -91,7 +91,7 @@ export function CalendarBodySkeleton() {
   );
 
   return (
-    <section className="relative grid grid-cols-4 gap-5">
+    <section className="py-8 relative grid grid-cols-4 gap-5">
       {/* Day header mobile */}
       <div className="sm:hidden py-2 col-span-4 sticky z-20 top-0 bg-background">
         <Skeleton className="h-8 w-[80px] col-span-1" />

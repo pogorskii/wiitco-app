@@ -163,7 +163,7 @@ export function MovieLengthFilter() {
 
   return (
     <Select onValueChange={handleSelect} defaultValue={filter}>
-      <SelectTrigger className="rounded-full">
+      <SelectTrigger className="rounded-full sm:w-fit">
         <SelectValue placeholder="Filter Releases" />
       </SelectTrigger>
       <SelectContent className="rounded-lg">

@@ -24,7 +24,7 @@ export function DayHeader({
   });
 
   return (
-    <div ref={ref} className="sticky top-28">
+    <div ref={ref} className="sticky top-16">
       <h2
         key={day !== 50 ? day : "TBD"}
         className="flex flex-col self-start col-span-1 scroll-m-20 pb-2 text-xl sm:text-3xl font-semibold tracking-tight"

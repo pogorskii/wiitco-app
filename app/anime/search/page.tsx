@@ -4,7 +4,7 @@ import { Suspense } from "react";
 import type { Metadata } from "next";
 import { v4 as uuid } from "uuid";
 import { fetchAnimeShowsSearch } from "@/lib/actions";
-import InfiniteAnimeShowsSearch from "./infinite-anime-shows-search";
+import InfiniteAnimeShowsSearch from "@/app/ui/anime/infinite-anime-shows-search";
 import { Breadcrumbs } from "@/app/ui/breadcrumbs";
 import { AnimeSearchNav } from "@/app/ui/anime/anime-search-nav";
 import { SearchBodySkeleton } from "@/app/ui/skeletons";
@@ -38,13 +38,13 @@ export default async function Page({
       </h1>
       <AnimeSearchNav />
       <Suspense fallback={<SearchBodySkeleton />}>
-        <PageContent search={search} genre={genre} />
+        <AnimeShowsSearchPageContent search={search} genre={genre} />
       </Suspense>
     </div>
   );
 }
 
-async function PageContent({
+export async function AnimeShowsSearchPageContent({
   search,
   genre,
 }: {
