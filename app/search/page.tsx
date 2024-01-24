@@ -1,9 +1,9 @@
 "use server";
 
-import { MoviesSearchPageContent } from "../cinema/search/page";
-import { AnimeShowsSearchPageContent } from "../anime/search/page";
-import { TelevisionShowsSearchPageContent } from "../tv/search/page";
-import { VideoGamesSearchPageContent } from "../video-games/games/page";
+import MoviesSearchTable from "../ui/cinema/movies-search-table";
+import AnimeShowsSearchTable from "@/app/ui/anime/anime-shows-search-table";
+import TelevisionShowsSearchTable from "../ui/tv/television-shows-search-table";
+import GamesSearchPageTable from "../ui/video-games/games-search-table";
 import { Search } from "@/app/ui/search";
 import { SearchCategories } from "../ui/search-categories";
 import { ReactNode } from "react";
@@ -30,10 +30,10 @@ export default async function Page({
   const currentCategory = searchParams.category;
 
   const searchTabs: { [key: string]: ReactNode } = {
-    movies: <MoviesSearchPageContent search={currentSearch} />,
-    tv: <TelevisionShowsSearchPageContent search={currentSearch} />,
-    anime: <AnimeShowsSearchPageContent search={currentSearch} />,
-    games: <VideoGamesSearchPageContent search={currentSearch} />,
+    movies: <MoviesSearchTable search={currentSearch} />,
+    tv: <TelevisionShowsSearchTable search={currentSearch} />,
+    anime: <AnimeShowsSearchTable search={currentSearch} />,
+    games: <GamesSearchPageTable search={currentSearch} />,
   };
 
   return (
@@ -48,14 +48,11 @@ export default async function Page({
         <div className="mb-4 flex flex-wrap gap-2">
           <SearchCategories />
         </div>
-        {!currentCategory && (
-          <Suspense fallback={<Spinner />}>
-            <MoviesSearchPageContent search={currentSearch} />
-          </Suspense>
-        )}
         {currentCategory && (
           <Suspense fallback={<Spinner />}>
-            {searchTabs[currentCategory]}
+            {currentCategory
+              ? searchTabs[currentCategory]
+              : searchTabs["movies"]}
           </Suspense>
         )}
       </div>

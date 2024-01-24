@@ -2,12 +2,10 @@
 
 import { Suspense } from "react";
 import type { Metadata } from "next";
-import { v4 as uuid } from "uuid";
-import { fetchAnimeShowsSearch } from "@/lib/actions";
-import InfiniteAnimeShowsSearch from "@/app/ui/anime/infinite-anime-shows-search";
 import { Breadcrumbs } from "@/app/ui/breadcrumbs";
 import { AnimeSearchNav } from "@/app/ui/anime/anime-search-nav";
 import { SearchBodySkeleton } from "@/app/ui/skeletons";
+import AnimeShowsSearchTable from "@/app/ui/anime/anime-shows-search-table";
 
 export async function generateMetadata(): Promise<Metadata> {
   return {
@@ -38,31 +36,8 @@ export default async function Page({
       </h1>
       <AnimeSearchNav />
       <Suspense fallback={<SearchBodySkeleton />}>
-        <AnimeShowsSearchPageContent search={search} genre={genre} />
+        <AnimeShowsSearchTable search={search} genre={genre} />
       </Suspense>
-    </div>
-  );
-}
-
-export async function AnimeShowsSearchPageContent({
-  search,
-  genre,
-}: {
-  search?: string;
-  genre?: string;
-}) {
-  const shows = await fetchAnimeShowsSearch({
-    search,
-    genre,
-  });
-
-  return (
-    <div key={uuid()} className="grid grid-cols-1 md:grid-cols-2 sm:gap-6">
-      <InfiniteAnimeShowsSearch
-        initialShows={shows}
-        search={search}
-        genre={genre}
-      />
     </div>
   );
 }

@@ -1,13 +1,10 @@
 "use server";
 
-import { v4 as uuid } from "uuid";
-import { fetchGamesSearchDB } from "../lib/actions";
-import InfiniteGamesSearch from "@/app/ui/video-games/infinite-games-search";
 import { Breadcrumbs } from "@/app/ui/breadcrumbs";
 import { SectionNav } from "@/app/ui/video-games/section-nav";
-import { GameSearch } from "../lib/definitions";
 import { Suspense } from "react";
 import { SearchBodySkeleton } from "@/app/ui/skeletons";
+import GamesSearchPageTable from "@/app/ui/video-games/games-search-table";
 import type { Metadata } from "next";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -41,44 +38,13 @@ export default async function Page({
       </h1>
       <SectionNav />
       <Suspense fallback={<SearchBodySkeleton />}>
-        <VideoGamesSearchPageContent
+        <GamesSearchPageTable
           search={search}
           categories={categories}
           platforms={platforms}
           sort={sort}
         />
       </Suspense>
-    </div>
-  );
-}
-
-export async function VideoGamesSearchPageContent({
-  search,
-  categories,
-  platforms,
-  sort,
-}: {
-  search?: string;
-  categories?: string;
-  platforms?: string;
-  sort?: string;
-}) {
-  const games = await fetchGamesSearchDB({
-    search,
-    categories,
-    platforms,
-    sort,
-  });
-
-  return (
-    <div key={uuid()} className="grid grid-cols-1 md:grid-cols-2 sm:gap-6">
-      <InfiniteGamesSearch
-        initialGames={games as GameSearch}
-        search={search}
-        categories={categories}
-        platforms={platforms}
-        sort={sort}
-      />
     </div>
   );
 }

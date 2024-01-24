@@ -1,12 +1,10 @@
 "use server";
 
-import { v4 as uuid } from "uuid";
-import { fetchTelevisionShowsSearch } from "@/lib/actions";
-import InfiniteTelevisionShowsSearch from "@/app/ui/tv/infinite-television-shows-search";
 import { Breadcrumbs } from "@/app/ui/breadcrumbs";
 import { SectionNav } from "@/app/ui/tv/section-nav";
 import { Suspense } from "react";
 import { SearchBodySkeleton } from "@/app/ui/skeletons";
+import TelevisionShowsSearchTable from "@/app/ui/tv/television-shows-search-table";
 import type { Metadata } from "next";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -38,31 +36,8 @@ export default async function Page({
       </h1>
       <SectionNav />
       <Suspense fallback={<SearchBodySkeleton />}>
-        <TelevisionShowsSearchPageContent search={search} genre={genre} />
+        <TelevisionShowsSearchTable search={search} genre={genre} />
       </Suspense>
-    </div>
-  );
-}
-
-export async function TelevisionShowsSearchPageContent({
-  search,
-  genre,
-}: {
-  search?: string;
-  genre?: string;
-}) {
-  const shows = await fetchTelevisionShowsSearch({
-    search,
-    genre,
-  });
-
-  return (
-    <div key={uuid()} className="grid grid-cols-1 md:grid-cols-2 sm:gap-6">
-      <InfiniteTelevisionShowsSearch
-        initialTelevisionShows={shows}
-        search={search}
-        genre={genre}
-      />
     </div>
   );
 }

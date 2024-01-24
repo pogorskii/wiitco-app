@@ -1,12 +1,10 @@
 "use server";
 
-import { v4 as uuid } from "uuid";
-import { fetchMoviesSearch } from "@/lib/actions";
-import InfiniteMoviesSearch from "@/app/ui/cinema/infinite-movies-search";
 import { Breadcrumbs } from "@/app/ui/breadcrumbs";
 import { SectionNav } from "../../ui/cinema/section-nav";
 import { Suspense } from "react";
 import { SearchBodySkeleton } from "@/app/ui/skeletons";
+import MoviesSearchTable from "@/app/ui/cinema/movies-search-table";
 import type { Metadata } from "next";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -30,7 +28,8 @@ export default async function Page({
       <Breadcrumbs
         breadcrumbs={[
           { label: "Home", href: "/" },
-          { label: "Movies", href: "/movies", active: true },
+          { label: "Movies", href: "/movies" },
+          { label: "Search", href: "/movies/search", active: true },
         ]}
       />
       <h1 className="scroll-m-20 border-b pb-2 text-3xl font-semibold tracking-tight first:mt-0">
@@ -38,31 +37,8 @@ export default async function Page({
       </h1>
       <SectionNav />
       <Suspense fallback={<SearchBodySkeleton />}>
-        <MoviesSearchPageContent search={search} genre={genre} />
+        <MoviesSearchTable search={search} genre={genre} />
       </Suspense>
-    </div>
-  );
-}
-
-export async function MoviesSearchPageContent({
-  search,
-  genre,
-}: {
-  search?: string;
-  genre?: string;
-}) {
-  const movies = await fetchMoviesSearch({
-    search,
-    genre,
-  });
-
-  return (
-    <div key={uuid()} className="grid grid-cols-1 md:grid-cols-2 sm:gap-6">
-      <InfiniteMoviesSearch
-        initialMovies={movies}
-        search={search}
-        genre={genre}
-      />
     </div>
   );
 }
