@@ -1,13 +1,13 @@
 "use server";
 
 import { v4 as uuid } from "uuid";
-import { SectionNav } from "@/app/ui/video-games/section-nav";
+import { SectionNav } from "@/components/ui/video-games/section-nav";
 import { fetchGamesSearchDB } from "../../lib/actions";
-import InfiniteGamesSearch from "@/app/ui/video-games/infinite-games-search";
-import { Breadcrumbs } from "@/app/ui/breadcrumbs";
+import InfiniteGamesSearch from "@/components/ui/video-games/infinite-games-search";
+import { Breadcrumbs } from "@/components/ui/breadcrumbs";
 import { GameSearch } from "../../lib/definitions";
 import { Suspense } from "react";
-import { SearchBodySkeleton } from "@/app/ui/skeletons";
+import { SearchBodySkeleton } from "@/components/ui/skeletons";
 import type { Metadata } from "next";
 
 export async function generateMetadata({

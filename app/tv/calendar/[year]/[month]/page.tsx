@@ -3,11 +3,11 @@
 import { v4 as uuid } from "uuid";
 import { fetchTelevisionSeasonsByMonth } from "@/lib/actions";
 import { TelevisionSeasons } from "@/lib/definitions";
-import { InfiniteTelevisionSeasonsCalendar } from "@/app/ui/tv/infinte-tv-shows-calendar";
-import { Breadcrumbs } from "@/app/ui/breadcrumbs";
-import { TelevisionCalendarNav } from "@/app/ui/tv/television-calendar-nav";
+import { InfiniteTelevisionSeasonsCalendar } from "@/components/ui/tv/infinte-tv-shows-calendar";
+import { Breadcrumbs } from "@/components/ui/breadcrumbs";
+import { TelevisionCalendarNav } from "@/components/ui/tv/television-calendar-nav";
 import { Suspense } from "react";
-import { CalendarBodySkeleton } from "@/app/ui/skeletons";
+import { CalendarBodySkeleton } from "@/components/ui/skeletons";
 import { getMonthYearName } from "@/lib/utils";
 import type { Metadata } from "next";
 

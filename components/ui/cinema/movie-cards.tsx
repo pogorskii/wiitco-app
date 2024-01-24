@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { MoviesSearch } from "@/lib/zod-schemas";
 import { parse, format } from "date-fns";
+import { MovieRelease } from "@/lib/definitions";
 
 import {
   Card,
@@ -12,25 +13,12 @@ import {
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 
-export function MovieCardCalendar({
-  id,
-  title,
-  imageId,
-  types,
-  actors,
-  directors,
-  genres,
-}: {
-  id: number;
-  title: string;
-  imageId: string | null;
-  types: number[];
-  actors: string[];
-  directors: string[];
-  genres: number[];
-}) {
-  const coverUrl = imageId
-    ? `https://image.tmdb.org/t/p/w600_and_h900_bestv2${imageId}`
+export function MovieCardCalendar({ movie }: { movie: MovieRelease }) {
+  const { id, title, posterPath, releaseTypes, actors, directors, genres } =
+    movie;
+
+  const coverUrl = posterPath
+    ? `https://image.tmdb.org/t/p/w600_and_h900_bestv2${posterPath}`
     : "/movie-placeholder.webp";
   const typesEnum: { [key: number]: string } = {
     1: "Premiere",
@@ -40,7 +28,7 @@ export function MovieCardCalendar({
     5: "Physical",
     6: "On TV",
   };
-  const typeNames = types.map((x) => typesEnum[x]);
+  const typeNames = releaseTypes.map((x) => typesEnum[x]);
 
   const genresEnum: { [key: number]: string } = {
     28: "Action",

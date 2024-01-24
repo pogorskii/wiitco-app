@@ -8,9 +8,11 @@ export function TruncText({
   text,
   maxLength = 360,
 }: {
-  text: string;
+  text?: string | null;
   maxLength?: number;
 }) {
+  if (!text) return null;
+
   const [isTrunc, setIsTrunc] = useState(text.length > maxLength);
 
   function handleClick() {

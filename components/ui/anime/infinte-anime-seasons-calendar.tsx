@@ -12,8 +12,8 @@ import {
 import { TelevisionSeasons } from "@/lib/definitions";
 import { Card, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Spinner } from "@/app/ui/spinner";
-import { DayHeader, DayHeaderMobile } from "@/app/ui/day-headers";
+import { Spinner } from "@/components/ui/spinner";
+import { DayHeader, DayHeaderMobile } from "@/components/ui/day-headers";
 import { TelevisionSeasonFormatted } from "@/lib/definitions";
 
 export function InfiniteAnimeSeasonsCalendar({

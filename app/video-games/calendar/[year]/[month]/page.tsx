@@ -2,11 +2,11 @@
 
 import { v4 as uuid } from "uuid";
 import { fetchGameReleaseDatesByMonth } from "@/app/video-games/lib/actions";
-import { InfiniteGamesCalendar } from "@/app/ui/video-games/infinite-games-calendar";
-import { Breadcrumbs } from "@/app/ui/breadcrumbs";
-import { CalendarNav } from "@/app/ui/video-games/calendar-nav";
+import { InfiniteGamesCalendar } from "@/components/ui/video-games/infinite-games-calendar";
+import { Breadcrumbs } from "@/components/ui/breadcrumbs";
+import { CalendarNav } from "@/components/ui/video-games/calendar-nav";
 import { Suspense } from "react";
-import { CalendarBodySkeleton } from "@/app/ui/skeletons";
+import { CalendarBodySkeleton } from "@/components/ui/skeletons";
 import { getMonthYearName } from "@/lib/utils";
 import type { Metadata } from "next";
 

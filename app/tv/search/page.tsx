@@ -1,10 +1,10 @@
 "use server";
 
-import { Breadcrumbs } from "@/app/ui/breadcrumbs";
-import { SectionNav } from "@/app/ui/tv/section-nav";
+import { Breadcrumbs } from "@/components/ui/breadcrumbs";
+import { SectionNav } from "@/components/ui/tv/section-nav";
 import { Suspense } from "react";
-import { SearchBodySkeleton } from "@/app/ui/skeletons";
-import TelevisionShowsSearchTable from "@/app/ui/tv/television-shows-search-table";
+import { SearchBodySkeleton } from "@/components/ui/skeletons";
+import TelevisionShowsSearchTable from "@/components/ui/tv/television-shows-search-table";
 import type { Metadata } from "next";
 
 export async function generateMetadata(): Promise<Metadata> {

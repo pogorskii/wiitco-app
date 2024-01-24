@@ -1,11 +1,11 @@
 "use client";
 
-import { GameSearch } from "../../video-games/lib/definitions";
+import { GameSearch } from "../../../app/video-games/lib/definitions";
 import { useEffect, useState, useCallback, useRef } from "react";
 import { useInView } from "react-intersection-observer";
-import { fetchGamesSearchDB } from "../../video-games/lib/actions";
-import { GameSearchCard } from "@/app/ui/video-games/game-card";
-import { Spinner } from "@/app/ui/spinner";
+import { fetchGamesSearchDB } from "../../../app/video-games/lib/actions";
+import { GameSearchCard } from "@/components/ui/video-games/game-card";
+import { Spinner } from "@/components/ui/spinner";
 
 export default function InfiniteGamesSearch({
   search,

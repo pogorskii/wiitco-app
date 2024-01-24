@@ -1,14 +1,14 @@
 "use server";
 
-import MoviesSearchTable from "../ui/cinema/movies-search-table";
-import AnimeShowsSearchTable from "@/app/ui/anime/anime-shows-search-table";
-import TelevisionShowsSearchTable from "../ui/tv/television-shows-search-table";
-import GamesSearchPageTable from "../ui/video-games/games-search-table";
-import { Search } from "@/app/ui/search";
-import { SearchCategories } from "../ui/search-categories";
+import MoviesSearchTable from "../../components/ui/cinema/movies-search-table";
+import AnimeShowsSearchTable from "@/components/ui/anime/anime-shows-search-table";
+import TelevisionShowsSearchTable from "../../components/ui/tv/television-shows-search-table";
+import GamesSearchPageTable from "../../components/ui/video-games/games-search-table";
+import { Search } from "@/components/ui/search";
+import { SearchCategories } from "../../components/ui/search-categories";
 import { ReactNode } from "react";
 import { Suspense } from "react";
-import { Spinner } from "../ui/spinner";
+import { Spinner } from "../../components/ui/spinner";
 
 import type { Metadata } from "next";
 

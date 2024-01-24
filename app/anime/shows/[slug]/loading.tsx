@@ -1,5 +1,5 @@
-import { Breadcrumbs } from "@/app/ui/breadcrumbs";
-import { EntryDetailsPageBodySkeleton } from "@/app/ui/skeletons";
+import { Breadcrumbs } from "@/components/ui/breadcrumbs";
+import { EntryDetailsPageBodySkeleton } from "@/components/ui/skeletons";
 
 export default function Loading() {
   return (
@@ -10,7 +10,7 @@ export default function Loading() {
           { label: "Anime", href: "/anime/shows" },
           {
             label: "Loading...",
-            href: `"/anime/shows"`,
+            href: "#",
             active: true,
           },
         ]}

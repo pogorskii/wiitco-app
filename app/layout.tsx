@@ -1,12 +1,12 @@
 import type { Metadata } from "next";
 // import { Inter } from "next/font/google";
-import { firaSans } from "./ui/fonts";
+import { firaSans } from "../components/ui/fonts";
 import "./globals.css";
-import { ThemeProvider } from "@/app/ui/theme-provider";
+import { ThemeProvider } from "@/components/ui/theme-provider";
 import { ReduxProvider } from "@/redux/provider";
-import { BackToTop } from "./ui/back-to-top";
-import Header from "./ui/header";
-import { Footer } from "./ui/footer";
+import { BackToTop } from "../components/ui/back-to-top";
+import Header from "../components/ui/header";
+import { Footer } from "../components/ui/footer";
 
 // const inter = Inter({ subsets: ["latin"] });
 

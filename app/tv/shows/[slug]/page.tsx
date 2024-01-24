@@ -3,23 +3,23 @@
 import { Suspense } from "react";
 import { format } from "date-fns";
 import Image from "next/image";
-import { TagsRow } from "@/app/ui/tags-row";
-import { TruncText } from "@/app/ui/trunc-text";
-import { RatingCircle } from "@/app/ui/rating-circle";
-import { YouTubePlayer } from "@/app/ui/youtube-player";
-import { Breadcrumbs } from "@/app/ui/breadcrumbs";
+import { TagsRow } from "@/components/ui/tags-row";
+import { TruncText } from "@/components/ui/trunc-text";
+import { RatingCircle } from "@/components/ui/rating-circle";
+import { YouTubePlayer } from "@/components/ui/youtube-player";
+import { Breadcrumbs } from "@/components/ui/breadcrumbs";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { FaPlus } from "react-icons/fa";
 import { Separator } from "@/components/ui/separator";
 import type { Metadata } from "next";
 import { fetchTelevisionShowDetails } from "@/lib/actions";
-import { CastCarousel } from "@/app/ui/cinema/cast-carousel";
-import { SeasonsCarousel } from "@/app/ui/tmdb/seasons-carousel";
+import { CastCarousel } from "@/components/ui/cinema/cast-carousel";
+import { SeasonsCarousel } from "@/components/ui/tmdb/seasons-carousel";
 import { convertMinutesToHoursAndMinutes } from "@/lib/utils";
-import { JustWatchSection } from "@/app/ui/tmdb/just-watch-section";
-import { CinemaLinksList } from "@/app/ui/tmdb/cinema-links-list";
-import { CinemaStillsGallery } from "@/app/ui/tmdb/cinema-stills-gallery";
+import { JustWatchSection } from "@/components/ui/tmdb/just-watch-section";
+import { CinemaLinksList } from "@/components/ui/tmdb/cinema-links-list";
+import { CinemaStillsGallery } from "@/components/ui/tmdb/cinema-stills-gallery";
 
 export async function generateMetadata({
   params,

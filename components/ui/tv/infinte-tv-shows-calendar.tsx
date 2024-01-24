@@ -4,9 +4,9 @@ import { useEffect, useState, useCallback, useRef } from "react";
 import { useInView } from "react-intersection-observer";
 import { fetchTelevisionSeasonsByMonth } from "@/lib/actions";
 import { groupTelevisionSeasonsAndSortByDay } from "@/lib/utils";
-import { Spinner } from "@/app/ui/spinner";
+import { Spinner } from "@/components/ui/spinner";
 import { TelevisionSeasons } from "@/lib/definitions";
-import { TelevisionDay } from "@/app/ui/tv/television-day";
+import { TelevisionDay } from "@/components/ui/tv/television-day";
 
 export function InfiniteTelevisionSeasonsCalendar({
   month,

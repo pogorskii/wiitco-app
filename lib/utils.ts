@@ -2,17 +2,17 @@ import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 import {
   MovieRelease,
-  MovieReleasesByMonth,
   TelevisionSeasonFormatted,
   TelevisionSeasons,
 } from "./definitions";
+import { MovieReleaseDatesByMonth } from "./actions";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
 export const groupMovieReleasesAndSortByDay = (
-  releasesByMonth: MovieReleasesByMonth
+  releasesByMonth: MovieReleaseDatesByMonth
 ) => {
   const groupedByDay = new Map<number, MovieRelease[]>();
   for (const movieRelease of releasesByMonth) {

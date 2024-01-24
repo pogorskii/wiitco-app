@@ -7,7 +7,7 @@ import { format } from "date-fns";
 import { TelevisionShowsSearch } from "@/lib/zod-schemas";
 import { useInView } from "react-intersection-observer";
 import { fetchAnimeShowsSearch } from "@/lib/actions";
-import { Spinner } from "@/app/ui/spinner";
+import { Spinner } from "@/components/ui/spinner";
 import {
   Card,
   CardContent,

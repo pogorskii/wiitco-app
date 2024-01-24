@@ -3,13 +3,13 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { Search } from "@/app/ui/search";
-import { GamesSearchFilters } from "@/app/ui/video-games/game-search-filters";
+import { Search } from "@/components/ui/search";
+import { GamesSearchFilters } from "@/components/ui/video-games/game-search-filters";
 import {
   PlatformFilter,
   GameCategoryFilter,
   SortingSelector,
-} from "@/app/ui/video-games/game-search-filters";
+} from "@/components/ui/video-games/game-search-filters";
 import { FaChevronDown, FaChevronUp } from "react-icons/fa";
 
 export function SectionNav() {

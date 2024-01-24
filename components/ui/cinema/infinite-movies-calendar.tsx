@@ -4,9 +4,11 @@ import { useEffect, useState, useCallback, useRef } from "react";
 import { useInView } from "react-intersection-observer";
 import { fetchMovieReleaseDatesByMonth } from "@/lib/actions";
 import { groupMovieReleasesAndSortByDay } from "@/lib/utils";
-import { Spinner } from "@/app/ui/spinner";
-import { MovieReleasesByMonth } from "@/lib/definitions";
-import { MoviesDay } from "@/app/ui/cinema/movies-day";
+import { Spinner } from "@/components/ui/spinner";
+import { MovieReleaseDatesByMonth } from "@/lib/actions";
+import { CalendarEmptyMonth } from "../calendar-empty-month";
+import { MovieCardCalendar } from "./movie-cards";
+import { CalendarDay } from "../calendar-day";
 
 export function InfiniteMoviesCalendar({
   month,
@@ -17,15 +19,17 @@ export function InfiniteMoviesCalendar({
 }: {
   month: string;
   year: string;
-  initialMovies?: MovieReleasesByMonth;
+  initialMovies: MovieReleaseDatesByMonth;
   types?: string;
   lengthFilter?: string;
 }) {
+  const itemsPerPage = 40;
   const [movies, setMovies] = useState(initialMovies);
   const page = useRef(1);
-  const [loadingActive, setLoadingActive] = useState(true);
+  const [loadingActive, setLoadingActive] = useState(
+    initialMovies.length >= itemsPerPage
+  );
   const [ref, inView] = useInView({ rootMargin: "1000px" });
-  const itemsPerPage = 40;
 
   const loadMoreMovies = useCallback(async () => {
     const next = page.current + 1;
@@ -38,10 +42,7 @@ export function InfiniteMoviesCalendar({
     });
     if (movies?.length) {
       page.current = next;
-      setMovies((prev) => [
-        ...(prev?.length ? prev : []),
-        ...(movies as MovieReleasesByMonth),
-      ]);
+      setMovies((prev) => [...(prev?.length ? prev : []), ...movies]);
       if (movies.length < itemsPerPage) setLoadingActive(false);
     } else {
       setLoadingActive(false);
@@ -53,16 +54,30 @@ export function InfiniteMoviesCalendar({
       loadMoreMovies();
     }
   }, [inView, loadMoreMovies]);
+  if (!movies.length) return <CalendarEmptyMonth />;
 
-  if (!movies) return <h2>No movies currently scheduled for this month.</h2>;
+  const groupedAndSortedByDay = Array.from(
+    groupMovieReleasesAndSortByDay(movies)
+  );
+  const caldendarDays = groupedAndSortedByDay.map(([day, movies]) => {
+    const movieCards = movies.map((movie, i) => (
+      <MovieCardCalendar key={i} movie={movie} />
+    ));
+
+    return (
+      <CalendarDay
+        key={day}
+        day={day}
+        month={month}
+        year={year}
+        contentCards={movieCards}
+      />
+    );
+  });
 
   return (
-    <>
-      {/* Movies calendar */}
-      {(!movies || movies?.length === 0) && (
-        <p className="col-span-2 w-full text-center">No movies found.</p>
-      )}
-      <MoviesCalendar month={month} year={year} movies={movies} />
+    <div className="py-8 flex flex-col gap-6">
+      {caldendarDays}
       {/* Loading spinner */}
       {loadingActive && (
         <div
@@ -72,36 +87,6 @@ export function InfiniteMoviesCalendar({
           <Spinner />
         </div>
       )}
-    </>
-  );
-}
-
-function MoviesCalendar({
-  month,
-  year,
-  movies,
-}: {
-  month: string;
-  year: string;
-  movies: MovieReleasesByMonth;
-}) {
-  const groupedAndSortedByDay = groupMovieReleasesAndSortByDay(movies);
-  const moviesCalendarArray = Array.from(groupedAndSortedByDay);
-
-  return (
-    <>
-      {moviesCalendarArray.map((calendarDay) => {
-        const [day, movies] = calendarDay;
-        return (
-          <MoviesDay
-            key={day}
-            day={day}
-            month={month}
-            year={year}
-            movies={movies}
-          />
-        );
-      })}
-    </>
+    </div>
   );
 }

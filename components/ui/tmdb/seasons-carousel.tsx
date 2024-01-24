@@ -1,6 +1,7 @@
 "use client";
 
 import { format } from "date-fns";
+import { TelevisionShowSeasons } from "@/lib/zod-schemas";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -12,21 +13,11 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 
-type Seasons = (
-  | {
-      id: number;
-      name: string;
-      overview: string | null;
-      poster_path: string | null;
-      vote_average: number;
-      air_date: Date | null;
-      season_number: number;
-      episode_count: number;
-    }
-  | undefined
-)[];
-
-export function SeasonsCarousel({ seasons }: { seasons: Seasons }) {
+export function SeasonsCarousel({
+  seasons,
+}: {
+  seasons: TelevisionShowSeasons;
+}) {
   const validSeasons = [];
 
   for (const season of seasons) {

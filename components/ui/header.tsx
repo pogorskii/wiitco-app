@@ -1,5 +1,5 @@
-import WIITCOLogo from "@/app/ui/wiitco-logo";
-import { NavLinks } from "@/app/ui/nav-links";
+import WIITCOLogo from "@/components/ui/wiitco-logo";
+import { NavLinks } from "@/components/ui/nav-links";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "./theme-toggle";
 import { MobileMenu } from "./mobile-menu";

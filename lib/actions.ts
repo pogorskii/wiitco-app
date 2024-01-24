@@ -12,6 +12,7 @@ import {
   CinemaPersonDetails,
   CinemaPeopleSearch,
 } from "./zod-schemas";
+import { Prisma } from "@prisma/client";
 
 const headersTMDB = new Headers();
 headersTMDB.set("Accept", "application/json");
@@ -173,6 +174,9 @@ export const fetchMovieReleaseDatesByMonth = async ({
 
   return releaseDates;
 };
+export type MovieReleaseDatesByMonth = Prisma.PromiseReturnType<
+  typeof fetchMovieReleaseDatesByMonth
+>;
 
 export const fetchTelevisionShowDetails = async (id: string) => {
   try {

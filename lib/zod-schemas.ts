@@ -417,6 +417,7 @@ export const TelevisionShowDetails = z.object({
   }),
 });
 export type TelevisionShowDetails = z.infer<typeof TelevisionShowDetails>;
+export type TelevisionShowSeasons = TelevisionShowDetails["seasons"]
 
 export const TelevisionShowsSearch = z.array(
   z.object({

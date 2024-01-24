@@ -1,10 +1,10 @@
 "use server";
 
-import { Breadcrumbs } from "@/app/ui/breadcrumbs";
-import { SectionNav } from "../../ui/cinema/section-nav";
+import { Breadcrumbs } from "@/components/ui/breadcrumbs";
+import { SectionNav } from "../../../components/ui/cinema/section-nav";
 import { Suspense } from "react";
-import { SearchBodySkeleton } from "@/app/ui/skeletons";
-import MoviesSearchTable from "@/app/ui/cinema/movies-search-table";
+import { SearchBodySkeleton } from "@/components/ui/skeletons";
+import MoviesSearchTable from "@/components/ui/cinema/movies-search-table";
 import type { Metadata } from "next";
 
 export async function generateMetadata(): Promise<Metadata> {

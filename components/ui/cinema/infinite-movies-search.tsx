@@ -5,7 +5,7 @@ import { useEffect, useState, useCallback, useRef } from "react";
 import { useInView } from "react-intersection-observer";
 import { fetchMoviesSearch } from "@/lib/actions";
 import { MovieSearchCard } from "./movie-cards";
-import { Spinner } from "@/app/ui/spinner";
+import { Spinner } from "@/components/ui/spinner";
 
 export default function InfiniteMoviesSearch({
   search,

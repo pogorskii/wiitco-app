@@ -3,22 +3,22 @@
 import { Suspense } from "react";
 import { format } from "date-fns";
 import Image from "next/image";
-import { TagsRow } from "@/app/ui/tags-row";
-import { TruncText } from "@/app/ui/trunc-text";
-import { RatingCircle } from "@/app/ui/rating-circle";
-import { YouTubePlayer } from "@/app/ui/youtube-player";
-import { Breadcrumbs } from "@/app/ui/breadcrumbs";
+import { TagsRow } from "@/components/ui/tags-row";
+import { TruncText } from "@/components/ui/trunc-text";
+import { RatingCircle } from "@/components/ui/rating-circle";
+import { YouTubePlayer } from "@/components/ui/youtube-player";
+import { Breadcrumbs } from "@/components/ui/breadcrumbs";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { FaPlus } from "react-icons/fa";
 import { Separator } from "@/components/ui/separator";
 import type { Metadata } from "next";
 import { fetchTelevisionShowDetails } from "@/lib/actions";
-import { CastCarousel } from "@/app/ui/cinema/cast-carousel";
-import { SeasonsCarousel } from "@/app/ui/tmdb/seasons-carousel";
-import { JustWatchSection } from "@/app/ui/tmdb/just-watch-section";
-import { CinemaStillsGallery } from "@/app/ui/tmdb/cinema-stills-gallery";
-import { CinemaLinksList } from "@/app/ui/tmdb/cinema-links-list";
+import { CastCarousel } from "@/components/ui/cinema/cast-carousel";
+import { SeasonsCarousel } from "@/components/ui/tmdb/seasons-carousel";
+import { JustWatchSection } from "@/components/ui/tmdb/just-watch-section";
+import { CinemaStillsGallery } from "@/components/ui/tmdb/cinema-stills-gallery";
+import { CinemaLinksList } from "@/components/ui/tmdb/cinema-links-list";
 import { convertMinutesToHoursAndMinutes } from "@/lib/utils";
 
 export async function generateMetadata({
@@ -35,7 +35,7 @@ export async function generateMetadata({
 
 export default async function Page({ params }: { params: { slug: string } }) {
   const show = await fetchTelevisionShowDetails(params.slug);
-  if (!show) return <p>Anime not found.</p>;
+  if (!show) return <p>Anime show not found.</p>;
 
   const {
     id,
@@ -97,7 +97,6 @@ export default async function Page({ params }: { params: { slug: string } }) {
           </Button>
 
           <div className="mb-8 flex col-span-1 lg:hidden flex-col items-center">
-            {/* Reviews */}
             <RatingCircle rating={vote_average * 10} reviewCount={vote_count} />
           </div>
         </div>
@@ -120,7 +119,7 @@ export default async function Page({ params }: { params: { slug: string } }) {
 
             <div className="col-span-3 md:col-span-1">
               <Badge variant="outline" className="mb-2">
-                {in_production ? "On Air" : "Finished"}
+                {in_production ? "In Production" : "Finished"}
               </Badge>
               <h1 className="mb-2 scroll-m-20 text-xl md:text-2xl font-semibold first:mt-0">
                 {name}
@@ -255,25 +254,20 @@ export default async function Page({ params }: { params: { slug: string } }) {
                 )}
               </ul>
 
-              {/* Truncated Summary */}
-              {overview && <TruncText text={overview} />}
+              <TruncText text={overview} />
 
-              {/* Links table */}
               {Object.values(external_ids).some((e) => e !== null) && (
                 <div className="mb-8">
                   <CinemaLinksList homepage={homepage} links={external_ids} />
                 </div>
               )}
 
-              {/* Seasons Carousel */}
               {seasons.length > 0 && <SeasonsCarousel seasons={seasons} />}
 
-              {/* JustWatch Info */}
               <Suspense fallback={<p>Loading...</p>}>
                 <JustWatchSection title={name} id={id} type="tv" />
               </Suspense>
 
-              {/* Cast Carousel */}
               {credits.cast.length > 0 && (
                 <CastCarousel actors={credits.cast} />
               )}

@@ -3,13 +3,13 @@
 import { v4 as uuid } from "uuid";
 import { fetchAnimeSeasonsByMonth } from "@/lib/actions";
 import { TelevisionSeasons } from "@/lib/definitions";
-import { InfiniteAnimeSeasonsCalendar } from "@/app/ui/anime/infinte-anime-seasons-calendar";
-import { Breadcrumbs } from "@/app/ui/breadcrumbs";
+import { InfiniteAnimeSeasonsCalendar } from "@/components/ui/anime/infinte-anime-seasons-calendar";
+import { Breadcrumbs } from "@/components/ui/breadcrumbs";
 import { Suspense } from "react";
-import { CalendarBodySkeleton } from "@/app/ui/skeletons";
+import { CalendarBodySkeleton } from "@/components/ui/skeletons";
 import { getMonthYearName } from "@/lib/utils";
 import type { Metadata } from "next";
-import { MonthSwitcher } from "@/app/ui/month-switcher";
+import { MonthSwitcher } from "@/components/ui/month-switcher";
 
 export async function generateMetadata({
   params,
@@ -78,7 +78,7 @@ async function TelevisionCalendarBody({
   });
 
   if (!seasons.length)
-    return <h2>No Anime shows currently scheduled for this month.</h2>;
+    return <h2>No anime shows currently scheduled for this month.</h2>;
 
   return (
     <div key={uuid()} className="flex flex-col gap-6">

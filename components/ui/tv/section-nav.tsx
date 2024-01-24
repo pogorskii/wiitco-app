@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { Search } from "@/app/ui/search";
+import { Search } from "@/components/ui/search";
 import { TelevisionShowGenreFilter } from "./television-show-filters";
 import { FaChevronDown, FaChevronUp } from "react-icons/fa";
 

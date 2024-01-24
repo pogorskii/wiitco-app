@@ -2,7 +2,7 @@
 
 import { v4 as uuid } from "uuid";
 import { fetchAnimeShowsSearch } from "@/lib/actions";
-import InfiniteAnimeShowsSearch from "@/app/ui/anime/infinite-anime-shows-search";
+import InfiniteAnimeShowsSearch from "@/components/ui/anime/infinite-anime-shows-search";
 
 export default async function AnimeShowsSearchTable({
   search,

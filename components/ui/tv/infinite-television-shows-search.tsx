@@ -5,7 +5,7 @@ import { useEffect, useState, useCallback, useRef } from "react";
 import { useInView } from "react-intersection-observer";
 import { fetchTelevisionShowsSearch } from "@/lib/actions";
 import { TelevisionShowSearchCard } from "./television-cards";
-import { Spinner } from "@/app/ui/spinner";
+import { Spinner } from "@/components/ui/spinner";
 
 export default function InfiniteTelevisionShowsSearch({
   search,

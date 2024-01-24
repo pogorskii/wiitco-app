@@ -1,5 +1,5 @@
-import { Breadcrumbs } from "@/app/ui/breadcrumbs";
-import { EntryDetailsPageBodySkeleton } from "@/app/ui/skeletons";
+import { Breadcrumbs } from "@/components/ui/breadcrumbs";
+import { EntryDetailsPageBodySkeleton } from "@/components/ui/skeletons";
 
 export default function Loading() {
   return (

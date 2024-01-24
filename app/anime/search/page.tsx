@@ -2,10 +2,10 @@
 
 import { Suspense } from "react";
 import type { Metadata } from "next";
-import { Breadcrumbs } from "@/app/ui/breadcrumbs";
-import { AnimeSearchNav } from "@/app/ui/anime/anime-search-nav";
-import { SearchBodySkeleton } from "@/app/ui/skeletons";
-import AnimeShowsSearchTable from "@/app/ui/anime/anime-shows-search-table";
+import { Breadcrumbs } from "@/components/ui/breadcrumbs";
+import { AnimeSearchNav } from "@/components/ui/anime/anime-search-nav";
+import { SearchBodySkeleton } from "@/components/ui/skeletons";
+import AnimeShowsSearchTable from "@/components/ui/anime/anime-shows-search-table";
 
 export async function generateMetadata(): Promise<Metadata> {
   return {
@@ -28,11 +28,12 @@ export default async function Page({
       <Breadcrumbs
         breadcrumbs={[
           { label: "Home", href: "/" },
-          { label: "Anime", href: "/anime", active: true },
+          { label: "Anime", href: "/anime" },
+          { label: "Search", href: "/anime/search", active: true },
         ]}
       />
       <h1 className="scroll-m-20 border-b pb-2 text-3xl font-semibold tracking-tight first:mt-0">
-        All Anime shows
+        All anime shows
       </h1>
       <AnimeSearchNav />
       <Suspense fallback={<SearchBodySkeleton />}>

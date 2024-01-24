@@ -2,7 +2,7 @@
 
 import { v4 as uuid } from "uuid";
 import { fetchGamesSearchDB } from "@/app/video-games/lib/actions";
-import InfiniteGamesSearch from "@/app/ui/video-games/infinite-games-search";
+import InfiniteGamesSearch from "@/components/ui/video-games/infinite-games-search";
 import { GameSearch } from "@/app/video-games/lib/definitions";
 
 export default async function GamesSearchPageTable({

@@ -8,7 +8,7 @@ import { LuGamepad2 } from "react-icons/lu";
 import { BiCameraMovie } from "react-icons/bi";
 import { GiStaryu } from "react-icons/gi";
 import { IoPerson } from "react-icons/io5";
-import { fetchGamesSearchDB } from "../video-games/lib/actions";
+import { fetchGamesSearchDB } from "../../app/video-games/lib/actions";
 import {
   fetchMoviesSearch,
   fetchTelevisionShowsSearch,

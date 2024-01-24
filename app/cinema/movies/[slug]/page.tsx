@@ -3,11 +3,11 @@
 import { Suspense } from "react";
 import { formatDistanceToNow, format } from "date-fns";
 import Image from "next/image";
-import { TagsRow } from "@/app/ui/tags-row";
-import { TruncText } from "@/app/ui/trunc-text";
-import { RatingCircle } from "@/app/ui/rating-circle";
-import { YouTubePlayer } from "@/app/ui/youtube-player";
-import { Breadcrumbs } from "@/app/ui/breadcrumbs";
+import { TagsRow } from "@/components/ui/tags-row";
+import { TruncText } from "@/components/ui/trunc-text";
+import { RatingCircle } from "@/components/ui/rating-circle";
+import { YouTubePlayer } from "@/components/ui/youtube-player";
+import { Breadcrumbs } from "@/components/ui/breadcrumbs";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
@@ -15,11 +15,13 @@ import { FaPlus } from "react-icons/fa";
 import { Separator } from "@/components/ui/separator";
 import type { Metadata } from "next";
 import { fetchMovieDetails, fetchMovieCollection } from "@/lib/actions";
-import { CastCarousel } from "@/app/ui/cinema/cast-carousel";
-import { JustWatchSection } from "@/app/ui/tmdb/just-watch-section";
-import { CinemaStillsGallery } from "@/app/ui/tmdb/cinema-stills-gallery";
-import { CinemaLinksList } from "@/app/ui/tmdb/cinema-links-list";
+import { CastCarousel } from "@/components/ui/cinema/cast-carousel";
+import { JustWatchSection } from "@/components/ui/tmdb/just-watch-section";
+import { CinemaStillsGallery } from "@/components/ui/tmdb/cinema-stills-gallery";
+import { CinemaLinksList } from "@/components/ui/tmdb/cinema-links-list";
 import { convertMinutesToHoursAndMinutes } from "@/lib/utils";
+import { AddToAccountButton } from "@/components/ui/add-to-account-button";
+import { DetailsPageH1 } from "@/components/ui/details-page-h1";
 
 export async function generateMetadata({
   params,
@@ -92,19 +94,13 @@ export default async function Page({ params }: { params: { slug: string } }) {
             }}
             priority
           />
-          {/* TODO: Change appearance if added */}
-          <Button className="mt-4 mb-6 w-full">
-            <FaPlus className="me-1" /> Watch this movie
-          </Button>
+          <AddToAccountButton type="movie" />
 
           <div className="mb-8 flex col-span-1 lg:hidden flex-col items-center">
-            {/* Reviews */}
             <RatingCircle rating={vote_average * 10} reviewCount={vote_count} />
           </div>
 
-          {belongs_to_collection && (
-            <RelatedSeries series={belongs_to_collection} />
-          )}
+          <RelatedSeries series={belongs_to_collection} />
         </div>
 
         {/* Second column */}
@@ -129,9 +125,7 @@ export default async function Page({ params }: { params: { slug: string } }) {
                   {status}
                 </Badge>
               )}
-              <h1 className="mb-2 scroll-m-20 text-xl md:text-2xl font-semibold first:mt-0">
-                {title}
-              </h1>
+              <DetailsPageH1 text={title} />
               {release_date && (
                 <span>
                   {format(release_date, "MMMM d yyyy")} (
@@ -144,16 +138,12 @@ export default async function Page({ params }: { params: { slug: string } }) {
             </div>
           </div>
 
-          <Button className="mb-2 mt-4 w-full md:hidden">
-            <FaPlus className="me-1" /> Watch this movie
-          </Button>
-
+          <AddToAccountButton type="movie" />
           <Separator className="mt-1 mb-4" />
 
           {/* Info First Column */}
           <div className="col-span-3 grid grid-cols-4 gap-6">
             <div className="flex md:hidden col-span-5 lg:hidden flex-col items-center">
-              {/* Reviews */}
               <RatingCircle
                 rating={vote_average * 10}
                 reviewCount={vote_count}
@@ -370,8 +360,10 @@ async function RelatedSeries({
     id: number;
     name: string;
     poster_path: string | null;
-  };
+  } | null;
 }) {
+  if (!series) return null;
+
   return (
     <div className="mb-8">
       <h2 className="md:hidden mb-2 font-semibold text-lg">Related to</h2>

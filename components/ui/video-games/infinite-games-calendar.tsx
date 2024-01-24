@@ -3,10 +3,10 @@
 import { useEffect, useState, useCallback, useRef } from "react";
 import { useInView } from "react-intersection-observer";
 import { fetchGameReleaseDatesByMonth } from "@/app/video-games/lib/actions";
-import { Spinner } from "@/app/ui/spinner";
+import { Spinner } from "@/components/ui/spinner";
 import { groupGameReleasesAndSortByDay } from "@/app/video-games/lib/utilis";
 import { GameReleasesByMonth } from "@/app/video-games/lib/definitions";
-import { GamesDay } from "@/app/ui/video-games/games-day";
+import { GamesDay } from "@/components/ui/video-games/games-day";
 
 export function InfiniteGamesCalendar({
   month,

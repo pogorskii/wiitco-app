@@ -3,18 +3,18 @@
 import { Suspense } from "react";
 import { format, formatDistanceToNow, formatDistance } from "date-fns";
 import Image from "next/image";
-import { TruncText } from "@/app/ui/trunc-text";
-import { Breadcrumbs } from "@/app/ui/breadcrumbs";
+import { TruncText } from "@/components/ui/trunc-text";
+import { Breadcrumbs } from "@/components/ui/breadcrumbs";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { FaPlus } from "react-icons/fa";
 import { Separator } from "@/components/ui/separator";
 import type { Metadata } from "next";
 import { fetchCinemaPersonDetails } from "@/lib/actions";
-import { ActingCreditsCarousel } from "@/app/ui/tmdb/acting-credits-carousel";
-import { ProducingCreditsCarousel } from "@/app/ui/tmdb/producing-credits-carousel";
-import { CinemaStillsGallery } from "@/app/ui/tmdb/cinema-stills-gallery";
-import { CinemaLinksList } from "@/app/ui/tmdb/cinema-links-list";
+import { ActingCreditsCarousel } from "@/components/ui/tmdb/acting-credits-carousel";
+import { ProducingCreditsCarousel } from "@/components/ui/tmdb/producing-credits-carousel";
+import { CinemaStillsGallery } from "@/components/ui/tmdb/cinema-stills-gallery";
+import { CinemaLinksList } from "@/components/ui/tmdb/cinema-links-list";
 
 export async function generateMetadata({
   params,
