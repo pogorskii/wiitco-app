@@ -268,7 +268,7 @@ export default async function Page({ params }: { params: { slug: string } }) {
                 <JustWatchSection title={name} id={id} type="tv" />
               </Suspense>
 
-              {credits.cast.length > 0 && (
+              {credits.cast && credits?.cast?.length > 0 && (
                 <CastCarousel actors={credits.cast} />
               )}
 

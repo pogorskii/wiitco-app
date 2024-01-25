@@ -357,9 +357,9 @@ export const TelevisionShowDetails = z.object({
   vote_average: z.number(),
   vote_count: z.number(),
   credits: z.object({
-    cast: z.array(
-      z
-        .object({
+    cast: z
+      .array(
+        z.object({
           adult: z.boolean(),
           gender: z.number(),
           id: z.number(),
@@ -372,11 +372,11 @@ export const TelevisionShowDetails = z.object({
           credit_id: z.string(),
           order: z.number(),
         })
-        .optional()
-    ),
-    crew: z.array(
-      z
-        .object({
+      )
+      .optional(),
+    crew: z
+      .array(
+        z.object({
           adult: z.boolean(),
           gender: z.number(),
           id: z.number(),
@@ -389,8 +389,8 @@ export const TelevisionShowDetails = z.object({
           department: z.string(),
           job: z.string(),
         })
-        .optional()
-    ),
+      )
+      .optional(),
   }),
   external_ids: z.object({
     imdb_id: z.string().nullable(),
@@ -420,6 +420,7 @@ export const TelevisionShowDetails = z.object({
 });
 export type TelevisionShowDetails = z.infer<typeof TelevisionShowDetails>;
 export type TelevisionShowSeasons = TelevisionShowDetails["seasons"];
+export type TelevisionShowCast = TelevisionShowDetails["credits"]["cast"];
 
 export const TelevisionShowsSearch = z.array(
   z.object({

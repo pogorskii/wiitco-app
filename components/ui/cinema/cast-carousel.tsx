@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { MovieDetailsCast } from "@/lib/zod-schemas";
+import { MovieDetailsCast, TelevisionShowCast } from "@/lib/zod-schemas";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -13,7 +13,11 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 
-export function CastCarousel({ actors }: { actors: MovieDetailsCast }) {
+export function CastCarousel({
+  actors,
+}: {
+  actors: MovieDetailsCast | TelevisionShowCast;
+}) {
   if (!actors) return null;
 
   const sortedTopActors = actors

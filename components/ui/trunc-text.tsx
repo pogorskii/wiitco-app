@@ -11,9 +11,8 @@ export function TruncText({
   text?: string | null;
   maxLength?: number;
 }) {
+  const [isTrunc, setIsTrunc] = useState(text && text.length > maxLength);
   if (!text) return null;
-
-  const [isTrunc, setIsTrunc] = useState(text.length > maxLength);
 
   function handleClick() {
     setIsTrunc(!isTrunc);
