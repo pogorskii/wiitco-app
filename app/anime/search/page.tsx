@@ -3,9 +3,11 @@
 import { Suspense } from "react";
 import type { Metadata } from "next";
 import { Breadcrumbs } from "@/components/ui/breadcrumbs";
-import { AnimeSearchNav } from "@/components/ui/anime/anime-search-nav";
+import { SearchNav } from "@/components/ui/search-nav";
 import { SearchBodySkeleton } from "@/components/ui/skeletons";
 import AnimeShowsSearchTable from "@/components/ui/anime/anime-shows-search-table";
+import { AnimeShowGenreFilter } from "@/components/ui/anime/anime-filters";
+import { GlobalH1 } from "@/components/ui/global-h1";
 
 export async function generateMetadata(): Promise<Metadata> {
   return {
@@ -32,10 +34,10 @@ export default async function Page({
           { label: "Search", href: "/anime/search", active: true },
         ]}
       />
-      <h1 className="scroll-m-20 border-b pb-2 text-3xl font-semibold tracking-tight first:mt-0">
-        All anime shows
-      </h1>
-      <AnimeSearchNav />
+      <GlobalH1>All Anime Shows</GlobalH1>
+      <SearchNav>
+        <AnimeShowGenreFilter />
+      </SearchNav>
       <Suspense fallback={<SearchBodySkeleton />}>
         <AnimeShowsSearchTable search={search} genre={genre} />
       </Suspense>

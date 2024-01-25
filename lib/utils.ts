@@ -1,11 +1,11 @@
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
+import { MovieRelease, TelevisionSeasonFormatted } from "./definitions";
 import {
-  MovieRelease,
-  TelevisionSeasonFormatted,
-  TelevisionSeasons,
-} from "./definitions";
-import { MovieReleaseDatesByMonth } from "./actions";
+  MovieReleaseDatesByMonth,
+  TeleveisionSeasonsByMonth,
+  AnimeSeasonsByMonth,
+} from "./actions";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -70,10 +70,12 @@ export const groupMovieReleasesAndSortByDay = (
 };
 
 export const groupTelevisionSeasonsAndSortByDay = (
-  releasesByMonth: TelevisionSeasons
+  releasesByMonth: TeleveisionSeasonsByMonth | AnimeSeasonsByMonth
 ) => {
   const groupedByDay = new Map<number, TelevisionSeasonFormatted[]>();
   for (const season of releasesByMonth) {
+    if (!season.airDate) return;
+
     const day = season.airDate.getDate();
     const bucket = groupedByDay.get(day) || ([] as TelevisionSeasonFormatted[]);
     const existingSeasonIndex = bucket.findIndex(

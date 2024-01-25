@@ -17,12 +17,11 @@ export default async function TelevisionShowsSearchTable({
   });
 
   return (
-    <div key={uuid()} className="grid grid-cols-1 md:grid-cols-2 sm:gap-6">
-      <InfiniteTelevisionShowsSearch
-        initialTelevisionShows={shows}
-        search={search}
-        genre={genre}
-      />
-    </div>
+    <InfiniteTelevisionShowsSearch
+      key={uuid()}
+      initialTelevisionShows={shows}
+      search={search}
+      genre={genre}
+    />
   );
 }

@@ -2,7 +2,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { format } from "date-fns";
 import { GamePlatforms } from "./game-platforms";
-import { GameSearch } from "@/app/video-games/lib/definitions";
+import { GameRelease } from "@/app/video-games/lib/definitions";
+import { GamesSearch } from "@/app/video-games/lib/actions";
 import {
   Card,
   CardContent,
@@ -12,23 +13,11 @@ import {
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 
-export function GameCardCalendar({
-  id,
-  title,
-  slug,
-  imageId,
-  platforms,
-  category,
-}: {
-  id: number;
-  title: string;
-  slug: string;
-  imageId?: string;
-  platforms: number[];
-  category: number;
-}) {
-  const coverUrl = imageId
-    ? `https://images.igdb.com/igdb/image/upload/t_original/${imageId}.jpg`
+export function GameCardCalendar({ game }: { game: GameRelease }) {
+  const { id, name, slug, cover, platforms, category } = game;
+
+  const coverUrl = cover?.imageId
+    ? `https://images.igdb.com/igdb/image/upload/t_original/${cover.imageId}.jpg`
     : "/game-placeholder.webp";
 
   const categoryEnum: { [key: number]: string } = {
@@ -66,7 +55,7 @@ export function GameCardCalendar({
             <Image
               className="hover:scale-105 duration-200 ease-in-out"
               src={coverUrl}
-              alt={title}
+              alt={name}
               width={600}
               height={900}
               style={{ objectFit: "cover" }}
@@ -74,7 +63,7 @@ export function GameCardCalendar({
             />
           </div>
           <CardHeader>
-            <CardTitle className="mb-3 text-xl">{title}</CardTitle>
+            <CardTitle className="mb-3 text-xl">{name}</CardTitle>
             <div>
               <GamePlatforms platforms={platforms} />
             </div>
@@ -92,7 +81,7 @@ export function GameCardCalendar({
                 src={coverUrl}
                 width={600}
                 height={900}
-                alt={`${title} game cover`}
+                alt={`${name} game cover`}
                 style={{
                   width: "100%",
                   height: "auto",
@@ -108,7 +97,7 @@ export function GameCardCalendar({
             className="mb-2 hover:text-blue-400 hover:underline hover:underline-offset-2 hover:decoration-solid"
             href={`/video-games/games/${slug}`}
           >
-            <h2 className="text-base font-semibold">{title}</h2>
+            <h2 className="text-base font-semibold">{name}</h2>
           </Link>
           {platforms && <GamePlatforms platforms={platforms} />}
           <Badge className="self-start mt-auto text-xs p-0.5 font-normal leading-none rounded-sm">
@@ -120,8 +109,7 @@ export function GameCardCalendar({
   );
 }
 
-type ArrayElement<T extends Array<any>> = T[number];
-type SingleGameSearch = ArrayElement<GameSearch>;
+type SingleGameSearch = GamesSearch;
 
 export function GameSearchCard({ game }: { game: SingleGameSearch }) {
   const { name, slug, cover, category, platforms, firstReleaseDate } = game;

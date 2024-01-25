@@ -1,11 +1,12 @@
 "use client";
 
-import { GameSearch } from "../../../app/video-games/lib/definitions";
 import { useEffect, useState, useCallback, useRef } from "react";
 import { useInView } from "react-intersection-observer";
+import { GamesSearch } from "../../../app/video-games/lib/actions";
 import { fetchGamesSearchDB } from "../../../app/video-games/lib/actions";
 import { GameSearchCard } from "@/components/ui/video-games/game-card";
 import { Spinner } from "@/components/ui/spinner";
+import { NoResultsFound } from "../no-results-found";
 
 export default function InfiniteGamesSearch({
   search,
@@ -21,16 +22,18 @@ export default function InfiniteGamesSearch({
   engine?: string;
   company?: string;
   genre?: string;
-  initialGames?: GameSearch;
+  initialGames: GamesSearch;
   categories?: string;
   platforms?: string;
   sort?: string;
 }) {
+  const itemsPerPage = 20;
   const [games, setGames] = useState(initialGames);
   const page = useRef(1);
-  const [loadingActive, setLoadingActive] = useState(true);
+  const [loadingActive, setLoadingActive] = useState(
+    initialGames && initialGames.length >= itemsPerPage
+  );
   const [ref, inView] = useInView({ rootMargin: "1000px" });
-  const itemsPerPage = 20;
 
   const loadMoreGames = useCallback(async () => {
     const next = page.current + 1;
@@ -47,10 +50,7 @@ export default function InfiniteGamesSearch({
     });
     if (games?.length) {
       page.current = next;
-      setGames((prev) => [
-        ...(prev?.length ? prev : []),
-        ...(games as GameSearch),
-      ]);
+      setGames((prev) => [...(prev?.length ? prev : []), ...games]);
       if (games.length < itemsPerPage) setLoadingActive(false);
     } else {
       setLoadingActive(false);
@@ -62,15 +62,10 @@ export default function InfiniteGamesSearch({
       loadMoreGames();
     }
   }, [inView, loadMoreGames]);
+  if (!games?.length) return <NoResultsFound type="search" />;
 
   return (
-    <>
-      {/* Games table */}
-      {games?.length === 0 && (
-        <p className="col-span-2 w-full text-center">
-          No matching games found. Please try changing the search parameters.
-        </p>
-      )}
+    <div className="grid grid-cols-1 md:grid-cols-2 sm:gap-6">
       {games?.map((game) => (
         <GameSearchCard key={game.slug} game={game} />
       ))}
@@ -83,6 +78,6 @@ export default function InfiniteGamesSearch({
           <Spinner />
         </div>
       )}
-    </>
+    </div>
   );
 }

@@ -2,21 +2,26 @@
 
 import { useEffect, useState, useCallback, useRef } from "react";
 import { useInView } from "react-intersection-observer";
-import { fetchAnimeSeasonsByMonth, AnimeSeasonsByMonth } from "@/lib/actions";
+import {
+  fetchTelevisionSeasonsByMonth,
+  TeleveisionSeasonsByMonth,
+} from "@/lib/actions";
 import { groupTelevisionSeasonsAndSortByDay } from "@/lib/utils";
 import { Spinner } from "@/components/ui/spinner";
-import { NoResultsFound } from "../no-results-found";
+import { TelevisionSeasonCardCalendar } from "./television-cards";
 import { CalendarDay } from "../calendar-day";
-import { AnimeSeasonCardCalendar } from "./anime-cards";
+import { NoResultsFound } from "../no-results-found";
 
-export function InfiniteAnimeSeasonsCalendar({
+export function InfiniteTelevisionSeasonsCalendar({
   month,
   year,
   initialSeasons,
+  types,
 }: {
   month: string;
   year: string;
-  initialSeasons: AnimeSeasonsByMonth;
+  initialSeasons: TeleveisionSeasonsByMonth;
+  types?: string;
 }) {
   const itemsPerPage = 40;
   const [seasons, setSeasons] = useState(initialSeasons);
@@ -28,10 +33,11 @@ export function InfiniteAnimeSeasonsCalendar({
 
   const loadMoreSeasons = useCallback(async () => {
     const next = page.current + 1;
-    const seasons = await fetchAnimeSeasonsByMonth({
+    const seasons = await fetchTelevisionSeasonsByMonth({
       page: next,
       year,
       month,
+      types,
       itemsPerPage,
     });
     if (seasons?.length) {
@@ -41,7 +47,7 @@ export function InfiniteAnimeSeasonsCalendar({
     } else {
       setLoadingActive(false);
     }
-  }, [month, year, initialSeasons]);
+  }, [month, year, initialSeasons, types]);
 
   useEffect(() => {
     if (inView) {
@@ -56,7 +62,7 @@ export function InfiniteAnimeSeasonsCalendar({
   const arrayFromGroupedAndSortedByDay = Array.from(groupedAndSortedByDay);
   const calendarDays = arrayFromGroupedAndSortedByDay.map(([day, seasons]) => {
     const seasonCards = seasons.map((season, i) => (
-      <AnimeSeasonCardCalendar key={i} season={season} />
+      <TelevisionSeasonCardCalendar key={i} season={season} />
     ));
 
     return (

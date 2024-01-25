@@ -1,15 +1,15 @@
 "use server";
 
+import { Suspense } from "react";
 import { v4 as uuid } from "uuid";
 import { fetchAnimeSeasonsByMonth } from "@/lib/actions";
-import { TelevisionSeasons } from "@/lib/definitions";
 import { InfiniteAnimeSeasonsCalendar } from "@/components/ui/anime/infinte-anime-seasons-calendar";
 import { Breadcrumbs } from "@/components/ui/breadcrumbs";
-import { Suspense } from "react";
 import { CalendarBodySkeleton } from "@/components/ui/skeletons";
 import { getMonthYearName } from "@/lib/utils";
+import { GlobalH1 } from "@/components/ui/global-h1";
+import { CalendarNav } from "@/components/ui/calendar-nav";
 import type { Metadata } from "next";
-import { MonthSwitcher } from "@/components/ui/month-switcher";
 
 export async function generateMetadata({
   params,
@@ -19,21 +19,15 @@ export async function generateMetadata({
   const displayDate = getMonthYearName(params.month, params.year);
 
   return {
-    title: `Anime Shows Airing in ${displayDate}`,
+    title: `Every Anime Show Airing in ${displayDate}`,
   };
 }
 
 export default async function Page({
   params,
-  searchParams,
 }: {
   params: { year: string; month: string };
-  searchParams: {
-    types?: string;
-    platforms?: string;
-  };
 }) {
-  const types = searchParams.types;
   const { year, month } = params;
   const displayDate = getMonthYearName(month, year);
 
@@ -50,44 +44,33 @@ export default async function Page({
           },
         ]}
       />
-      <h1 className="scroll-m-20 border-b pb-2 text-3xl font-semibold tracking-tight first:mt-0">
-        All Anime Shows Airing in {displayDate}
-      </h1>
-      <div className="relative sm:sticky top-[-1px] bg-background z-20 py-1 px-6 mx-[-24px] sm:px-10 sm:mx-[-40px] lg:px-20 lg:mx-[-80px]">
-        <MonthSwitcher year={year} month={month} />
-      </div>
+      <GlobalH1>{displayDate} Anime Shows</GlobalH1>
+      <CalendarNav year={year} month={month} />
       <Suspense fallback={<CalendarBodySkeleton />}>
-        <TelevisionCalendarBody year={year} month={month} types={types} />
+        <AnimeSeasonsCalendarBody year={year} month={month} />
       </Suspense>
     </>
   );
 }
 
-async function TelevisionCalendarBody({
+async function AnimeSeasonsCalendarBody({
   year,
   month,
-  types,
 }: {
   year: string;
   month: string;
-  types?: string;
 }) {
   const seasons = await fetchAnimeSeasonsByMonth({
     year,
     month,
   });
 
-  if (!seasons.length)
-    return <h2>No anime shows currently scheduled for this month.</h2>;
-
   return (
-    <div key={uuid()} className="flex flex-col gap-6">
-      <InfiniteAnimeSeasonsCalendar
-        month={month}
-        year={year}
-        initialSeasons={seasons as TelevisionSeasons}
-        types={types}
-      />
-    </div>
+    <InfiniteAnimeSeasonsCalendar
+      key={uuid()}
+      month={month}
+      year={year}
+      initialSeasons={seasons}
+    />
   );
 }

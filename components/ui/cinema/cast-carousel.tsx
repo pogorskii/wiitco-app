@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { MovieDetailsCast } from "@/lib/zod-schemas";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -12,31 +13,10 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 
-type Actors = (
-  | {
-      adult: boolean;
-      id: number;
-      name: string;
-      popularity: number;
-      gender: number;
-      known_for_department: string;
-      original_name: string;
-      profile_path: string | null;
-      character: string;
-      credit_id: string;
-      order: number;
-    }
-  | undefined
-)[];
+export function CastCarousel({ actors }: { actors: MovieDetailsCast }) {
+  if (!actors) return null;
 
-export function CastCarousel({ actors }: { actors: Actors }) {
-  const validActors = [];
-
-  for (const actor of actors) {
-    if (actor) validActors.push(actor);
-  }
-
-  const sortedTopActors = validActors
+  const sortedTopActors = actors
     .sort((a, b) => a.order - b.order)
     .filter((_, i) => i < 20);
 
@@ -70,7 +50,7 @@ export function CastCarousel({ actors }: { actors: Actors }) {
               </Link>
             </figure>
           ))}
-          {validActors.length > 19 && (
+          {actors.length > 19 && (
             <figure className="my-auto h-full shrink-0">
               <div className="p-1">
                 <Dialog>
@@ -83,7 +63,7 @@ export function CastCarousel({ actors }: { actors: Actors }) {
                     </DialogHeader>
                     <ScrollArea className="h-full max-h-[70vh] w-auto rounded-md border">
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 p-4">
-                        {validActors.map((actor, i) => (
+                        {actors.map((actor, i) => (
                           <div key={i}>
                             {i > 1 && <Separator className="mb-4" />}
                             <Link href={`/cinema/people/${actor.id}`}>

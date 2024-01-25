@@ -59,39 +59,39 @@ export const MovieDetails = z.object({
   overview: z.string(),
   popularity: z.number(),
   poster_path: z.string().nullable(),
-  production_companies: z.array(
-    z
-      .object({
+  production_companies: z
+    .array(
+      z.object({
         id: z.number(),
         logo_path: z.string().nullable(),
         name: z.string(),
         origin_country: z.string(),
       })
-      .optional()
-  ),
-  production_countries: z.array(
-    z
-      .object({
+    )
+    .optional(),
+  production_countries: z
+    .array(
+      z.object({
         iso_3166_1: z.string(),
         name: z.string(),
       })
-      .optional()
-  ),
+    )
+    .optional(),
   release_date: z
     .string()
     .transform((e) => new Date(e))
     .nullable(),
   revenue: z.number(),
   runtime: z.number(),
-  spoken_languages: z.array(
-    z
-      .object({
+  spoken_languages: z
+    .array(
+      z.object({
         english_name: z.string(),
         iso_639_1: z.string(),
         name: z.string(),
       })
-      .optional()
-  ),
+    )
+    .optional(),
   status: z.string().nullable(),
   tagline: z.string().nullable(),
   title: z.string(),
@@ -99,9 +99,9 @@ export const MovieDetails = z.object({
   vote_average: z.number(),
   vote_count: z.number(),
   credits: z.object({
-    cast: z.array(
-      z
-        .object({
+    cast: z
+      .array(
+        z.object({
           adult: z.boolean(),
           gender: z.number(),
           id: z.number(),
@@ -115,11 +115,11 @@ export const MovieDetails = z.object({
           credit_id: z.string(),
           order: z.number(),
         })
-        .optional()
-    ),
-    crew: z.array(
-      z
-        .object({
+      )
+      .optional(),
+    crew: z
+      .array(
+        z.object({
           adult: z.boolean(),
           gender: z.number(),
           id: z.number(),
@@ -132,8 +132,8 @@ export const MovieDetails = z.object({
           department: z.string(),
           job: z.string(),
         })
-        .optional()
-    ),
+      )
+      .optional(),
   }),
   external_ids: z.object({
     imdb_id: z.string().nullable(),
@@ -182,6 +182,8 @@ export const MovieDetails = z.object({
   }),
 });
 export type MovieDetails = z.infer<typeof MovieDetails>;
+export type MovieDetailsCast = MovieDetails["credits"]["cast"];
+export type MovieDetailsCrew = MovieDetails["credits"]["crew"];
 
 export const MoviesSearch = z.array(
   z.object({
@@ -417,7 +419,7 @@ export const TelevisionShowDetails = z.object({
   }),
 });
 export type TelevisionShowDetails = z.infer<typeof TelevisionShowDetails>;
-export type TelevisionShowSeasons = TelevisionShowDetails["seasons"]
+export type TelevisionShowSeasons = TelevisionShowDetails["seasons"];
 
 export const TelevisionShowsSearch = z.array(
   z.object({

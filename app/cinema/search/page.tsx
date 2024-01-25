@@ -1,11 +1,13 @@
 "use server";
 
 import { Breadcrumbs } from "@/components/ui/breadcrumbs";
-import { SectionNav } from "../../../components/ui/cinema/section-nav";
+import { SearchNav } from "@/components/ui/search-nav";
 import { Suspense } from "react";
 import { SearchBodySkeleton } from "@/components/ui/skeletons";
 import MoviesSearchTable from "@/components/ui/cinema/movies-search-table";
+import { GlobalH1 } from "@/components/ui/global-h1";
 import type { Metadata } from "next";
+import { MovieGenreFilter } from "@/components/ui/cinema/movie-filters";
 
 export async function generateMetadata(): Promise<Metadata> {
   return {
@@ -32,10 +34,10 @@ export default async function Page({
           { label: "Search", href: "/movies/search", active: true },
         ]}
       />
-      <h1 className="scroll-m-20 border-b pb-2 text-3xl font-semibold tracking-tight first:mt-0">
-        All Movies
-      </h1>
-      <SectionNav />
+      <GlobalH1>All Movies</GlobalH1>
+      <SearchNav>
+        <MovieGenreFilter />
+      </SearchNav>
       <Suspense fallback={<SearchBodySkeleton />}>
         <MoviesSearchTable search={search} genre={genre} />
       </Suspense>

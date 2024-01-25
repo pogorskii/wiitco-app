@@ -4,6 +4,7 @@ import prisma from "../../../lib/prisma";
 import { createFuzzySearchQuery } from "@/lib/utils";
 import { HowLongToBeatService } from "howlongtobeat";
 import { hltbArrSchema } from "./zod-schemas";
+import { Prisma } from "@prisma/client";
 
 export async function fetchGameDetails({ slug }: { slug: string }) {
   const game = await prisma.game.findUnique({
@@ -410,6 +411,7 @@ export const fetchGamesSearchDB = async ({
                 sort: "desc",
               },
             },
+            { id: "desc" },
           ],
           select,
         });
@@ -418,9 +420,12 @@ export const fetchGamesSearchDB = async ({
           skip: (page - 1) * itemsPerPage,
           take: itemsPerPage,
           where,
-          orderBy: {
-            follows: "desc",
-          },
+          orderBy: [
+            {
+              follows: "desc",
+            },
+            { id: "desc" },
+          ],
           select,
         });
       }
@@ -430,9 +435,12 @@ export const fetchGamesSearchDB = async ({
         skip: (page - 1) * itemsPerPage,
         take: itemsPerPage,
         where,
-        orderBy: {
-          firstReleaseDate: { sort: "desc", nulls: "last" },
-        },
+        orderBy: [
+          {
+            firstReleaseDate: { sort: "desc", nulls: "last" },
+          },
+          { id: "desc" },
+        ],
         select,
       });
     }
@@ -441,9 +449,12 @@ export const fetchGamesSearchDB = async ({
         skip: (page - 1) * itemsPerPage,
         take: itemsPerPage,
         where,
-        orderBy: {
-          firstReleaseDate: { sort: "asc", nulls: "last" },
-        },
+        orderBy: [
+          {
+            firstReleaseDate: { sort: "asc", nulls: "last" },
+          },
+          { id: "desc" },
+        ],
         select,
       });
     }
@@ -452,9 +463,12 @@ export const fetchGamesSearchDB = async ({
         skip: (page - 1) * itemsPerPage,
         take: itemsPerPage,
         where,
-        orderBy: {
-          name: "asc",
-        },
+        orderBy: [
+          {
+            name: "asc",
+          },
+          { id: "desc" },
+        ],
         select,
       });
     }
@@ -463,9 +477,12 @@ export const fetchGamesSearchDB = async ({
         skip: (page - 1) * itemsPerPage,
         take: itemsPerPage,
         where,
-        orderBy: {
-          name: "desc",
-        },
+        orderBy: [
+          {
+            name: "desc",
+          },
+          { id: "desc" },
+        ],
         select,
       });
     }
@@ -475,6 +492,7 @@ export const fetchGamesSearchDB = async ({
     console.error("Search error: ", error);
   }
 };
+export type GamesSearch = Prisma.PromiseReturnType<typeof fetchGamesSearchDB>;
 
 export const fetchGameReleaseDatesByMonth = async ({
   page = 1,
@@ -483,6 +501,7 @@ export const fetchGameReleaseDatesByMonth = async ({
   categories = "main,dlc,expansion",
   platforms,
   filterUnknown = "true",
+  itemsPerPage = 40,
 }: {
   page?: number;
   year: string;
@@ -490,8 +509,8 @@ export const fetchGameReleaseDatesByMonth = async ({
   categories?: string;
   platforms?: string;
   filterUnknown?: string;
+  itemsPerPage?: number;
 }) => {
-  // Convert 'categories' search param
   // TODO: Add the rest of the categories
   const categoriesEnum: { [key: string]: number } = {
     main: 0,
@@ -510,15 +529,12 @@ export const fetchGameReleaseDatesByMonth = async ({
   };
   const categoriesQuery = categories.split(",").map((x) => categoriesEnum[x]);
 
-  // Handle 'platforms' search param
   const platformId = platforms ? Number(platforms) : undefined;
-
-  // Handle 'filterUnknown' filter
   const follows = filterUnknown === "true" ? 0 : -1;
 
   const releaseDates = await prisma.gReleaseDate.findMany({
-    take: 40,
-    skip: 40 * (page - 1),
+    take: itemsPerPage,
+    skip: itemsPerPage * (page - 1),
     where: {
       y: Number(year),
       m: Number(month),
@@ -558,6 +574,9 @@ export const fetchGameReleaseDatesByMonth = async ({
 
   return releaseDates;
 };
+export type GameReleaseDatesByMonth = Prisma.PromiseReturnType<
+  typeof fetchGameReleaseDatesByMonth
+>;
 
 export const fetchRelatedGameSeries = async (slug: string) => {
   const game = await prisma.game.findUnique({

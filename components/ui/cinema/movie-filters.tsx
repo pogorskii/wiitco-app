@@ -283,7 +283,7 @@ export function MovieGenreFilter() {
 
   return (
     <Select onValueChange={handleSelect} defaultValue={filter}>
-      <SelectTrigger className="rounded-full">
+      <SelectTrigger className="w-full min-w-[100px] max-w-[200px] px-4 justify-between rounded-full gap-2">
         <SelectValue placeholder="Select Genre" />
       </SelectTrigger>
       <SelectContent className="rounded-lg">

@@ -1,13 +1,18 @@
 "use server";
 
 import { Suspense } from "react";
+import { v4 as uuid } from "uuid";
 import { fetchMovieReleaseDatesByMonth } from "@/lib/actions";
 import { InfiniteMoviesCalendar } from "@/components/ui/cinema/infinite-movies-calendar";
-import { CalendarH1 } from "@/components/ui/calendar-h1";
+import { GlobalH1 } from "@/components/ui/global-h1";
 import { Breadcrumbs } from "@/components/ui/breadcrumbs";
-import { CalendarNav } from "@/components/ui/cinema/calendar-nav";
+import { CalendarNav } from "@/components/ui/calendar-nav";
 import { CalendarBodySkeleton } from "@/components/ui/skeletons";
 import { getMonthYearName } from "@/lib/utils";
+import {
+  MovieLengthFilter,
+  MovieReleaseTypeFilter,
+} from "@/components/ui/cinema/movie-filters";
 import type { Metadata } from "next";
 
 export async function generateMetadata({
@@ -27,14 +32,12 @@ export default async function Page({
   searchParams,
 }: {
   params: { year: string; month: string };
-  searchParams?: {
+  searchParams: {
     types?: string;
-    platforms?: string;
     lengthfilter?: string;
   };
 }) {
-  const types = searchParams?.types;
-  const lengthFilter = searchParams?.lengthfilter;
+  const { types, lengthfilter: lengthFilter } = searchParams;
   const year = params.year;
   const month = params.month;
   const displayDate = getMonthYearName(month, year);
@@ -52,8 +55,11 @@ export default async function Page({
           },
         ]}
       />
-      <CalendarH1 text={`${displayDate} Movies`} />
-      <CalendarNav year={year} month={month} />
+      <GlobalH1>{displayDate} Movies</GlobalH1>
+      <CalendarNav year={year} month={month}>
+        <MovieReleaseTypeFilter />
+        <MovieLengthFilter />
+      </CalendarNav>
       <Suspense fallback={<CalendarBodySkeleton />}>
         <MoviesCalendarBody
           year={year}
@@ -86,6 +92,7 @@ async function MoviesCalendarBody({
 
   return (
     <InfiniteMoviesCalendar
+      key={uuid()}
       month={month}
       year={year}
       initialMovies={movies}

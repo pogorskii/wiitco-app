@@ -6,7 +6,7 @@ import { fetchMovieReleaseDatesByMonth } from "@/lib/actions";
 import { groupMovieReleasesAndSortByDay } from "@/lib/utils";
 import { Spinner } from "@/components/ui/spinner";
 import { MovieReleaseDatesByMonth } from "@/lib/actions";
-import { CalendarEmptyMonth } from "../calendar-empty-month";
+import { NoResultsFound } from "../no-results-found";
 import { MovieCardCalendar } from "./movie-cards";
 import { CalendarDay } from "../calendar-day";
 
@@ -54,7 +54,7 @@ export function InfiniteMoviesCalendar({
       loadMoreMovies();
     }
   }, [inView, loadMoreMovies]);
-  if (!movies.length) return <CalendarEmptyMonth />;
+  if (!movies.length) return <NoResultsFound type="calendar" />;
 
   const groupedAndSortedByDay = Array.from(
     groupMovieReleasesAndSortByDay(movies)

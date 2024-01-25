@@ -14,9 +14,9 @@ import {
 import { Badge } from "@/components/ui/badge";
 
 export function TelevisionSeasonCardCalendar({
-  televisionSeason,
+  season,
 }: {
-  televisionSeason: TelevisionSeasonFormatted;
+  season: TelevisionSeasonFormatted;
 }) {
   const {
     showId,
@@ -27,7 +27,7 @@ export function TelevisionSeasonCardCalendar({
     genres,
     creatorNames,
     type,
-  } = televisionSeason;
+  } = season;
 
   const coverUrl = seasonPoster
     ? `https://image.tmdb.org/t/p/w600_and_h900_bestv2${seasonPoster}`

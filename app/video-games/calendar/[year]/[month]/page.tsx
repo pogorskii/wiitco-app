@@ -4,11 +4,17 @@ import { v4 as uuid } from "uuid";
 import { fetchGameReleaseDatesByMonth } from "@/app/video-games/lib/actions";
 import { InfiniteGamesCalendar } from "@/components/ui/video-games/infinite-games-calendar";
 import { Breadcrumbs } from "@/components/ui/breadcrumbs";
-import { CalendarNav } from "@/components/ui/video-games/calendar-nav";
+import { CalendarNav } from "@/components/ui/calendar-nav";
 import { Suspense } from "react";
 import { CalendarBodySkeleton } from "@/components/ui/skeletons";
 import { getMonthYearName } from "@/lib/utils";
 import type { Metadata } from "next";
+import { GlobalH1 } from "@/components/ui/global-h1";
+import {
+  GameFilterUnknown,
+  GameCategoryFilter,
+  GamePlatformFilter,
+} from "@/components/ui/video-games/game-filters";
 
 export async function generateMetadata({
   params,
@@ -18,7 +24,7 @@ export async function generateMetadata({
   const displayDate = getMonthYearName(params.month, params.year);
 
   return {
-    title: `Games Releasing in ${displayDate}`,
+    title: `Every Video Game Releasing in ${displayDate}`,
   };
 }
 
@@ -50,10 +56,12 @@ export default async function Page({
           },
         ]}
       />
-      <h1 className="scroll-m-20 border-b pb-2 text-3xl font-semibold tracking-tight first:mt-0">
-        All Games Releasing in {displayDate}
-      </h1>
-      <CalendarNav year={year} month={month} />
+      <GlobalH1>{displayDate} Video Games</GlobalH1>
+      <CalendarNav year={year} month={month}>
+        <GamePlatformFilter />
+        <GameCategoryFilter />
+        <GameFilterUnknown />
+      </CalendarNav>
       <Suspense fallback={<CalendarBodySkeleton />}>
         <GamesCalendarBody
           year={year}
@@ -88,19 +96,15 @@ async function GamesCalendarBody({
     filterUnknown,
   });
 
-  if (!games.length)
-    return <h2>No games currently scheduled for this month.</h2>;
-
   return (
-    <div key={uuid()} className="flex flex-col gap-6">
-      <InfiniteGamesCalendar
-        month={month}
-        year={year}
-        initialGames={games}
-        categories={categories}
-        platforms={platforms}
-        filterUnknown={filterUnknown}
-      />
-    </div>
+    <InfiniteGamesCalendar
+      key={uuid()}
+      month={month}
+      year={year}
+      initialGames={games}
+      categories={categories}
+      platforms={platforms}
+      filterUnknown={filterUnknown}
+    />
   );
 }

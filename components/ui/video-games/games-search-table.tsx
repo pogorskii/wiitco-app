@@ -3,7 +3,6 @@
 import { v4 as uuid } from "uuid";
 import { fetchGamesSearchDB } from "@/app/video-games/lib/actions";
 import InfiniteGamesSearch from "@/components/ui/video-games/infinite-games-search";
-import { GameSearch } from "@/app/video-games/lib/definitions";
 
 export default async function GamesSearchPageTable({
   search,
@@ -24,14 +23,13 @@ export default async function GamesSearchPageTable({
   });
 
   return (
-    <div key={uuid()} className="grid grid-cols-1 md:grid-cols-2 sm:gap-6">
-      <InfiniteGamesSearch
-        initialGames={games as GameSearch}
-        search={search}
-        categories={categories}
-        platforms={platforms}
-        sort={sort}
-      />
-    </div>
+    <InfiniteGamesSearch
+      key={uuid()}
+      initialGames={games}
+      search={search}
+      categories={categories}
+      platforms={platforms}
+      sort={sort}
+    />
   );
 }

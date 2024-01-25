@@ -72,7 +72,7 @@ const gamesLinks: { title: string; href: string; description: string }[] = [
   },
   {
     title: "Games DB",
-    href: "/video-games/games",
+    href: "/video-games/search",
     description: "Search and filter all Games.",
   },
 ];

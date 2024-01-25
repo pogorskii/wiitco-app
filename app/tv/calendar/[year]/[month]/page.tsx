@@ -2,14 +2,15 @@
 
 import { v4 as uuid } from "uuid";
 import { fetchTelevisionSeasonsByMonth } from "@/lib/actions";
-import { TelevisionSeasons } from "@/lib/definitions";
-import { InfiniteTelevisionSeasonsCalendar } from "@/components/ui/tv/infinte-tv-shows-calendar";
+import { InfiniteTelevisionSeasonsCalendar } from "@/components/ui/tv/infinte-television-shows-calendar";
 import { Breadcrumbs } from "@/components/ui/breadcrumbs";
-import { TelevisionCalendarNav } from "@/components/ui/tv/television-calendar-nav";
+import { CalendarNav } from "@/components/ui/calendar-nav";
 import { Suspense } from "react";
 import { CalendarBodySkeleton } from "@/components/ui/skeletons";
 import { getMonthYearName } from "@/lib/utils";
+import { GlobalH1 } from "@/components/ui/global-h1";
 import type { Metadata } from "next";
+import { TelevisionShowTypeFilter } from "@/components/ui/tv/television-show-filters";
 
 export async function generateMetadata({
   params,
@@ -19,7 +20,7 @@ export async function generateMetadata({
   const displayDate = getMonthYearName(params.month, params.year);
 
   return {
-    title: `TV Shows Airing in ${displayDate}`,
+    title: `Every TV Show Airing in ${displayDate}`,
   };
 }
 
@@ -32,7 +33,7 @@ export default async function Page({
     types?: string;
   };
 }) {
-  const types = searchParams?.types;
+  const types = searchParams.types;
   const { year, month } = params;
   const displayDate = getMonthYearName(month, year);
 
@@ -49,18 +50,22 @@ export default async function Page({
           },
         ]}
       />
-      <h1 className="scroll-m-20 border-b pb-2 text-3xl font-semibold tracking-tight first:mt-0">
-        All TV Shows Airing in {displayDate}
-      </h1>
-      <TelevisionCalendarNav year={year} month={month} />
+      <GlobalH1>{displayDate} TV Shows</GlobalH1>
+      <CalendarNav year={year} month={month}>
+        <TelevisionShowTypeFilter />
+      </CalendarNav>
       <Suspense fallback={<CalendarBodySkeleton />}>
-        <TelevisionCalendarBody year={year} month={month} types={types} />
+        <TelevisionSeasonsCalendarBody
+          year={year}
+          month={month}
+          types={types}
+        />
       </Suspense>
     </>
   );
 }
 
-async function TelevisionCalendarBody({
+async function TelevisionSeasonsCalendarBody({
   year,
   month,
   types,
@@ -75,17 +80,13 @@ async function TelevisionCalendarBody({
     types,
   });
 
-  if (!televisionSeasons.length)
-    return <h2>No TV Shows currently scheduled for this month.</h2>;
-
   return (
-    <div key={uuid()} className="flex flex-col gap-6">
-      <InfiniteTelevisionSeasonsCalendar
-        month={month}
-        year={year}
-        initialSeasons={televisionSeasons as TelevisionSeasons}
-        types={types}
-      />
-    </div>
+    <InfiniteTelevisionSeasonsCalendar
+      key={uuid()}
+      month={month}
+      year={year}
+      initialSeasons={televisionSeasons}
+      types={types}
+    />
   );
 }

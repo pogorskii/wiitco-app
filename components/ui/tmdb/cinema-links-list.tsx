@@ -21,6 +21,8 @@ export function CinemaLinksList({
     twitter_id: string | null;
   };
 }) {
+  if (!Object.values(links).some((e) => e !== null)) return null;
+
   const categoryEnum: { [key: string]: [string, IconType, string] } = {
     imdb_id: ["IMDb", FaImdb, "https://www.imdb.com/title/"],
     tvdb_id: ["TheTVDB", FaExternalLinkAlt, "https://thetvdb.com/series/"],
@@ -52,7 +54,7 @@ export function CinemaLinksList({
   });
 
   return (
-    <ul className="grid grid-cols-2 md:grid-cols-3 gap-2">
+    <ul className="mb-8 grid grid-cols-2 md:grid-cols-3 gap-2">
       {homepage && (
         <li>
           <a

@@ -1,17 +1,15 @@
 "use server";
 
 import { Suspense } from "react";
-import { formatDistanceToNow, format } from "date-fns";
+import Link from "next/link";
 import Image from "next/image";
-import { TagsRow } from "@/components/ui/tags-row";
+import { formatDistanceToNow, format } from "date-fns";
 import { TruncText } from "@/components/ui/trunc-text";
 import { RatingCircle } from "@/components/ui/rating-circle";
 import { YouTubePlayer } from "@/components/ui/youtube-player";
 import { Breadcrumbs } from "@/components/ui/breadcrumbs";
 import { Badge } from "@/components/ui/badge";
-import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { FaPlus } from "react-icons/fa";
 import { Separator } from "@/components/ui/separator";
 import type { Metadata } from "next";
 import { fetchMovieDetails, fetchMovieCollection } from "@/lib/actions";
@@ -22,6 +20,7 @@ import { CinemaLinksList } from "@/components/ui/tmdb/cinema-links-list";
 import { convertMinutesToHoursAndMinutes } from "@/lib/utils";
 import { AddToAccountButton } from "@/components/ui/add-to-account-button";
 import { DetailsPageH1 } from "@/components/ui/details-page-h1";
+import { LinksListRow } from "@/components/ui/links-list-row";
 
 export async function generateMetadata({
   params,
@@ -138,7 +137,8 @@ export default async function Page({ params }: { params: { slug: string } }) {
             </div>
           </div>
 
-          <AddToAccountButton type="movie" />
+          <AddToAccountButton type="movie" className="md:hidden" />
+
           <Separator className="mt-1 mb-4" />
 
           {/* Info First Column */}
@@ -155,71 +155,46 @@ export default async function Page({ params }: { params: { slug: string } }) {
               {tagline && <div className="mb-2">{tagline}</div>}
               {/* Main Info List */}
               <ul className="mb-4 [&>*+*]:mt-2">
-                {credits &&
-                  credits.crew.filter((e) => e?.job === "Director").length >
-                    0 && (
-                    <li>
-                      <span className="font-semibold">
-                        {credits.crew.filter((e) => e?.job === "Director")
-                          .length === 1
-                          ? `Director:`
-                          : `Directors:`}
-                      </span>
-                      <TagsRow
-                        type="cinema"
-                        category="people"
-                        tags={credits.crew
-                          .filter((e) => e?.job === "Director")
-                          .map((g) => {
-                            return {
-                              name: g?.name,
-                              slug: g?.id.toString(),
-                            };
-                          })}
-                      />
-                    </li>
-                  )}
-                {credits &&
-                  credits.crew.filter((e) => e?.job === "Screenplay").length >
-                    0 && (
-                    <li>
-                      <span className="font-semibold">
-                        {credits.crew.filter((e) => e?.job === "Screenplay")
-                          .length === 1
-                          ? `Writer:`
-                          : `Writers:`}
-                      </span>
-                      <TagsRow
-                        type="cinema"
-                        category="people"
-                        tags={credits.crew
-                          .filter((e) => e?.job === "Screenplay")
-                          .map((g) => {
-                            return {
-                              name: g?.name,
-                              slug: g?.id.toString(),
-                            };
-                          })}
-                      />
-                    </li>
-                  )}
-                {genres && genres.length > 0 && (
-                  <li>
-                    <span className="font-semibold">
-                      {genres.length === 1 ? `Genre:` : `Genres:`}
-                    </span>
-                    <TagsRow
-                      type="cinema"
-                      category="genres"
-                      tags={genres.map((g) => {
-                        return {
-                          name: g.name,
-                          slug: g.id.toString(),
-                        };
-                      })}
-                    />
-                  </li>
-                )}
+                <LinksListRow
+                  links={credits.crew
+                    ?.filter((e) => e?.job === "Director")
+                    .map((g) => {
+                      return {
+                        name: g.name,
+                        slug: g.id.toString(),
+                      };
+                    })}
+                  singularName="Director"
+                  pluralName="Directors"
+                  linkType="people"
+                  linkCategory="person"
+                />
+                <LinksListRow
+                  links={credits.crew
+                    ?.filter((e) => e?.job === "Screenplay")
+                    .map((g) => {
+                      return {
+                        name: g.name,
+                        slug: g.id.toString(),
+                      };
+                    })}
+                  singularName="Writer"
+                  pluralName="Writers"
+                  linkType="people"
+                  linkCategory="person"
+                />
+                <LinksListRow
+                  links={genres?.map((g) => {
+                    return {
+                      name: g.name,
+                      slug: g.id.toString(),
+                    };
+                  })}
+                  singularName="Genre"
+                  pluralName="Genres"
+                  linkType="cinema"
+                  linkCategory="genres"
+                />
                 {runtime > 0 && (
                   <li>
                     <span className="font-semibold">Runtime: </span>
@@ -246,67 +221,42 @@ export default async function Page({ params }: { params: { slug: string } }) {
                     })}
                   </li>
                 )}
-                {production_countries.length > 0 && (
-                  <li>
-                    <span className="font-semibold">
-                      {production_countries.length === 1
-                        ? `Country:`
-                        : `Countries:`}
-                    </span>
-                    <TagsRow
-                      type="cinema"
-                      category="country"
-                      tags={production_countries.map((e) => {
-                        return {
-                          name: e?.name,
-                          slug: e?.iso_3166_1,
-                        };
-                      })}
-                    />
-                  </li>
-                )}
-                {production_companies.length > 0 && (
-                  <li>
-                    <span className="font-semibold">
-                      {production_companies.length === 1
-                        ? `Company:`
-                        : `Companies:`}
-                    </span>
-                    <TagsRow
-                      type="cinema"
-                      category="company"
-                      tags={production_companies.map((e) => {
-                        return {
-                          name: e?.name,
-                          slug: e?.id,
-                        };
-                      })}
-                    />
-                  </li>
-                )}
+                <LinksListRow
+                  links={production_countries?.map((e) => {
+                    return {
+                      name: e.name,
+                      slug: e.iso_3166_1,
+                    };
+                  })}
+                  singularName="Country"
+                  pluralName="Countries"
+                  linkType="cinema"
+                  linkCategory="country"
+                />
+                <LinksListRow
+                  links={production_companies?.map((e) => {
+                    return {
+                      name: e.name,
+                      slug: e.id.toString(),
+                    };
+                  })}
+                  singularName="Country"
+                  pluralName="Countries"
+                  linkType="cinema"
+                  linkCategory="company"
+                />
               </ul>
 
-              {/* Truncated Summary */}
-              {overview && <TruncText text={overview} />}
+              <TruncText text={overview} />
 
-              {/* Links table */}
-              {Object.values(external_ids).some((e) => e !== null) && (
-                <div className="mb-8">
-                  <CinemaLinksList homepage={homepage} links={external_ids} />
-                </div>
-              )}
+              <CinemaLinksList homepage={homepage} links={external_ids} />
 
-              {/* JustWatch Info */}
               <Suspense fallback={<p>Loading...</p>}>
                 <JustWatchSection title={title} id={id} type="movie" />
               </Suspense>
 
-              {/* Cast Carousel */}
-              {credits.cast.length > 0 && (
-                <CastCarousel actors={credits.cast} />
-              )}
+              <CastCarousel actors={credits.cast} />
 
-              {/* YouTube Video Embed */}
               {videos.results.length > 0 && (
                 <section className="mb-8" id="trailer">
                   <h2 className="mb-2 scroll-m-20 text-lg font-semibold">
@@ -329,7 +279,6 @@ export default async function Page({ params }: { params: { slug: string } }) {
             {/* Info Second Column */}
             {/* Shows Here Only above LG Breakpoint */}
             <div className="hidden col-span-1 lg:flex flex-col items-center">
-              {/* Reviews */}
               <RatingCircle
                 rating={vote_average * 10}
                 reviewCount={vote_count}

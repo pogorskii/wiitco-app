@@ -6,6 +6,7 @@ import { useInView } from "react-intersection-observer";
 import { fetchTelevisionShowsSearch } from "@/lib/actions";
 import { TelevisionShowSearchCard } from "./television-cards";
 import { Spinner } from "@/components/ui/spinner";
+import { NoResultsFound } from "../no-results-found";
 
 export default function InfiniteTelevisionShowsSearch({
   search,
@@ -16,13 +17,15 @@ export default function InfiniteTelevisionShowsSearch({
   genre?: string;
   initialTelevisionShows?: TelevisionShowsSearch;
 }) {
+  const itemsPerPage = 20;
   const [televisionShows, setTelevisionShows] = useState(
     initialTelevisionShows
   );
   const page = useRef(1);
-  const [loadingActive, setLoadingActive] = useState(true);
+  const [loadingActive, setLoadingActive] = useState(
+    initialTelevisionShows && initialTelevisionShows.length >= itemsPerPage
+  );
   const [ref, inView] = useInView({ rootMargin: "1000px" });
-  const itemsPerPage = 20;
 
   const loadMoreTelevisionShows = useCallback(async () => {
     const next = page.current + 1;
@@ -35,7 +38,7 @@ export default function InfiniteTelevisionShowsSearch({
       page.current = next;
       setTelevisionShows((prev) => [
         ...(prev?.length ? prev : []),
-        ...(televisionShows as TelevisionShowsSearch),
+        ...televisionShows,
       ]);
       if (televisionShows.length < itemsPerPage) setLoadingActive(false);
     } else {
@@ -48,15 +51,10 @@ export default function InfiniteTelevisionShowsSearch({
       loadMoreTelevisionShows();
     }
   }, [inView, loadMoreTelevisionShows]);
+  if (!televisionShows?.length) return <NoResultsFound type="search" />;
 
   return (
-    <>
-      {/* Games table */}
-      {televisionShows?.length === 0 && (
-        <p className="col-span-2 w-full text-center">
-          No matching TV Shows found. Please try changing the search parameters.
-        </p>
-      )}
+    <div className="grid grid-cols-1 md:grid-cols-2 sm:gap-6">
       {televisionShows?.map((televisionShow) => (
         <TelevisionShowSearchCard
           key={televisionShow.id}
@@ -64,7 +62,7 @@ export default function InfiniteTelevisionShowsSearch({
         />
       ))}
       {/* Loading spinner */}
-      {televisionShows && televisionShows?.length > 0 && loadingActive && (
+      {loadingActive && (
         <div
           ref={ref}
           className="col-span-2 mt-16 mb-16 flex items-center justify-center"
@@ -72,6 +70,6 @@ export default function InfiniteTelevisionShowsSearch({
           <Spinner />
         </div>
       )}
-    </>
+    </div>
   );
 }

@@ -125,12 +125,28 @@ const navLinks: { title: string; href: string }[] = [
     href: "/movies",
   },
   {
+    title: "TV Shows Calendar",
+    href: "/tv",
+  },
+  {
+    title: "All TV Shows",
+    href: "/tv/search",
+  },
+  {
+    title: "Anime Calendar",
+    href: "/anime",
+  },
+  {
+    title: "All Anime Shows",
+    href: "/anime/search",
+  },
+  {
     title: "Games Calendar",
     href: "/video-games/calendar",
   },
   {
     title: "All Games",
-    href: "/video-games/games",
+    href: "/video-games/search",
   },
 ];
 

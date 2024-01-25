@@ -1,8 +1,10 @@
 import { Button } from "@/components/ui/button";
 import { FaPlus } from "react-icons/fa";
 export function AddToAccountButton({
+  className,
   type,
 }: {
+  className?: string;
   type: "movie" | "tv" | "anime" | "person" | "game";
 }) {
   const buttonTextEnum: { [key: string]: string } = {
@@ -14,7 +16,9 @@ export function AddToAccountButton({
   };
 
   return (
-    <Button className="mt-4 md-2 md:mb-6 w-full">
+    <Button
+      className={`mt-4 md-2 md:mb-6 w-full ${className ? className : ""}`}
+    >
       <FaPlus className="me-1" /> {buttonTextEnum[type]}
     </Button>
   );

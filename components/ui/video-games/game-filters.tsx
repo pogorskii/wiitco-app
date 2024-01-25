@@ -16,28 +16,11 @@ import {
 
 type Checked = DropdownMenuCheckboxItemProps["checked"];
 
-export function GamesSearchFilters() {
-  return (
-    <div className="flex">
-      <div className="me-2">
-        <PlatformFilter />
-      </div>
-      <GameCategoryFilter />
-      <div className="ms-auto flex items-center text-sm">
-        <p className="shrink-0 me-2">Sort games by:</p>
-        <SortingSelector />
-      </div>
-    </div>
-  );
-}
-
 export function GameCategoryFilter() {
-  // Hooks
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const { replace } = useRouter();
 
-  // Initial states based on URL params
   const categories = searchParams.get("categories") || "";
   const [checkboxesArr, setCheckboxesArr] = useState<Checked[]>([
     categories.includes("main"),
@@ -112,7 +95,7 @@ export function GameCategoryFilter() {
       <DropdownMenuTrigger asChild>
         <Button
           variant="outline"
-          className="rounded-full px-3 sm:px-4 justify-start sm:justify-center w-full sm:w-auto bg-white font-normal dark:border-slate-800 dark:bg-slate-950 dark:ring-offset-slate-950 dark:placeholder:text-slate-400 dark:focus:ring-slate-300"
+          className="w-full min-w-[100px] max-w-[200px] px-4 justify-between rounded-full gap-2 bg-white font-normal dark:border-slate-800 dark:bg-slate-950 dark:ring-offset-slate-950 dark:placeholder:text-slate-400 dark:focus:ring-slate-300"
         >
           Categories {categoriesQuantity > 0 && `(${categoriesQuantity})`}
         </Button>
@@ -169,13 +152,11 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-export function PlatformFilter() {
-  // Hooks
+export function GamePlatformFilter() {
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const { replace } = useRouter();
 
-  // Initial states based on URL params
   const platforms = searchParams.get("platforms") || "all";
   const [value, setValue] = useState(platforms);
 
@@ -194,7 +175,7 @@ export function PlatformFilter() {
 
   return (
     <Select onValueChange={handleSelect} defaultValue={value}>
-      <SelectTrigger className="w-full sm:w-[280px] rounded-full">
+      <SelectTrigger className="w-full min-w-[100px] max-w-[200px] px-4 justify-between rounded-full gap-2">
         <SelectValue placeholder="Select Platform" />
       </SelectTrigger>
       <SelectContent className="rounded-lg">
@@ -261,13 +242,11 @@ export function PlatformFilter() {
 }
 
 // Sorting selector
-export function SortingSelector() {
-  // Hooks
+export function GameSortingSelector() {
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const { replace } = useRouter();
 
-  // Initial states based on URL params
   const filter = searchParams.get("sort") || "relevance";
   const rules = [
     {
@@ -301,7 +280,7 @@ export function SortingSelector() {
 
   return (
     <Select onValueChange={handleSelect} defaultValue={filter}>
-      <SelectTrigger className="rounded-full">
+      <SelectTrigger className="w-full min-w-[100px] max-w-[200px] px-4 justify-between rounded-full gap-2">
         <SelectValue placeholder="Sort by" />
       </SelectTrigger>
       <SelectContent className="rounded-lg">
@@ -319,22 +298,20 @@ export function SortingSelector() {
 }
 
 // Filter Unknown Games (for calendar)
-export function FilterUnknownGames() {
-  // Hooks
+export function GameFilterUnknown() {
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const { replace } = useRouter();
 
-  // Initial states based on URL params
   const filter = searchParams.get("filterUnknown") || "true";
   const rules = [
     {
       value: "false",
-      label: "Show All Games",
+      label: "All Games",
     },
     {
       value: "true",
-      label: "Hide Niche Games",
+      label: "Popular Games",
     },
   ];
 
@@ -352,7 +329,7 @@ export function FilterUnknownGames() {
 
   return (
     <Select onValueChange={handleSelect} defaultValue={filter}>
-      <SelectTrigger className="rounded-full">
+      <SelectTrigger className="w-full min-w-[100px] max-w-[200px] px-4 justify-between rounded-full gap-2">
         <SelectValue placeholder="Filter Releases" />
       </SelectTrigger>
       <SelectContent className="rounded-lg">

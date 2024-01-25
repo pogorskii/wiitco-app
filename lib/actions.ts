@@ -349,11 +349,13 @@ export const fetchTelevisionSeasonsByMonth = async ({
   year,
   month,
   types = "documentary,news,miniseries,reality,scripted,talkshow,video",
+  itemsPerPage = 40,
 }: {
   page?: number;
   year: string;
   month: string;
   types?: string;
+  itemsPerPage?: number;
 }) => {
   const typesEnum: { [key: string]: string } = {
     documentary: "Documentary",
@@ -372,8 +374,8 @@ export const fetchTelevisionSeasonsByMonth = async ({
   const endDate = new Date(yearInt, monthInt, 0);
 
   const releaseDates = await prisma.tVSeason.findMany({
-    take: 40,
-    skip: 40 * (page - 1),
+    take: itemsPerPage,
+    skip: itemsPerPage * (page - 1),
     where: {
       airDate: {
         gte: startDate,
@@ -381,6 +383,22 @@ export const fetchTelevisionSeasonsByMonth = async ({
       },
       show: {
         type: { in: typesQuery },
+        AND: [
+          {
+            genres: {
+              none: {
+                genreId: 16,
+              },
+            },
+          },
+          {
+            originCountries: {
+              none: {
+                countryIso: "JP",
+              },
+            },
+          },
+        ],
       },
     },
     orderBy: [{ airDate: "asc" }, { id: "asc" }],
@@ -435,6 +453,9 @@ export const fetchTelevisionSeasonsByMonth = async ({
 
   return releaseDates;
 };
+export type TeleveisionSeasonsByMonth = Prisma.PromiseReturnType<
+  typeof fetchTelevisionSeasonsByMonth
+>;
 
 export const fetchAnimeSeasonsByMonth = async ({
   page = 1,
@@ -525,3 +546,6 @@ export const fetchAnimeSeasonsByMonth = async ({
 
   return seasons;
 };
+export type AnimeSeasonsByMonth = Prisma.PromiseReturnType<
+  typeof fetchAnimeSeasonsByMonth
+>;

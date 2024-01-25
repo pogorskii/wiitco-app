@@ -6,6 +6,7 @@ import { useInView } from "react-intersection-observer";
 import { fetchMoviesSearch } from "@/lib/actions";
 import { MovieSearchCard } from "./movie-cards";
 import { Spinner } from "@/components/ui/spinner";
+import { NoResultsFound } from "../no-results-found";
 
 export default function InfiniteMoviesSearch({
   search,
@@ -16,11 +17,13 @@ export default function InfiniteMoviesSearch({
   genre?: string;
   initialMovies?: MoviesSearch;
 }) {
+  const itemsPerPage = 20;
   const [movies, setMovies] = useState(initialMovies);
   const page = useRef(1);
-  const [loadingActive, setLoadingActive] = useState(true);
+  const [loadingActive, setLoadingActive] = useState(
+    initialMovies && initialMovies.length >= itemsPerPage
+  );
   const [ref, inView] = useInView({ rootMargin: "1000px" });
-  const itemsPerPage = 20;
 
   const loadMoreMovies = useCallback(async () => {
     const next = page.current + 1;
@@ -31,10 +34,7 @@ export default function InfiniteMoviesSearch({
     });
     if (movies?.length) {
       page.current = next;
-      setMovies((prev) => [
-        ...(prev?.length ? prev : []),
-        ...(movies as MoviesSearch),
-      ]);
+      setMovies((prev) => [...(prev?.length ? prev : []), ...movies]);
       if (movies.length < itemsPerPage) setLoadingActive(false);
     } else {
       setLoadingActive(false);
@@ -46,20 +46,15 @@ export default function InfiniteMoviesSearch({
       loadMoreMovies();
     }
   }, [inView, loadMoreMovies]);
+  if (!movies?.length) return <NoResultsFound type="search" />;
 
   return (
-    <>
-      {/* Games table */}
-      {movies?.length === 0 && (
-        <p className="col-span-2 w-full text-center">
-          No matching movies found. Please try changing the search parameters.
-        </p>
-      )}
+    <div className="grid grid-cols-1 md:grid-cols-2 sm:gap-6">
       {movies?.map((movie) => (
         <MovieSearchCard key={movie.id} movie={movie} />
       ))}
       {/* Loading spinner */}
-      {movies && movies?.length > 0 && loadingActive && (
+      {loadingActive && (
         <div
           ref={ref}
           className="col-span-2 mt-16 mb-16 flex items-center justify-center"
@@ -67,6 +62,6 @@ export default function InfiniteMoviesSearch({
           <Spinner />
         </div>
       )}
-    </>
+    </div>
   );
 }

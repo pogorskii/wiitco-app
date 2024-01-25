@@ -1,7 +1,8 @@
-import { GameRelease, GameReleasesByMonth } from "./definitions";
+import { GameRelease } from "./definitions";
+import { GameReleaseDatesByMonth } from "./actions";
 
 export const groupGameReleasesAndSortByDay = (
-  releasesByMonth: GameReleasesByMonth
+  releasesByMonth: GameReleaseDatesByMonth
 ) => {
   const groupedByDay = new Map<number, GameRelease[]>();
   for (const gameRelease of releasesByMonth) {

@@ -83,7 +83,7 @@ export function TelevisionShowTypeFilter() {
       <DropdownMenuTrigger asChild>
         <Button
           variant="outline"
-          className="rounded-full px-3 sm:px-4 justify-start sm:justify-center w-full sm:w-auto bg-white font-normal dark:border-slate-800 dark:bg-slate-950 dark:ring-offset-slate-950 dark:placeholder:text-slate-400 dark:focus:ring-slate-300"
+          className="w-full min-w-[100px] max-w-[200px] px-4 justify-start rounded-full gap-2 bg-white font-normal dark:border-slate-800 dark:bg-slate-950 dark:ring-offset-slate-950 dark:placeholder:text-slate-400 dark:focus:ring-slate-300"
         >
           Show Types {categoriesQuantity > 0 && `(${categoriesQuantity})`}
         </Button>
@@ -130,58 +130,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-export function MovieLengthFilter() {
-  const searchParams = useSearchParams();
-  const pathname = usePathname();
-  const { replace } = useRouter();
-
-  const filter = searchParams.get("lengthfilter") || "feature";
-  const rules = [
-    {
-      value: "short",
-      label: "Only Short Films",
-    },
-    {
-      value: "feature",
-      label: "Only Feature Films",
-    },
-    {
-      value: "all",
-      label: "All Movies",
-    },
-  ];
-
-  function handleSelect(currentValue: string) {
-    const params = new URLSearchParams(searchParams);
-
-    if (currentValue === "feature") {
-      params.delete("lengthfilter");
-    } else {
-      params.set("lengthfilter", currentValue);
-    }
-    replace(`${pathname}?${params.toString()}`);
-    return;
-  }
-
-  return (
-    <Select onValueChange={handleSelect} defaultValue={filter}>
-      <SelectTrigger className="rounded-full">
-        <SelectValue placeholder="Filter Releases" />
-      </SelectTrigger>
-      <SelectContent className="rounded-lg">
-        <SelectGroup>
-          <SelectLabel>Filter by Length</SelectLabel>
-          {rules.map((rule) => (
-            <SelectItem key={rule.value} value={rule.value}>
-              {rule.label}
-            </SelectItem>
-          ))}
-        </SelectGroup>
-      </SelectContent>
-    </Select>
-  );
-}
-
 export function TelevisionShowGenreFilter() {
   const searchParams = useSearchParams();
   const pathname = usePathname();
@@ -225,7 +173,7 @@ export function TelevisionShowGenreFilter() {
 
   return (
     <Select onValueChange={handleSelect} defaultValue={filter}>
-      <SelectTrigger className="rounded-full">
+      <SelectTrigger className="w-full min-w-[100px] max-w-[200px] px-4 justify-between rounded-full gap-2">
         <SelectValue placeholder="Select Genre" />
       </SelectTrigger>
       <SelectContent className="rounded-lg">

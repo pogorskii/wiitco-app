@@ -2,11 +2,15 @@
 
 import { useEffect, useState, useCallback, useRef } from "react";
 import { useInView } from "react-intersection-observer";
-import { fetchGameReleaseDatesByMonth } from "@/app/video-games/lib/actions";
+import {
+  fetchGameReleaseDatesByMonth,
+  GameReleaseDatesByMonth,
+} from "@/app/video-games/lib/actions";
 import { Spinner } from "@/components/ui/spinner";
 import { groupGameReleasesAndSortByDay } from "@/app/video-games/lib/utilis";
-import { GameReleasesByMonth } from "@/app/video-games/lib/definitions";
-import { GamesDay } from "@/components/ui/video-games/games-day";
+import { GameCardCalendar } from "./game-card";
+import { CalendarDay } from "../calendar-day";
+import { NoResultsFound } from "../no-results-found";
 
 export function InfiniteGamesCalendar({
   month,
@@ -18,16 +22,18 @@ export function InfiniteGamesCalendar({
 }: {
   month: string;
   year: string;
-  initialGames?: GameReleasesByMonth;
+  initialGames: GameReleaseDatesByMonth;
   categories?: string;
   platforms?: string;
   filterUnknown?: string;
 }) {
+  const itemsPerPage = 40;
   const [games, setGames] = useState(initialGames);
   const page = useRef(1);
-  const [loadingActive, setLoadingActive] = useState(true);
+  const [loadingActive, setLoadingActive] = useState(
+    initialGames.length >= itemsPerPage
+  );
   const [ref, inView] = useInView({ rootMargin: "1000px" });
-  const itemsPerPage = 40;
 
   const loadMoreGames = useCallback(async () => {
     const next = page.current + 1;
@@ -38,6 +44,7 @@ export function InfiniteGamesCalendar({
       categories,
       platforms,
       filterUnknown,
+      itemsPerPage,
     });
     if (games?.length) {
       page.current = next;
@@ -53,16 +60,30 @@ export function InfiniteGamesCalendar({
       loadMoreGames();
     }
   }, [inView, loadMoreGames]);
+  if (!games.length) return <NoResultsFound type="calendar" />;
 
-  if (!games) return <h2>No games currently scheduled for this month.</h2>;
+  const groupedAndSortedByDay = Array.from(
+    groupGameReleasesAndSortByDay(games)
+  );
+  const calendarDays = groupedAndSortedByDay.map(([day, games]) => {
+    const seasonCards = games.map((game, i) => (
+      <GameCardCalendar key={i} game={game} />
+    ));
+
+    return (
+      <CalendarDay
+        key={day}
+        day={day}
+        month={month}
+        year={year}
+        contentCards={seasonCards}
+      />
+    );
+  });
 
   return (
-    <>
-      {/* Games calendar */}
-      {(!games || games?.length === 0) && (
-        <p className="col-span-2 w-full text-center">No movies found.</p>
-      )}
-      <GamesCalendar month={month} year={year} games={games} />
+    <div className="py-8 flex flex-col gap-6">
+      {calendarDays}
       {/* Loading spinner */}
       {loadingActive && (
         <div
@@ -72,36 +93,6 @@ export function InfiniteGamesCalendar({
           <Spinner />
         </div>
       )}
-    </>
-  );
-}
-
-function GamesCalendar({
-  month,
-  year,
-  games,
-}: {
-  month: string;
-  year: string;
-  games: GameReleasesByMonth;
-}) {
-  const groupedAndSortedByDay = groupGameReleasesAndSortByDay(games);
-  const gamesCalendarArray = Array.from(groupedAndSortedByDay);
-
-  return (
-    <>
-      {gamesCalendarArray.map((calendarDay) => {
-        const [day, games] = calendarDay;
-        return (
-          <GamesDay
-            key={day}
-            day={day}
-            month={month}
-            year={year}
-            games={games}
-          />
-        );
-      })}
-    </>
+    </div>
   );
 }

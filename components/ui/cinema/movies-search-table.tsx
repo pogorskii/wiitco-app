@@ -17,12 +17,11 @@ export default async function MoviesSearchTable({
   });
 
   return (
-    <div key={uuid()} className="grid grid-cols-1 md:grid-cols-2 sm:gap-6">
-      <InfiniteMoviesSearch
-        initialMovies={movies}
-        search={search}
-        genre={genre}
-      />
-    </div>
+    <InfiniteMoviesSearch
+      key={uuid()}
+      initialMovies={movies}
+      search={search}
+      genre={genre}
+    />
   );
 }
