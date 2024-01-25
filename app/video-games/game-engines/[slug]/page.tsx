@@ -102,6 +102,7 @@ async function PageContent({
     platforms,
     sort,
   });
+  if (!games) return null;
 
   return (
     <InfiniteGamesSearch
