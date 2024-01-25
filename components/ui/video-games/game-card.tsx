@@ -109,7 +109,7 @@ export function GameCardCalendar({ game }: { game: GameRelease }) {
   );
 }
 
-type SingleGameSearch = GamesSearch;
+type SingleGameSearch = GamesSearch[number];
 
 export function GameSearchCard({ game }: { game: SingleGameSearch }) {
   const { name, slug, cover, category, platforms, firstReleaseDate } = game;

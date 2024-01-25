@@ -396,7 +396,59 @@ export const fetchGamesSearchDB = async ({
 
     // Handle sorting rules (relevance is default)
     let results;
-    if (sort === "relevance") {
+    if (sort === "date-newer") {
+      results = await prisma.game.findMany({
+        skip: (page - 1) * itemsPerPage,
+        take: itemsPerPage,
+        where,
+        orderBy: [
+          {
+            firstReleaseDate: { sort: "desc", nulls: "last" },
+          },
+          { id: "desc" },
+        ],
+        select,
+      });
+    } else if (sort === "date-older") {
+      results = await prisma.game.findMany({
+        skip: (page - 1) * itemsPerPage,
+        take: itemsPerPage,
+        where,
+        orderBy: [
+          {
+            firstReleaseDate: { sort: "asc", nulls: "last" },
+          },
+          { id: "desc" },
+        ],
+        select,
+      });
+    } else if (sort === "title-a-z") {
+      results = await prisma.game.findMany({
+        skip: (page - 1) * itemsPerPage,
+        take: itemsPerPage,
+        where,
+        orderBy: [
+          {
+            name: "asc",
+          },
+          { id: "desc" },
+        ],
+        select,
+      });
+    } else if (sort === "title-z-a") {
+      results = await prisma.game.findMany({
+        skip: (page - 1) * itemsPerPage,
+        take: itemsPerPage,
+        where,
+        orderBy: [
+          {
+            name: "desc",
+          },
+          { id: "desc" },
+        ],
+        select,
+      });
+    } else {
       if (searchQuery) {
         results = await prisma.game.findMany({
           skip: (page - 1) * itemsPerPage,
@@ -430,69 +482,15 @@ export const fetchGamesSearchDB = async ({
         });
       }
     }
-    if (sort === "date-newer") {
-      results = await prisma.game.findMany({
-        skip: (page - 1) * itemsPerPage,
-        take: itemsPerPage,
-        where,
-        orderBy: [
-          {
-            firstReleaseDate: { sort: "desc", nulls: "last" },
-          },
-          { id: "desc" },
-        ],
-        select,
-      });
-    }
-    if (sort === "date-older") {
-      results = await prisma.game.findMany({
-        skip: (page - 1) * itemsPerPage,
-        take: itemsPerPage,
-        where,
-        orderBy: [
-          {
-            firstReleaseDate: { sort: "asc", nulls: "last" },
-          },
-          { id: "desc" },
-        ],
-        select,
-      });
-    }
-    if (sort === "title-a-z") {
-      results = await prisma.game.findMany({
-        skip: (page - 1) * itemsPerPage,
-        take: itemsPerPage,
-        where,
-        orderBy: [
-          {
-            name: "asc",
-          },
-          { id: "desc" },
-        ],
-        select,
-      });
-    }
-    if (sort === "title-z-a") {
-      results = await prisma.game.findMany({
-        skip: (page - 1) * itemsPerPage,
-        take: itemsPerPage,
-        where,
-        orderBy: [
-          {
-            name: "desc",
-          },
-          { id: "desc" },
-        ],
-        select,
-      });
-    }
 
     return results;
   } catch (error) {
     console.error("Search error: ", error);
   }
 };
-export type GamesSearch = Prisma.PromiseReturnType<typeof fetchGamesSearchDB>;
+export type GamesSearch = NonNullable<
+  Prisma.PromiseReturnType<typeof fetchGamesSearchDB>
+>;
 
 export const fetchGameReleaseDatesByMonth = async ({
   page = 1,

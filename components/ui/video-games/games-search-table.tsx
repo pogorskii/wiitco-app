@@ -21,6 +21,7 @@ export default async function GamesSearchPageTable({
     platforms,
     sort,
   });
+  if (!games) return null;
 
   return (
     <InfiniteGamesSearch
