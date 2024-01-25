@@ -274,7 +274,7 @@ export default async function Page({ params }: { params: { slug: string } }) {
               </Suspense>
 
               {/* Cast Carousel */}
-              {credits.cast.length > 0 && (
+              {credits.cast && credits.cast.length > 0 && (
                 <CastCarousel actors={credits.cast} />
               )}
 
