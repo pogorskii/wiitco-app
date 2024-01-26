@@ -1,16 +1,9 @@
 "use server";
 
-import { Suspense } from "react";
-import { format, formatDistanceToNow, formatDistance } from "date-fns";
 import Image from "next/image";
 import { TruncText } from "@/components/ui/trunc-text";
 import { Breadcrumbs } from "@/components/ui/breadcrumbs";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { FaPlus } from "react-icons/fa";
 import { Separator } from "@/components/ui/separator";
-import type { Metadata } from "next";
-import { fetchCinemaPersonDetails } from "@/lib/actions";
 import { ActingCreditsCarousel } from "@/components/ui/tmdb/acting-credits-carousel";
 import { ProducingCreditsCarousel } from "@/components/ui/tmdb/producing-credits-carousel";
 import { CinemaStillsGallery } from "@/components/ui/tmdb/cinema-stills-gallery";
@@ -19,6 +12,8 @@ import { AddToAccountButton } from "@/components/ui/add-to-account-button";
 import { DetailsPageTypeBadge } from "@/components/ui/details-page-type-badge";
 import { DetailsPageH1 } from "@/components/ui/details-page-h1";
 import { DisplayFullDate } from "@/components/ui/display-full-date";
+import { fetchCinemaPersonDetails } from "@/lib/actions";
+import type { Metadata } from "next";
 
 export async function generateMetadata({
   params,

@@ -235,18 +235,7 @@ export default async function Page({ params }: { params: { slug: string } }) {
               <CinemaLinksList homepage={homepage} links={external_ids} />
               <JustWatchSection title={title} id={id} type="movie" />
               <CastCarousel actors={credits.cast} />
-
-              {videos.results.length > 0 && (
-                <section className="mb-8" id="trailer">
-                  <DetailsPageH2>{title}&apos;s Trailer</DetailsPageH2>
-                  <Suspense fallback={<p>loading...</p>}>
-                    <YouTubePlayer
-                      videoId={videos.results[0] && videos.results[0].key}
-                    />
-                  </Suspense>
-                </section>
-              )}
-
+              <YouTubePlayer title={title} videoId={videos?.results?.[0].key} />
               <CinemaStillsGallery title={title} id={id} type="movie" />
             </div>
 

@@ -215,6 +215,10 @@ export async function fetchChildGames({ slug }: { slug: string }) {
 
   return game;
 }
+export type ChildGames = NonNullable<
+  Prisma.PromiseReturnType<typeof fetchChildGames>
+>;
+export type ChildGamesCategory = ChildGames["dlcs"];
 
 // HowLongToBeat
 export async function fetchHLTBInfo({ search }: { search: string }) {
@@ -643,6 +647,9 @@ export const fetchGamesOfCollection = async (slug: string) => {
 
   return games;
 };
+export type GamesOfCollection = Prisma.PromiseReturnType<
+  typeof fetchGamesOfCollection
+>;
 
 export const fetchGamesOfFranchise = async (slug: string) => {
   const games = await prisma.gFranchise.findUnique({
@@ -679,6 +686,9 @@ export const fetchGamesOfFranchise = async (slug: string) => {
 
   return games;
 };
+export type GamesOfFranchise = Prisma.PromiseReturnType<
+  typeof fetchGamesOfFranchise
+>;
 
 export const fetchSimilarGames = async (slug: string) => {
   const games = await prisma.game.findUnique({
@@ -703,3 +713,4 @@ export const fetchSimilarGames = async (slug: string) => {
 
   return games;
 };
+export type SimilarGames = Prisma.PromiseReturnType<typeof fetchSimilarGames>;

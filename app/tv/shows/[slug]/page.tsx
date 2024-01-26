@@ -1,16 +1,13 @@
 "use server";
 
-import { Suspense } from "react";
 import Image from "next/image";
 import { TruncText } from "@/components/ui/trunc-text";
 import { RatingCircle } from "@/components/ui/rating-circle";
 import { YouTubePlayer } from "@/components/ui/youtube-player";
 import { Breadcrumbs } from "@/components/ui/breadcrumbs";
 import { Separator } from "@/components/ui/separator";
-import { fetchTelevisionShowDetails } from "@/lib/actions";
 import { CastCarousel } from "@/components/ui/cinema/cast-carousel";
 import { SeasonsCarousel } from "@/components/ui/tmdb/seasons-carousel";
-import { convertMinutesToHoursAndMinutes } from "@/lib/utils";
 import { JustWatchSection } from "@/components/ui/tmdb/just-watch-section";
 import { CinemaLinksList } from "@/components/ui/tmdb/cinema-links-list";
 import { CinemaStillsGallery } from "@/components/ui/tmdb/cinema-stills-gallery";
@@ -19,7 +16,8 @@ import { DetailsPageTypeBadge } from "@/components/ui/details-page-type-badge";
 import { DetailsPageH1 } from "@/components/ui/details-page-h1";
 import { DisplayFullDate } from "@/components/ui/display-full-date";
 import { LinksListRow } from "@/components/ui/links-list-row";
-import { DetailsPageH2 } from "@/components/ui/details-page-h2";
+import { fetchTelevisionShowDetails } from "@/lib/actions";
+import { convertMinutesToHoursAndMinutes } from "@/lib/utils";
 import type { Metadata } from "next";
 
 export async function generateMetadata({
@@ -220,17 +218,7 @@ export default async function Page({ params }: { params: { slug: string } }) {
               <SeasonsCarousel seasons={seasons} />
               <JustWatchSection title={name} id={id} type="tv" />
               <CastCarousel actors={credits.cast} />
-
-              {/* YouTube Video Embed */}
-              {videos.results.length > 0 && (
-                <section className="mb-8" id="trailer">
-                  <DetailsPageH2>{name}&apos;s Trailer</DetailsPageH2>
-                  <Suspense fallback={<p>loading...</p>}>
-                    <YouTubePlayer videoId={videos.results[0].key} />
-                  </Suspense>
-                </section>
-              )}
-
+              <YouTubePlayer title={name} videoId={videos.results[0].key} />
               <CinemaStillsGallery title={name} id={id} type="tv" />
             </div>
 

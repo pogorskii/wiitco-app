@@ -26,7 +26,7 @@ export const MovieCollection = z.object({
       video: z.boolean(),
       vote_average: z.number(),
       vote_count: z.number(),
-    })
+    }),
   ),
 });
 export type MovieCollection = z.infer<typeof MovieCollection>;
@@ -48,7 +48,7 @@ export const MovieDetails = z.object({
       z.object({
         id: z.number(),
         name: z.string(),
-      })
+      }),
     )
     .optional(),
   homepage: z.string().nullable(),
@@ -66,7 +66,7 @@ export const MovieDetails = z.object({
         logo_path: z.string().nullable(),
         name: z.string(),
         origin_country: z.string(),
-      })
+      }),
     )
     .optional(),
   production_countries: z
@@ -74,7 +74,7 @@ export const MovieDetails = z.object({
       z.object({
         iso_3166_1: z.string(),
         name: z.string(),
-      })
+      }),
     )
     .optional(),
   release_date: z
@@ -89,7 +89,7 @@ export const MovieDetails = z.object({
         english_name: z.string(),
         iso_639_1: z.string(),
         name: z.string(),
-      })
+      }),
     )
     .optional(),
   status: z.string().nullable(),
@@ -114,7 +114,7 @@ export const MovieDetails = z.object({
           character: z.string(),
           credit_id: z.string(),
           order: z.number(),
-        })
+        }),
       )
       .optional(),
     crew: z
@@ -131,7 +131,7 @@ export const MovieDetails = z.object({
           credit_id: z.string(),
           department: z.string(),
           job: z.string(),
-        })
+        }),
       )
       .optional(),
   }),
@@ -156,16 +156,16 @@ export const MovieDetails = z.object({
                 release_date: z.string().transform((e) => new Date(e)),
                 type: z.number(),
               })
-              .optional()
+              .optional(),
           ),
         })
-        .optional()
+        .optional(),
     ),
   }),
   videos: z.object({
-    results: z.array(
-      z
-        .object({
+    results: z
+      .array(
+        z.object({
           iso_639_1: z.string().nullable(),
           iso_3166_1: z.string().nullable(),
           name: z.string(),
@@ -176,9 +176,9 @@ export const MovieDetails = z.object({
           official: z.boolean(),
           published_at: z.string().transform((e) => new Date(e)),
           id: z.string(),
-        })
-        .optional()
-    ),
+        }),
+      )
+      .optional(),
   }),
 });
 export type MovieDetails = z.infer<typeof MovieDetails>;
@@ -201,7 +201,7 @@ export const MoviesSearch = z.array(
     video: z.boolean(),
     vote_average: z.number(),
     vote_count: z.number(),
-  })
+  }),
 );
 export type MoviesSearch = z.infer<typeof MoviesSearch>;
 
@@ -215,7 +215,7 @@ export const movieReleasesSchema = z.array(
     genre_ids: z.array(z.number()),
     popularity: z.number(),
     vote_average: z.number(),
-  })
+  }),
 );
 export type MovieReleases = z.infer<typeof movieReleasesSchema>;
 
@@ -231,7 +231,7 @@ export const TelevisionShowDetails = z.object({
         gender: z.number(),
         profile_path: z.string().nullable(),
       })
-      .optional()
+      .optional(),
   ),
   episode_run_time: z.array(z.number().optional()),
   first_air_date: z
@@ -243,7 +243,7 @@ export const TelevisionShowDetails = z.object({
       z.object({
         id: z.number(),
         name: z.string(),
-      })
+      }),
     )
     .optional(),
   homepage: z.string().nullable(),
@@ -296,7 +296,7 @@ export const TelevisionShowDetails = z.object({
         logo_path: z.string().nullable(),
         name: z.string(),
         origin_country: z.string(),
-      })
+      }),
     )
     .optional(),
   number_of_episodes: z.number(),
@@ -314,7 +314,7 @@ export const TelevisionShowDetails = z.object({
         logo_path: z.string().nullable(),
         name: z.string(),
         origin_country: z.string(),
-      })
+      }),
     )
     .optional(),
   production_countries: z
@@ -322,7 +322,7 @@ export const TelevisionShowDetails = z.object({
       z.object({
         iso_3166_1: z.string(),
         name: z.string(),
-      })
+      }),
     )
     .optional(),
   seasons: z
@@ -339,7 +339,7 @@ export const TelevisionShowDetails = z.object({
         poster_path: z.string().nullable(),
         season_number: z.number(),
         vote_average: z.number(),
-      })
+      }),
     )
     .optional(),
   spoken_languages: z
@@ -348,7 +348,7 @@ export const TelevisionShowDetails = z.object({
         english_name: z.string(),
         iso_639_1: z.string(),
         name: z.string(),
-      })
+      }),
     )
     .optional(),
   status: z.string().nullable(),
@@ -371,7 +371,7 @@ export const TelevisionShowDetails = z.object({
           character: z.string(),
           credit_id: z.string(),
           order: z.number(),
-        })
+        }),
       )
       .optional(),
     crew: z
@@ -388,7 +388,7 @@ export const TelevisionShowDetails = z.object({
           credit_id: z.string(),
           department: z.string(),
           job: z.string(),
-        })
+        }),
       )
       .optional(),
   }),
@@ -414,7 +414,7 @@ export const TelevisionShowDetails = z.object({
         official: z.boolean(),
         published_at: z.string().transform((e) => new Date(e)),
         id: z.string(),
-      })
+      }),
     ),
   }),
 });
@@ -441,7 +441,7 @@ export const TelevisionShowsSearch = z.array(
     name: z.string(),
     vote_average: z.number(),
     vote_count: z.number(),
-  })
+  }),
 );
 export type TelevisionShowsSearch = z.infer<typeof TelevisionShowsSearch>;
 
@@ -457,7 +457,7 @@ export const TMDBImages = z.object({
         vote_average: z.number(),
         vote_count: z.number(),
         width: z.number(),
-      })
+      }),
     )
     .optional(),
   logos: z
@@ -470,7 +470,7 @@ export const TMDBImages = z.object({
         vote_average: z.number(),
         vote_count: z.number(),
         width: z.number(),
-      })
+      }),
     )
     .optional(),
   posters: z
@@ -483,7 +483,7 @@ export const TMDBImages = z.object({
         vote_average: z.number(),
         vote_count: z.number(),
         width: z.number(),
-      })
+      }),
     )
     .optional(),
   profiles: z
@@ -496,7 +496,7 @@ export const TMDBImages = z.object({
         vote_average: z.number(),
         vote_count: z.number(),
         width: z.number(),
-      })
+      }),
     )
     .optional(),
 });
@@ -512,7 +512,7 @@ export const CinemaPeopleSearch = z.array(
     original_name: z.string(),
     popularity: z.number(),
     profile_path: z.string().nullable(),
-  })
+  }),
 );
 
 /*
@@ -1155,7 +1155,7 @@ export const CinemaPersonDetails = z.object({
           character: z.string().default(""),
           credit_id: z.string(),
           order: z.number(),
-        })
+        }),
       )
       .optional(),
     crew: z
@@ -1181,7 +1181,7 @@ export const CinemaPersonDetails = z.object({
           credit_id: z.string(),
           department: z.string(),
           job: z.string(),
-        })
+        }),
       )
       .optional(),
   }),
@@ -1209,7 +1209,7 @@ export const CinemaPersonDetails = z.object({
           character: z.string().default(""),
           credit_id: z.string(),
           episode_count: z.number().nullable().default(null),
-        })
+        }),
       )
       .optional(),
     crew: z
@@ -1236,7 +1236,7 @@ export const CinemaPersonDetails = z.object({
           department: z.string().nullable(),
           episode_count: z.number().nullable().default(null),
           job: z.string(),
-        })
+        }),
       )
       .optional(),
   }),
@@ -1264,7 +1264,7 @@ const JustWatchBase = z.object({
         provider_id: z.number(),
         provider_name: z.string(),
         display_priority: z.number(),
-      })
+      }),
     )
     .optional(),
   rent: z
@@ -1274,7 +1274,7 @@ const JustWatchBase = z.object({
         provider_id: z.number(),
         provider_name: z.string(),
         display_priority: z.number(),
-      })
+      }),
     )
     .optional(),
   flatrate: z
@@ -1284,7 +1284,7 @@ const JustWatchBase = z.object({
         provider_id: z.number(),
         provider_name: z.string(),
         display_priority: z.number(),
-      })
+      }),
     )
     .optional(),
 });
