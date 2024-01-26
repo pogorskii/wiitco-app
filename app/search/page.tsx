@@ -11,6 +11,7 @@ import { Suspense } from "react";
 import { Spinner } from "../../components/ui/spinner";
 
 import type { Metadata } from "next";
+import { GlobalH1 } from "@/components/ui/global-h1";
 
 export async function generateMetadata(): Promise<Metadata> {
   return {
@@ -38,24 +39,19 @@ export default async function Page({
 
   return (
     <div>
-      <div>
-        <h1 className="mb-8 scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl">
-          Search by category
-        </h1>
-        <div className="mb-4">
-          <Search placeholder="Search any movie, TV show, person or video game..." />
-        </div>
-        <div className="mb-4 flex flex-wrap gap-2">
-          <SearchCategories />
-        </div>
-        {currentCategory && (
-          <Suspense fallback={<Spinner />}>
-            {currentCategory
-              ? searchTabs[currentCategory]
-              : searchTabs["movies"]}
-          </Suspense>
-        )}
+      <GlobalH1>Search by category</GlobalH1>
+      <Search
+        className="mb-4"
+        placeholder="Search any movie, TV show, person or video game..."
+      />
+      <div className="mb-4 flex flex-wrap gap-4">
+        <SearchCategories />
       </div>
+      {currentCategory && (
+        <Suspense fallback={<Spinner />}>
+          {currentCategory ? searchTabs[currentCategory] : searchTabs["movies"]}
+        </Suspense>
+      )}
     </div>
   );
 }

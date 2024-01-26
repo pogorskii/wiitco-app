@@ -1,7 +1,33 @@
+import { Suspense } from "react";
+import { Skeleton } from "../skeleton";
 import { fetchTMDBImages } from "@/lib/actions";
 import { ImagesCarousel } from "../images-carousel";
+import { DetailsPageH2 } from "../details-page-h2";
 
-export async function CinemaStillsGallery({
+export function CinemaStillsGallery({
+  title,
+  id,
+  type,
+}: {
+  title: string;
+  id: number;
+  type: "movie" | "tv" | "person";
+}) {
+  return (
+    <div className="mb-8">
+      <DetailsPageH2>{title}&apos;s Images</DetailsPageH2>
+      <Suspense
+        fallback={
+          <Skeleton className="rounded-lg border border-slate-200 shadow-sm dark:border-slate-800" />
+        }
+      >
+        <GalleryContent title={title} id={id} type={type} />
+      </Suspense>
+    </div>
+  );
+}
+
+async function GalleryContent({
   title,
   id,
   type,
@@ -29,12 +55,5 @@ export async function CinemaStillsGallery({
 
   if (validImages.length === 0) return;
 
-  return (
-    <section className="mb-8" id="screenshots">
-      <h2 className="mb-2 scroll-m-20 text-lg font-semibold">
-        {title}&apos;s Images
-      </h2>
-      <ImagesCarousel title={title} images={validImages} />
-    </section>
-  );
+  return <ImagesCarousel title={title} images={validImages} />;
 }

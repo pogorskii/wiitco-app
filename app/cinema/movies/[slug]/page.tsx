@@ -3,15 +3,12 @@
 import { Suspense } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { formatDistanceToNow, format } from "date-fns";
 import { TruncText } from "@/components/ui/trunc-text";
 import { RatingCircle } from "@/components/ui/rating-circle";
 import { YouTubePlayer } from "@/components/ui/youtube-player";
 import { Breadcrumbs } from "@/components/ui/breadcrumbs";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import type { Metadata } from "next";
 import { fetchMovieDetails, fetchMovieCollection } from "@/lib/actions";
 import { CastCarousel } from "@/components/ui/cinema/cast-carousel";
 import { JustWatchSection } from "@/components/ui/tmdb/just-watch-section";
@@ -21,6 +18,7 @@ import { convertMinutesToHoursAndMinutes } from "@/lib/utils";
 import { AddToAccountButton } from "@/components/ui/add-to-account-button";
 import { DetailsPageH1 } from "@/components/ui/details-page-h1";
 import { LinksListRow } from "@/components/ui/links-list-row";
+import type { Metadata } from "next";
 
 export async function generateMetadata({
   params,
@@ -82,7 +80,7 @@ export default async function Page({ params }: { params: { slug: string } }) {
       <div className="grid grid-cols-4 gap-6">
         {/* First column */}
         {/* Shown only on MD breakpoint and above */}
-        <div className="hidden md:block col-span-1">
+        <div className="col-span-1 hidden md:block">
           <Image
             src={coverUrl}
             alt={`${title} poster`}
@@ -94,18 +92,18 @@ export default async function Page({ params }: { params: { slug: string } }) {
             priority
           />
           <AddToAccountButton type="movie" />
-
-          <div className="mb-8 flex col-span-1 lg:hidden flex-col items-center">
-            <RatingCircle rating={vote_average * 10} reviewCount={vote_count} />
-          </div>
-
+          <RatingCircle
+            className="col-span-1 lg:hidden"
+            rating={vote_average * 10}
+            reviewCount={vote_count}
+          />
           <RelatedSeries series={belongs_to_collection} />
         </div>
 
         {/* Second column */}
         <div className="col-span-4 md:col-span-3">
-          <div className="grid grid-cols-5 md:grid-cols-1">
-            <div className="col-span-2 block me-4 md:hidden">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-5 md:grid-cols-1">
+            <div className="col-span-1 sm:col-span-2 md:hidden">
               <Image
                 src={coverUrl}
                 alt={`${title} poster`}
@@ -118,37 +116,23 @@ export default async function Page({ params }: { params: { slug: string } }) {
               />
             </div>
 
-            <div className="col-span-3 md:col-span-1">
-              {status && (
-                <Badge variant="outline" className="mb-2">
-                  {status}
-                </Badge>
-              )}
-              <DetailsPageH1 text={title} />
-              {release_date && (
-                <span>
-                  {format(release_date, "MMMM d yyyy")} (
-                  {formatDistanceToNow(release_date, {
-                    addSuffix: true,
-                  })}
-                  )
-                </span>
-              )}
+            <div className="col-span-1 sm:col-span-3 md:col-span-1">
+              <DetailsPageTypeBadge>{status}</DetailsPageTypeBadge>
+              <DetailsPageH1>{title}</DetailsPageH1>
+              <DisplayFullDate startDate={release_date} addSuffix />
             </div>
           </div>
 
           <AddToAccountButton type="movie" className="md:hidden" />
-
-          <Separator className="mt-1 mb-4" />
+          <Separator className="mb-4 mt-2" />
 
           {/* Info First Column */}
           <div className="col-span-3 grid grid-cols-4 gap-6">
-            <div className="flex md:hidden col-span-5 lg:hidden flex-col items-center">
-              <RatingCircle
-                rating={vote_average * 10}
-                reviewCount={vote_count}
-              />
-            </div>
+            <RatingCircle
+              className="col-span-5 md:hidden"
+              rating={vote_average * 10}
+              reviewCount={vote_count}
+            />
 
             {/* Below LG breakpoint changes into single column */}
             <div className="col-span-4 lg:col-span-3">
@@ -248,20 +232,13 @@ export default async function Page({ params }: { params: { slug: string } }) {
               </ul>
 
               <TruncText text={overview} />
-
               <CinemaLinksList homepage={homepage} links={external_ids} />
-
-              <Suspense fallback={<p>Loading...</p>}>
-                <JustWatchSection title={title} id={id} type="movie" />
-              </Suspense>
-
+              <JustWatchSection title={title} id={id} type="movie" />
               <CastCarousel actors={credits.cast} />
 
               {videos.results.length > 0 && (
                 <section className="mb-8" id="trailer">
-                  <h2 className="mb-2 scroll-m-20 text-lg font-semibold">
-                    {title}&apos;s Trailer
-                  </h2>
+                  <DetailsPageH2>{title}&apos;s Trailer</DetailsPageH2>
                   <Suspense fallback={<p>loading...</p>}>
                     <YouTubePlayer
                       videoId={videos.results[0] && videos.results[0].key}
@@ -270,20 +247,16 @@ export default async function Page({ params }: { params: { slug: string } }) {
                 </section>
               )}
 
-              {/* Screenshots Slider */}
-              <Suspense fallback={<p>loading...</p>}>
-                <CinemaStillsGallery title={title} id={id} type="movie" />
-              </Suspense>
+              <CinemaStillsGallery title={title} id={id} type="movie" />
             </div>
 
             {/* Info Second Column */}
             {/* Shows Here Only above LG Breakpoint */}
-            <div className="hidden col-span-1 lg:flex flex-col items-center">
-              <RatingCircle
-                rating={vote_average * 10}
-                reviewCount={vote_count}
-              />
-            </div>
+            <RatingCircle
+              className="col-span-1 hidden lg:flex"
+              rating={vote_average * 10}
+              reviewCount={vote_count}
+            />
           </div>
         </div>
       </div>
@@ -300,6 +273,9 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { DetailsPageTypeBadge } from "@/components/ui/details-page-type-badge";
+import { DisplayFullDate } from "@/components/ui/display-full-date";
+import { DetailsPageH2 } from "@/components/ui/details-page-h2";
 
 async function RelatedSeries({
   series,
@@ -315,14 +291,13 @@ async function RelatedSeries({
 
   return (
     <div className="mb-8">
-      <h2 className="md:hidden mb-2 font-semibold text-lg">Related to</h2>
-      <p className="hidden md:block mb-2 font-semibold text-lg">Related to</p>
+      <DetailsPageH2>Related to</DetailsPageH2>
       <ul className="[&>li]:mt-1">
         <li>
           <Dialog>
             <DialogTrigger asChild>
               <Button
-                className="w-full font-normal leading-normal text-start rounded-none h-fit px-2 whitespace-break-spaces"
+                className="h-fit w-full whitespace-break-spaces rounded-none px-2 text-start font-normal leading-normal"
                 variant="outline"
               >
                 {series.name}
@@ -345,7 +320,7 @@ async function SeriesModalContent({ seriesId }: { seriesId: number }) {
   const moviesQuantity = collection.parts.length;
 
   return (
-    <DialogContent className="w-[800px] max-w-[90vw] max-h-[90vh]">
+    <DialogContent className="max-h-[90vh] w-[800px] max-w-[90vw]">
       <DialogHeader>
         <DialogTitle>{collection.name}</DialogTitle>
         <DialogDescription>
@@ -354,24 +329,24 @@ async function SeriesModalContent({ seriesId }: { seriesId: number }) {
         </DialogDescription>
       </DialogHeader>
       <ScrollArea className="h-full max-h-[70vh] w-auto rounded-md border">
-        <div className="grid px-2 md:px-4 py-1 md:py-2">
+        <div className="grid px-2 py-1 md:px-4 md:py-2">
           {collection.parts.map((movie, i, arr) => (
             <div key={i}>
-              <div className="py-2 grid grid-cols-4 gap-2">
-                <div className="col-span-3 shrink-0 flex flex-col items-start justify-between">
+              <div className="grid grid-cols-4 gap-2 py-2">
+                <div className="col-span-3 flex shrink-0 flex-col items-start justify-between">
                   <div>
                     <Link
-                      className="block mb-1 hover:underline hover:underline-offset-2"
+                      className="mb-1 block hover:underline hover:underline-offset-2"
                       href={`/cinema/movies/${movie.id}`}
                     >
-                      <h3 className="scroll-m-20 text-base md:text-xl font-medium tracking-tight">
+                      <h3 className="scroll-m-20 text-base font-medium tracking-tight md:text-xl">
                         {movie.title}
                       </h3>
                     </Link>
                   </div>
                 </div>
                 <Link
-                  className="col-span-1 block mb-1 hover:underline hover:underline-offset-2"
+                  className="col-span-1 mb-1 block hover:underline hover:underline-offset-2"
                   href={`/cinema/movies/${movie.id}`}
                 >
                   <img

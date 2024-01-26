@@ -1,11 +1,18 @@
 "use client";
 
+import { clsx } from "clsx";
 import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import { useSearchParams, usePathname, useRouter } from "next/navigation";
 import { useDebouncedCallback } from "use-debounce";
 import { Input } from "@/components/ui/input";
 
-export function Search({ placeholder }: { placeholder: string }) {
+export function Search({
+  placeholder,
+  className,
+}: {
+  placeholder: string;
+  className?: string;
+}) {
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const { replace } = useRouter();
@@ -21,7 +28,7 @@ export function Search({ placeholder }: { placeholder: string }) {
   }, 300);
 
   return (
-    <div className="relative flex flex-1 flex-shrink-0">
+    <div className={clsx("relative flex flex-1 flex-shrink-0", className)}>
       <label htmlFor="search" className="sr-only">
         Search
       </label>

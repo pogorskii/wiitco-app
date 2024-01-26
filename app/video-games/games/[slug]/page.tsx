@@ -3,9 +3,7 @@
 import { Suspense } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { formatDistanceToNow, format } from "date-fns";
 import { GamePlatforms } from "@/components/ui/video-games/game-platforms";
-import { TagsRow } from "@/components/ui/tags-row";
 import { TruncText } from "@/components/ui/trunc-text";
 import { RatingCircle } from "@/components/ui/rating-circle";
 import { ImagesCarousel } from "@/components/ui/images-carousel";
@@ -14,7 +12,6 @@ import { YouTubePlayer } from "@/components/ui/youtube-player";
 import { Breadcrumbs } from "@/components/ui/breadcrumbs";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { FaPlus } from "react-icons/fa";
 import { LanguagesTable } from "@/components/ui/video-games/languages-table";
 import { Separator } from "@/components/ui/separator";
 import { Game, GCover } from "@prisma/client";
@@ -91,38 +88,25 @@ export default async function Page({ params }: { params: { slug: string } }) {
       <div className="grid grid-cols-4 gap-6">
         {/* First column */}
         {/* Shown only on MD breakpoint and above */}
-        <div className="hidden md:block col-span-1">
-          <Suspense fallback={<p>loading...</p>}>
-            <Image
-              src={coverUrl}
-              alt={`${name} game cover`}
-              width={cover?.width || 1200}
-              height={cover?.height || 1600}
-              style={{
-                width: "100%",
-              }}
-              priority
-            />
-          </Suspense>
-          {/* TODO: Change appearance if added */}
-          <Button className="mt-4 mb-6 w-full">
-            <FaPlus className="me-1" /> Watch this game
-          </Button>
+        <div className="col-span-1 hidden md:block">
+          <Image
+            src={coverUrl}
+            alt={`${name} game cover`}
+            width={cover?.width || 1200}
+            height={cover?.height || 1600}
+            style={{
+              width: "100%",
+            }}
+            priority
+          />
+          <AddToAccountButton type="game" />
 
-          <div className="flex col-span-1 lg:hidden flex-col items-center">
-            {/* Reviews */}
+          <div className="col-span-1 flex flex-col items-center lg:hidden">
             <RatingCircle rating={rating} reviewCount={reviewsCount} />
-
-            {/* Age Ratings */}
-            {ageRatings.length > 0 && <AgeRatings ageRatings={ageRatings} />}
-
-            {/* Languages Table */}
-            {languageSupports.length > 0 && (
-              <LanguagesTable languageSupports={languageSupports} />
-            )}
+            <AgeRatings ageRatings={ageRatings} />
+            <LanguagesTable languageSupports={languageSupports} />
           </div>
 
-          {/* HowLongToBeat Table */}
           <Suspense fallback={<p>Loading...</p>}>
             <HLTBTable query={name} />
           </Suspense>
@@ -134,8 +118,8 @@ export default async function Page({ params }: { params: { slug: string } }) {
 
         {/* Second column */}
         <div className="col-span-4 md:col-span-3">
-          <div className="grid grid-cols-5 md:grid-cols-1">
-            <div className="col-span-2 block me-4 md:hidden">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-5 md:grid-cols-1">
+            <div className="col-span-1 sm:col-span-2 md:hidden">
               <Image
                 src={coverUrl}
                 alt={`${name} game cover`}
@@ -148,98 +132,56 @@ export default async function Page({ params }: { params: { slug: string } }) {
               />
             </div>
 
-            <div className="col-span-3 md:col-span-1">
-              <Suspense fallback={<p>Loading...</p>}>
-                <GameCategory category={category} slug={slug} />
-              </Suspense>
-              <h1 className="mb-2 scroll-m-20 text-xl md:text-2xl font-semibold first:mt-0">
-                {name}
-              </h1>
-              {firstReleaseDate && (
-                <p>
-                  {format(firstReleaseDate, "MMMM d yyyy")} (
-                  {formatDistanceToNow(firstReleaseDate, {
-                    addSuffix: true,
-                  })}
-                  )
-                </p>
-              )}
+            <div className="col-span-1 sm:col-span-3 md:col-span-1">
+              <GameCategory category={category} slug={slug} />
+              <DetailsPageH1>{name}</DetailsPageH1>
+              <DisplayFullDate startDate={firstReleaseDate} addSuffix />
             </div>
           </div>
 
-          <Button className="mb-2 mt-4 w-full md:hidden">
-            <FaPlus className="me-1" /> Watch this game
-          </Button>
-
-          <Separator className="mt-1 mb-4" />
+          <AddToAccountButton className="md:hidden" type="game" />
+          <Separator className="mb-4 mt-2" />
 
           {/* Info First Column */}
           <div className="col-span-3 grid grid-cols-4 gap-6">
-            <div className="flex md:hidden col-span-5 lg:hidden flex-col items-center">
-              {/* Reviews */}
+            <div className="col-span-5 flex flex-col items-center md:hidden">
               <RatingCircle rating={rating} reviewCount={reviewsCount} />
-
-              {/* Age Ratings */}
-              {ageRatings.length > 0 && <AgeRatings ageRatings={ageRatings} />}
-
-              {/* Languages Table */}
-              {languageSupports.length > 0 && (
-                <LanguagesTable languageSupports={languageSupports} />
-              )}
+              <AgeRatings ageRatings={ageRatings} />
+              <LanguagesTable languageSupports={languageSupports} />
             </div>
 
             {/* Below LG breakpoint changes into single column */}
             <div className="col-span-4 lg:col-span-3">
               {/* Main Info List */}
               <ul className="mb-4 [&>*+*]:mt-2">
-                {developers.length > 0 && (
-                  <li>
-                    <span className="font-semibold">
-                      {developers.length === 1 ? "Developer:" : "Developers:"}
-                    </span>
-                    <TagsRow
-                      type="video-games"
-                      category="companies"
-                      tags={developers.map((d) => d.developer)}
-                    ></TagsRow>
-                  </li>
-                )}
-                {publishers.length > 0 && (
-                  <li>
-                    <span className="font-semibold">
-                      {publishers.length === 1 ? "Publisher:" : "Publishers:"}
-                    </span>
-                    <TagsRow
-                      type="video-games"
-                      category="companies"
-                      tags={publishers.map((p) => p.publisher)}
-                    ></TagsRow>
-                  </li>
-                )}
-                {genres.length > 0 && (
-                  <li>
-                    <span className="font-semibold">
-                      {genres.length === 1 ? `Genre:` : `Genres:`}
-                    </span>
-                    <TagsRow
-                      type="video-games"
-                      category="genres"
-                      tags={genres.map((g) => g.genre)}
-                    />
-                  </li>
-                )}
-                {engines.length > 0 && (
-                  <li>
-                    <span className="font-semibold">
-                      {engines.length === 1 ? `Engine:` : `Engines:`}
-                    </span>
-                    <TagsRow
-                      type="video-games"
-                      category="game-engines"
-                      tags={engines.map((e) => e.engine)}
-                    />
-                  </li>
-                )}
+                <LinksListRow
+                  links={developers.map((d) => d.developer)}
+                  singularName="Developer"
+                  pluralName="Developers"
+                  linkType="video-games"
+                  linkCategory="companies"
+                />
+                <LinksListRow
+                  links={publishers.map((p) => p.publisher)}
+                  singularName="Publisher"
+                  pluralName="Publishers"
+                  linkType="video-games"
+                  linkCategory="companies"
+                />
+                <LinksListRow
+                  links={genres.map((p) => p.genre)}
+                  singularName="Genre"
+                  pluralName="Genres"
+                  linkType="video-games"
+                  linkCategory="genres"
+                />
+                <LinksListRow
+                  links={engines.map((p) => p.engine)}
+                  singularName="Engine"
+                  pluralName="Engines"
+                  linkType="video-games"
+                  linkCategory="game-engines"
+                />
                 {platforms.length > 0 && (
                   <li className="flex justify-start gap-2">
                     <span className="font-semibold">
@@ -252,23 +194,16 @@ export default async function Page({ params }: { params: { slug: string } }) {
                 )}
               </ul>
 
-              {/* Truncated Summary */}
-              {summary && <TruncText text={summary} />}
+              <TruncText text={summary} />
+              <LinksList links={websites} />
 
-              {/* Links table */}
-              {websites.length > 0 && <LinksList links={websites} />}
-
-              {/* Related Games Tabs */}
               <Suspense fallback={<p>Loading...</p>}>
                 <ChildGamesTabs slug={slug} />
               </Suspense>
 
-              {/* YouTube Video Embed */}
               {videos.length > 0 && (
                 <section className="mb-8" id="trailer">
-                  <h2 className="mb-2 scroll-m-20 text-lg font-semibold">
-                    {name}&apos;s Trailer
-                  </h2>
+                  <DetailsPageH2>{name}&apos;s Trailer</DetailsPageH2>
                   <YouTubePlayer videoId={videos[0].videoId} />
                 </section>
               )}
@@ -276,9 +211,7 @@ export default async function Page({ params }: { params: { slug: string } }) {
               {/* Screenshots Slider */}
               {screenshots.length > 0 && (
                 <section className="mb-8" id="screenshots">
-                  <h2 className="mb-2 scroll-m-20 text-lg font-semibold">
-                    {name}&apos;s Screenshots
-                  </h2>
+                  <DetailsPageH2>{name}&apos;s Screenshots</DetailsPageH2>
                   <Suspense fallback={<p>loading...</p>}>
                     <ImagesCarousel images={screenshots} title={name} />
                   </Suspense>
@@ -303,17 +236,10 @@ export default async function Page({ params }: { params: { slug: string } }) {
 
             {/* Info Second Column */}
             {/* Shows Here Only above LG Breakpoint */}
-            <div className="hidden col-span-1 lg:flex flex-col items-center">
-              {/* Reviews */}
+            <div className="col-span-1 hidden flex-col items-center lg:flex">
               <RatingCircle rating={rating} reviewCount={reviewsCount} />
-
-              {/* Age Ratings */}
-              {ageRatings.length > 0 && <AgeRatings ageRatings={ageRatings} />}
-
-              {/* Languages Table */}
-              {languageSupports.length > 0 && (
-                <LanguagesTable languageSupports={languageSupports} />
-              )}
+              <AgeRatings ageRatings={ageRatings} />
+              <LanguagesTable languageSupports={languageSupports} />
             </div>
           </div>
         </div>
@@ -349,11 +275,7 @@ async function GameCategory({
   const categoryName = categoryEnum[category];
 
   if (category === 0 || category === 3)
-    return (
-      <Badge variant="outline" className="mb-2 text-sm">
-        {categoryName}
-      </Badge>
-    );
+    return <DetailsPageTypeBadge>{categoryName}</DetailsPageTypeBadge>;
 
   const game = await fetchGameCategory({ slug });
   if (!game) return;
@@ -404,7 +326,9 @@ type AgeRatingsType = {
   checksum: string;
 }[];
 
-async function AgeRatings({ ageRatings }: { ageRatings: AgeRatingsType }) {
+async function AgeRatings({ ageRatings }: { ageRatings?: AgeRatingsType }) {
+  if (!ageRatings || !ageRatings.length) return null;
+
   const ratingEnum: { [key: number]: string } = {
     1: "Three",
     2: "Seven",
@@ -422,9 +346,7 @@ async function AgeRatings({ ageRatings }: { ageRatings: AgeRatingsType }) {
 
   return (
     <div className="mb-8 w-full">
-      <h2 className="mt-8 mb-2 font-semibold text-lg text-start">
-        Age Ratings
-      </h2>
+      <DetailsPageH2>Age ratings</DetailsPageH2>
       <div className="flex items-center justify-start gap-2">
         {/* TODO: Add support for more ratings */}
         {ageRatings
@@ -461,7 +383,7 @@ async function HLTBTable({ query }: { query: string }) {
 
   return (
     <div className="mb-8">
-      <h2 className="mb-2 font-semibold text-lg">How long is {hltb.name}?</h2>
+      <DetailsPageH2>How long is {hltb.name}?</DetailsPageH2>
       <Table>
         <TableBody>
           {hltb.gameplayMain ? (
@@ -525,16 +447,16 @@ async function ChildGamesTabs({ slug }: { slug: string }) {
         game.remakes.length > 0
           ? "remakes"
           : game.remasters.length > 0
-          ? "remasters"
-          : game.dlcs.length > 0
-          ? "dlcs"
-          : game.expansions.length > 0
-          ? "expansions"
-          : "standalones"
+            ? "remasters"
+            : game.dlcs.length > 0
+              ? "dlcs"
+              : game.expansions.length > 0
+                ? "expansions"
+                : "standalones"
       }
-      className="w-full mb-8"
+      className="mb-8 w-full"
     >
-      <TabsList className="w-full grid grid-cols-3 lg:grid-cols-5">
+      <TabsList className="grid w-full grid-cols-3 lg:grid-cols-5">
         {game.remakes.length > 0 && (
           <TabsTrigger value="remakes">Remakes</TabsTrigger>
         )}
@@ -607,14 +529,16 @@ async function RelatedTab({
       <Card>
         <CardHeader className="pb-2">
           <CardTitle className="text-lg">
-            {tabHeading} of {gameTitle}
+            <DetailsPageH2>
+              {tabHeading} of {gameTitle}
+            </DetailsPageH2>
           </CardTitle>
         </CardHeader>
-        <CardContent className="min-h-[200px] grid grid-cols-2 md:grid-cols-4 lg:grid-cols-3 gap-4">
+        <CardContent className="grid min-h-[200px] grid-cols-2 gap-4 md:grid-cols-4 lg:grid-cols-3">
           {tabData.map((g) => (
             <Link
               key={g.slug}
-              className="overflow-hidden w-full inline-block relative col-span-1 text-white hover:text-blue-400 transition-colors duration-200"
+              className="relative col-span-1 inline-block w-full overflow-hidden text-white transition-colors duration-200 hover:text-blue-400"
               href={`/video-games/games/${g.slug}`}
             >
               <img
@@ -626,8 +550,8 @@ async function RelatedTab({
                 }
                 alt={`${g.name} game cover`}
               />
-              <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-transparent to-black"></div>
-              <h3 className="absolute bottom-0 p-2 scroll-m-20 text-base font-semibold tracking-tight">
+              <div className="absolute left-0 top-0 h-full w-full bg-gradient-to-b from-transparent to-black"></div>
+              <h3 className="absolute bottom-0 scroll-m-20 p-2 text-base font-semibold tracking-tight">
                 {g.name}
               </h3>
             </Link>
@@ -659,11 +583,13 @@ import { IconType } from "react-icons/lib";
 function LinksList({
   links,
 }: {
-  links: {
+  links?: {
     url: string;
     category: number;
   }[];
 }) {
+  if (!links || !links.length) return null;
+
   const sortedLinks = links.sort((a, b) => a.category - b.category);
 
   const categoryEnum: { [key: number]: [string, IconType] } = {
@@ -691,7 +617,7 @@ function LinksList({
     return (
       <li key={i}>
         <a className="hover:underline hover:underline-offset-4" href={l.url}>
-          <Icon className="inline-block me-1.5" />
+          <Icon className="me-1.5 inline-block" />
           <span>{categoryEnum[l.category][0]}</span>
         </a>
       </li>
@@ -699,7 +625,7 @@ function LinksList({
   });
 
   return (
-    <ul className="mb-8 grid grid-cols-2 md:grid-cols-3 gap-2">{listItems}</ul>
+    <ul className="mb-8 grid grid-cols-2 gap-2 md:grid-cols-3">{listItems}</ul>
   );
 }
 
@@ -712,6 +638,12 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { AddToAccountButton } from "@/components/ui/add-to-account-button";
+import { DetailsPageH2 } from "@/components/ui/details-page-h2";
+import { DetailsPageTypeBadge } from "@/components/ui/details-page-type-badge";
+import { DetailsPageH1 } from "@/components/ui/details-page-h1";
+import { DisplayFullDate } from "@/components/ui/display-full-date";
+import { LinksListRow } from "@/components/ui/links-list-row";
 
 async function RelatedSeries({ slug }: { slug: string }) {
   const game = await fetchRelatedGameSeries(slug);
@@ -719,8 +651,7 @@ async function RelatedSeries({ slug }: { slug: string }) {
 
   return (
     <div className="mb-8">
-      <h2 className="md:hidden mb-2 font-semibold text-lg">Related to</h2>
-      <p className="hidden md:block mb-2 font-semibold text-lg">Related to</p>
+      <DetailsPageH2>Related to</DetailsPageH2>
       <ul className="[&>li]:mt-1">
         {game.franchises.map((e, i) => (
           <li key={i}>
@@ -751,7 +682,7 @@ function SeriesModal({
     <Dialog>
       <DialogTrigger asChild>
         <Button
-          className="w-full text-start rounded-none h-fit py-1 whitespace-break-spaces"
+          className="h-fit w-full whitespace-break-spaces rounded-none py-1 text-start"
           variant="outline"
         >
           {data.name} {type}
@@ -806,7 +737,7 @@ async function SeriesModalContent({
   };
 
   return (
-    <DialogContent className="w-[800px] max-w-[90vw] max-h-[90vh]">
+    <DialogContent className="max-h-[90vh] w-[800px] max-w-[90vw]">
       <DialogHeader>
         <DialogTitle>
           {collection.name} {type}
@@ -817,17 +748,17 @@ async function SeriesModalContent({
         </DialogDescription>
       </DialogHeader>
       <ScrollArea className="h-full max-h-[70vh] w-auto rounded-md border">
-        <div className="grid px-2 md:px-4 py-1 md:py-2">
+        <div className="grid px-2 py-1 md:px-4 md:py-2">
           {uniqueGames.map((game, i, arr) => (
             <div key={i}>
-              <div className="py-2 grid grid-cols-4 gap-2">
-                <div className="col-span-3 shrink-0 flex flex-col items-start justify-between">
+              <div className="grid grid-cols-4 gap-2 py-2">
+                <div className="col-span-3 flex shrink-0 flex-col items-start justify-between">
                   <div>
                     <Link
-                      className="block mb-1 hover:underline hover:underline-offset-2"
+                      className="mb-1 block hover:underline hover:underline-offset-2"
                       href={`/video-games/games/${game.slug}`}
                     >
-                      <h3 className="scroll-m-20 text-base md:text-xl font-medium tracking-tight">
+                      <h3 className="scroll-m-20 text-base font-medium tracking-tight md:text-xl">
                         {game.name}
                       </h3>
                     </Link>
@@ -842,7 +773,7 @@ async function SeriesModalContent({
                   </Badge>
                 </div>
                 <Link
-                  className="col-span-1 block mb-1 hover:underline hover:underline-offset-2"
+                  className="col-span-1 mb-1 block hover:underline hover:underline-offset-2"
                   href={`/video-games/games/${game.slug}`}
                 >
                   <img
@@ -871,18 +802,14 @@ async function SimilarGames({ slug }: { slug: string }) {
 
   return (
     <>
-      <h2 className="mb-2 lg:mb-[310px] scroll-m-20 text-lg font-semibold">
-        More games like {game.name}
-      </h2>
-      <div className="lg:absolute bottom-0 left-1/2 lg:translate-x-[-50%] lg:w-[90vw]">
-        <SimilarGamesCarousel
-          games={
-            game.similarOf.map((e) => e.similar) as (Game & {
-              cover: GCover;
-            })[]
-          }
-        />
-      </div>
+      <DetailsPageH2>More games like {game.name}</DetailsPageH2>
+      <SimilarGamesCarousel
+        games={
+          game.similarOf.map((e) => e.similar) as (Game & {
+            cover: GCover;
+          })[]
+        }
+      />
     </>
   );
 }

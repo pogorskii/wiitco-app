@@ -1,7 +1,24 @@
 import { fetchJustWatchInfo } from "@/lib/actions";
 import { JustWatchInfo } from "./just-watch-info";
+import { Skeleton } from "../skeleton";
+import { Suspense } from "react";
 
-export async function JustWatchSection({
+export function JustWatchSection({
+  title,
+  id,
+  type,
+}: {
+  title: string;
+  id: number;
+  type: "movie" | "tv";
+}) {
+  return (
+    <Suspense fallback={<Skeleton className="w-full h-20 rounded-lg" />}>
+      <JustWatchContent title={title} id={id} type={type} />
+    </Suspense>
+  );
+}
+async function JustWatchContent({
   title,
   id,
   type,
@@ -15,31 +32,25 @@ export async function JustWatchSection({
 
   const availableCountries: {
     [key: string]: {
-      link?: string | undefined;
-      buy?:
-        | {
-            logo_path: string;
-            provider_id: number;
-            provider_name: string;
-            display_priority: number;
-          }[]
-        | undefined;
-      rent?:
-        | {
-            logo_path: string;
-            provider_id: number;
-            provider_name: string;
-            display_priority: number;
-          }[]
-        | undefined;
-      flatrate?:
-        | {
-            logo_path: string;
-            provider_id: number;
-            provider_name: string;
-            display_priority: number;
-          }[]
-        | undefined;
+      link?: string;
+      buy?: {
+        logo_path: string;
+        provider_id: number;
+        provider_name: string;
+        display_priority: number;
+      }[];
+      rent?: {
+        logo_path: string;
+        provider_id: number;
+        provider_name: string;
+        display_priority: number;
+      }[];
+      flatrate?: {
+        logo_path: string;
+        provider_id: number;
+        provider_name: string;
+        display_priority: number;
+      }[];
     };
   } = {};
 

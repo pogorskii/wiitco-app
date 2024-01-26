@@ -44,13 +44,13 @@ export function ImagesCarousel({
           const smallImgUrl = image.file_path
             ? `https://image.tmdb.org/t/p/w1066_and_h600_bestv2/${image.file_path}`
             : image.imageId
-            ? `https://images.igdb.com/igdb/image/upload/t_720p/${image.imageId}.jpg`
-            : undefined;
+              ? `https://images.igdb.com/igdb/image/upload/t_720p/${image.imageId}.jpg`
+              : undefined;
           const origImgUrl = image.file_path
             ? `https://www.themoviedb.org/t/p/original/${image.file_path}`
             : image.imageId
-            ? `https://images.igdb.com/igdb/image/upload/t_original/${image.imageId}.jpg`
-            : undefined;
+              ? `https://images.igdb.com/igdb/image/upload/t_original/${image.imageId}.jpg`
+              : undefined;
 
           return (
             <CarouselItem key={i}>
@@ -58,7 +58,7 @@ export function ImagesCarousel({
                 <DialogTrigger asChild>
                   <div className="p-1">
                     <Card className="overflow-hidden">
-                      <CardContent className="cursor-pointer relative p-0 flex aspect-[16/9] items-center justify-center">
+                      <CardContent className="relative flex aspect-[16/9] cursor-pointer items-center justify-center p-0">
                         <img
                           src={smallImgUrl}
                           alt={`${title} Screenshot ${i}`}
@@ -67,7 +67,7 @@ export function ImagesCarousel({
                     </Card>
                   </div>
                 </DialogTrigger>
-                <DialogContent className="border-none p-0 max-w-[80vw]">
+                <DialogContent className="max-w-[80vw] border-none p-0">
                   <img src={origImgUrl} alt={`${title} Screenshot ${i}`} />
                 </DialogContent>
               </Dialog>

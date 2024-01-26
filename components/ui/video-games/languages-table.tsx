@@ -17,6 +17,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { FaCheck } from "react-icons/fa";
+import { DetailsPageH2 } from "../details-page-h2";
 
 type LanguageSupports = {
   language: {
@@ -45,6 +46,8 @@ export function LanguagesTable({
   function handleClick() {
     setIsOpen(!isOpen);
   }
+
+  if (!languageSupports.length) return null;
 
   const languages: {
     id: number;
@@ -86,21 +89,21 @@ export function LanguagesTable({
           <TableCell className="px-0 py-2">
             {languageSupports.some(
               (e) =>
-                e.language.id === language.id && e.supportType.name === "Audio"
+                e.language.id === language.id && e.supportType.name === "Audio",
             ) && <FaCheck className="mx-auto" />}
           </TableCell>
           <TableCell className="px-0 py-2">
             {languageSupports.some(
               (e) =>
                 e.language.id === language.id &&
-                e.supportType.name === "Subtitles"
+                e.supportType.name === "Subtitles",
             ) && <FaCheck className="mx-auto" />}
           </TableCell>
           <TableCell className="px-0 py-2">
             {languageSupports.some(
               (e) =>
                 e.language.id === language.id &&
-                e.supportType.name === "Interface"
+                e.supportType.name === "Interface",
             ) && <FaCheck className="mx-auto" />}
           </TableCell>
         </TableRow>
@@ -108,17 +111,15 @@ export function LanguagesTable({
   });
 
   return (
-    <div className="mb-8 self-start w-full">
-      <h2 className="mb-2 font-semibold text-lg text-start">
-        Supported Languages
-      </h2>
+    <div className="mb-8 w-full self-start">
+      <DetailsPageH2>Supported Languages</DetailsPageH2>
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead className="text-start h-8 px-1"></TableHead>
-            <TableHead className="text-start h-8 px-1">Audio</TableHead>
-            <TableHead className="text-start h-8 px-1">Subs</TableHead>
-            <TableHead className="text-start h-8 px-1">UI</TableHead>
+            <TableHead className="h-8 px-1 text-start"></TableHead>
+            <TableHead className="h-8 px-1 text-start">Audio</TableHead>
+            <TableHead className="h-8 px-1 text-start">Subs</TableHead>
+            <TableHead className="h-8 px-1 text-start">UI</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>{tableRows}</TableBody>

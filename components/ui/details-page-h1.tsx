@@ -1,7 +1,7 @@
-export function DetailsPageH1({ text }: { text: string }) {
+export function DetailsPageH1({ children }: { children: React.ReactNode }) {
   return (
-    <h1 className="mb-2 scroll-m-20 text-xl md:text-2xl font-semibold first:mt-0">
-      {text}
+    <h1 className="mb-4 scroll-m-20 text-2xl font-semibold tracking-tight first:mt-0 lg:text-4xl">
+      {children}
     </h1>
   );
 }

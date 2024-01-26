@@ -1,3 +1,4 @@
+import { clsx } from "clsx";
 import { Button } from "@/components/ui/button";
 import { FaPlus } from "react-icons/fa";
 export function AddToAccountButton({
@@ -17,7 +18,9 @@ export function AddToAccountButton({
 
   return (
     <Button
-      className={`mt-4 md-2 md:mb-6 w-full ${className ? className : ""}`}
+      className={clsx("mt-4 md-2 md:mb-6 w-full", {
+        [className as string]: className,
+      })}
     >
       <FaPlus className="me-1" /> {buttonTextEnum[type]}
     </Button>

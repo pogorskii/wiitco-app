@@ -18,13 +18,9 @@ export function SeasonsCarousel({
 }: {
   seasons: TelevisionShowSeasons;
 }) {
-  const validSeasons = [];
+  if (!seasons) return null;
 
-  for (const season of seasons) {
-    if (season) validSeasons.push(season);
-  }
-
-  const sortedSeasons = validSeasons.sort(
+  const sortedSeasons = seasons.sort(
     (a, b) => a.season_number - b.season_number
   );
 
@@ -75,7 +71,7 @@ export function SeasonsCarousel({
                     </DialogHeader>
                     <ScrollArea className="h-full max-h-[70vh] w-auto rounded-md border">
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 p-4">
-                        {validSeasons.map((season, i) => {
+                        {seasons.map((season, i) => {
                           if (i > 9) {
                             return (
                               <div key={i}>

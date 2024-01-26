@@ -16,6 +16,7 @@ import {
   PersonMovieProducingCredits,
   PersonTelevisionProducingCredits,
 } from "@/lib/zod-schemas";
+import { DetailsPageH2 } from "../details-page-h2";
 
 export function ProducingCreditsCarousel({
   cinema,
@@ -116,7 +117,7 @@ export function ProducingCreditsCarousel({
 
   return (
     <div className="mb-8">
-      <h2 className="mb-2 text-lg font-semibold">Producing credits</h2>
+      <DetailsPageH2>Producing credits</DetailsPageH2>
       <ScrollArea className="w-full whitespace-nowrap rounded-md border">
         <div className="flex w-max space-x-4 p-4">
           {safeOrderedCredits.map((credit, i) => {
@@ -127,7 +128,7 @@ export function ProducingCreditsCarousel({
 
             if (i < 10) {
               return (
-                <figure key={i} className="shrink-0 w-[156px]">
+                <figure key={i} className="w-[156px] shrink-0">
                   <Link href={entryLink}>
                     <div className="h-[200px] overflow-hidden rounded-md">
                       <img
@@ -137,11 +138,11 @@ export function ProducingCreditsCarousel({
                       />
                     </div>
                     <figcaption className="pt-2 text-xs">
-                      <p className="mb-1 text-sm font-semibold text-ellipsis overflow-hidden">
+                      <p className="mb-1 overflow-hidden text-ellipsis text-sm font-semibold">
                         {credit.title}
                       </p>
                       {credit.jobs && (
-                        <p className="mb-1 text-sm text-ellipsis overflow-hidden">
+                        <p className="mb-1 overflow-hidden text-ellipsis text-sm">
                           {credit.jobs.map((job, i, arr) => {
                             if (job && i < arr.length - 1) {
                               return <span key={i}>{job}, </span>;
@@ -152,7 +153,7 @@ export function ProducingCreditsCarousel({
                         </p>
                       )}
                       {credit.releaseDate && (
-                        <div className="text-xs text-muted-foreground text-ellipsis overflow-hidden">
+                        <div className="overflow-hidden text-ellipsis text-xs text-muted-foreground">
                           {format(credit.releaseDate, "MMMM d yyyy")}
                         </div>
                       )}
@@ -169,12 +170,12 @@ export function ProducingCreditsCarousel({
                   <DialogTrigger asChild>
                     <Button variant="outline">All Credits</Button>
                   </DialogTrigger>
-                  <DialogContent className="w-[800px] max-w-[90vw] max-h-[90vh]">
+                  <DialogContent className="max-h-[90vh] w-[800px] max-w-[90vw]">
                     <DialogHeader>
                       <DialogTitle>Full Roles list</DialogTitle>
                     </DialogHeader>
                     <ScrollArea className="h-full max-h-[70vh] w-auto rounded-md border">
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 p-4">
+                      <div className="grid grid-cols-1 gap-4 p-4 sm:grid-cols-2">
                         {safeOrderedCredits.map((credit, i) => {
                           const entryLink =
                             credit.type === "movie"
@@ -193,12 +194,12 @@ export function ProducingCreditsCarousel({
                                         alt={`${credit.title} poster`}
                                       />
                                     </div>
-                                    <div className="col-span-3 shrink-0 flex flex-col items-start">
+                                    <div className="col-span-3 flex shrink-0 flex-col items-start">
                                       <h3 className="scroll-m-20 text-base font-medium tracking-tight">
                                         {credit.title}
                                       </h3>
                                       {credit.jobs && (
-                                        <p className="mb-1 text-sm text-ellipsis overflow-hidden">
+                                        <p className="mb-1 overflow-hidden text-ellipsis text-sm">
                                           {credit.jobs.map((job, i, arr) => {
                                             if (job && i < arr.length - 1) {
                                               return (
@@ -214,7 +215,7 @@ export function ProducingCreditsCarousel({
                                         <div className="text-sm text-muted-foreground">
                                           {format(
                                             credit.releaseDate,
-                                            "MMMM d yyyy"
+                                            "MMMM d yyyy",
                                           )}
                                         </div>
                                       )}

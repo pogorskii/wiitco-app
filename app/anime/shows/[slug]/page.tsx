@@ -1,18 +1,12 @@
 "use server";
 
 import { Suspense } from "react";
-import { format } from "date-fns";
 import Image from "next/image";
-import { TagsRow } from "@/components/ui/tags-row";
 import { TruncText } from "@/components/ui/trunc-text";
 import { RatingCircle } from "@/components/ui/rating-circle";
 import { YouTubePlayer } from "@/components/ui/youtube-player";
 import { Breadcrumbs } from "@/components/ui/breadcrumbs";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { FaPlus } from "react-icons/fa";
 import { Separator } from "@/components/ui/separator";
-import type { Metadata } from "next";
 import { fetchTelevisionShowDetails } from "@/lib/actions";
 import { CastCarousel } from "@/components/ui/cinema/cast-carousel";
 import { SeasonsCarousel } from "@/components/ui/tmdb/seasons-carousel";
@@ -20,6 +14,13 @@ import { JustWatchSection } from "@/components/ui/tmdb/just-watch-section";
 import { CinemaStillsGallery } from "@/components/ui/tmdb/cinema-stills-gallery";
 import { CinemaLinksList } from "@/components/ui/tmdb/cinema-links-list";
 import { convertMinutesToHoursAndMinutes } from "@/lib/utils";
+import { AddToAccountButton } from "@/components/ui/add-to-account-button";
+import { LinksListRow } from "@/components/ui/links-list-row";
+import { DetailsPageH1 } from "@/components/ui/details-page-h1";
+import { DisplayFullDate } from "@/components/ui/display-full-date";
+import { DetailsPageH2 } from "@/components/ui/details-page-h2";
+import { DetailsPageTypeBadge } from "@/components/ui/details-page-type-badge";
+import type { Metadata } from "next";
 
 export async function generateMetadata({
   params,
@@ -80,7 +81,7 @@ export default async function Page({ params }: { params: { slug: string } }) {
       <div className="grid grid-cols-4 gap-6">
         {/* First column */}
         {/* Shown only on MD breakpoint and above */}
-        <div className="hidden md:block col-span-1">
+        <div className="col-span-1 hidden md:block">
           <Image
             src={coverUrl}
             alt={`${name} poster`}
@@ -91,20 +92,18 @@ export default async function Page({ params }: { params: { slug: string } }) {
             }}
             priority
           />
-          {/* TODO: Change appearance if added */}
-          <Button className="mt-4 mb-6 w-full">
-            <FaPlus className="me-1" /> Watch this Anime
-          </Button>
-
-          <div className="mb-8 flex col-span-1 lg:hidden flex-col items-center">
-            <RatingCircle rating={vote_average * 10} reviewCount={vote_count} />
-          </div>
+          <AddToAccountButton type="anime" />
+          <RatingCircle
+            className="col-span-1 lg:hidden"
+            rating={vote_average * 10}
+            reviewCount={vote_count}
+          />
         </div>
 
         {/* Second column */}
         <div className="col-span-4 md:col-span-3">
-          <div className="grid grid-cols-5 md:grid-cols-1">
-            <div className="col-span-2 block me-4 md:hidden">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-5 md:grid-cols-1">
+            <div className="col-span-1 sm:col-span-2 md:hidden">
               <Image
                 src={coverUrl}
                 alt={`${name} poster`}
@@ -117,66 +116,47 @@ export default async function Page({ params }: { params: { slug: string } }) {
               />
             </div>
 
-            <div className="col-span-3 md:col-span-1">
-              <Badge variant="outline" className="mb-2">
-                {in_production ? "In Production" : "Finished"}
-              </Badge>
-              <h1 className="mb-2 scroll-m-20 text-xl md:text-2xl font-semibold first:mt-0">
-                {name}
-              </h1>
-              {first_air_date && !isNaN(first_air_date.getTime()) && (
-                <span>
-                  {in_production && (
-                    <span className="font-semibold">Since: </span>
-                  )}
-                  {format(first_air_date, "MMMM d yyyy")}{" "}
-                  {last_air_date && (
-                    <> – {format(last_air_date, "MMMM d yyyy")}</>
-                  )}
-                </span>
-              )}
+            <div className="col-span-1 sm:col-span-3 md:col-span-1">
+              <DetailsPageTypeBadge>
+                {in_production ? "In Production" : "Production Finished"}
+              </DetailsPageTypeBadge>
+              <DetailsPageH1>{name}</DetailsPageH1>
+              <DisplayFullDate
+                startDate={first_air_date}
+                endDate={last_air_date}
+              />
             </div>
           </div>
 
-          <Button className="mb-2 mt-4 w-full md:hidden">
-            <FaPlus className="me-1" /> Watch this Anime
-          </Button>
-
-          <Separator className="mt-1 mb-4" />
+          <AddToAccountButton className="md:hidden" type="anime" />
+          <Separator className="mb-4 mt-2" />
 
           {/* Info First Column */}
           <div className="col-span-3 grid grid-cols-4 gap-6">
-            <div className="flex md:hidden col-span-5 lg:hidden flex-col items-center">
-              {/* Reviews */}
-              <RatingCircle
-                rating={vote_average * 10}
-                reviewCount={vote_count}
-              />
-            </div>
+            <RatingCircle
+              className="col-span-5 md:hidden"
+              rating={vote_average * 10}
+              reviewCount={vote_count}
+            />
 
             {/* Below LG breakpoint changes into single column */}
             <div className="col-span-4 lg:col-span-3">
               {/* Main Info List */}
               <ul className="mb-4 [&>*+*]:mt-2">
-                {genres && genres.length > 0 && (
-                  <li>
-                    <span className="font-semibold">
-                      {genres.length === 1 ? `Genre:` : `Genres:`}
-                    </span>
-                    <TagsRow
-                      type="tv"
-                      category="genres"
-                      tags={genres
-                        .filter((g) => g)
-                        .map((g) => {
-                          return {
-                            name: g?.name,
-                            slug: g?.id.toString(),
-                          };
-                        })}
-                    />
-                  </li>
-                )}
+                <LinksListRow
+                  links={genres
+                    ?.filter((g) => g)
+                    .map((g) => {
+                      return {
+                        name: g.name,
+                        slug: g.id.toString(),
+                      };
+                    })}
+                  singularName="Genre"
+                  pluralName="Genres"
+                  linkType="anime"
+                  linkCategory="genre"
+                />
                 {episode_run_time.length > 0 && (
                   <li>
                     <span className="font-semibold">Episode runtime: </span>
@@ -197,108 +177,68 @@ export default async function Page({ params }: { params: { slug: string } }) {
                     })}
                   </li>
                 )}
-                {production_countries.length > 0 && (
-                  <li>
-                    <span className="font-semibold">
-                      {production_countries.length === 1
-                        ? `Country:`
-                        : `Countries:`}
-                    </span>
-                    <TagsRow
-                      type="cinema"
-                      category="country"
-                      tags={production_countries.map((e) => {
-                        return {
-                          name: e?.name,
-                          slug: e?.iso_3166_1,
-                        };
-                      })}
-                    />
-                  </li>
-                )}
-                {production_companies.length > 0 && (
-                  <li>
-                    <span className="font-semibold">
-                      {production_companies.length === 1
-                        ? `Company:`
-                        : `Companies:`}
-                    </span>
-                    <TagsRow
-                      type="cinema"
-                      category="company"
-                      tags={production_companies.map((e) => {
-                        return {
-                          name: e?.name,
-                          slug: e?.id,
-                        };
-                      })}
-                    />
-                  </li>
-                )}
-                {networks.length > 0 && (
-                  <li>
-                    <span className="font-semibold">
-                      {networks.length === 1 ? `Network:` : `Networks:`}
-                    </span>
-                    <TagsRow
-                      type="cinema"
-                      category="company"
-                      tags={networks.map((e) => {
-                        return {
-                          name: e?.name,
-                          slug: e?.id,
-                        };
-                      })}
-                    />
-                  </li>
-                )}
+                <LinksListRow
+                  links={production_countries?.map((e) => {
+                    return {
+                      name: e.name,
+                      slug: e.iso_3166_1,
+                    };
+                  })}
+                  singularName="Country"
+                  pluralName="Countries"
+                  linkType="anime"
+                  linkCategory="country"
+                />
+                <LinksListRow
+                  links={production_companies?.map((e) => {
+                    return {
+                      name: e.name,
+                      slug: e.id,
+                    };
+                  })}
+                  singularName="Company"
+                  pluralName="Companies"
+                  linkType="anime"
+                  linkCategory="company"
+                />
+                <LinksListRow
+                  links={networks?.map((e) => {
+                    return {
+                      name: e.name,
+                      slug: e.id,
+                    };
+                  })}
+                  singularName="Network"
+                  pluralName="Networks"
+                  linkType="anime"
+                  linkCategory="network"
+                />
               </ul>
 
               <TruncText text={overview} />
+              <CinemaLinksList homepage={homepage} links={external_ids} />
+              <SeasonsCarousel seasons={seasons} />
+              <JustWatchSection title={name} id={id} type="tv" />
+              <CastCarousel actors={credits.cast} />
 
-              {Object.values(external_ids).some((e) => e !== null) && (
-                <div className="mb-8">
-                  <CinemaLinksList homepage={homepage} links={external_ids} />
-                </div>
-              )}
-
-              {seasons.length > 0 && <SeasonsCarousel seasons={seasons} />}
-
-              <Suspense fallback={<p>Loading...</p>}>
-                <JustWatchSection title={name} id={id} type="tv" />
-              </Suspense>
-
-              {credits.cast && credits?.cast?.length > 0 && (
-                <CastCarousel actors={credits.cast} />
-              )}
-
-              {/* YouTube Video Embed */}
               {videos.results.length > 0 && (
                 <section className="mb-8" id="trailer">
-                  <h2 className="mb-2 scroll-m-20 text-lg font-semibold">
-                    {name}&apos;s Trailer
-                  </h2>
+                  <DetailsPageH2>{name}&apos;s Trailer</DetailsPageH2>
                   <Suspense fallback={<p>loading...</p>}>
                     <YouTubePlayer videoId={videos.results[0].key} />
                   </Suspense>
                 </section>
               )}
 
-              {/* Screenshots Slider */}
-              <Suspense fallback={<p>loading...</p>}>
-                <CinemaStillsGallery title={name} id={id} type="tv" />
-              </Suspense>
+              <CinemaStillsGallery title={name} id={id} type="tv" />
             </div>
 
             {/* Info Second Column */}
-            {/* Shows Here Only above LG Breakpoint */}
-            <div className="hidden col-span-1 lg:flex flex-col items-center">
-              {/* Reviews */}
-              <RatingCircle
-                rating={vote_average * 10}
-                reviewCount={vote_count}
-              />
-            </div>
+            <RatingCircle
+              className="col-span-1 hidden lg:flex"
+              rating={vote_average * 10}
+              reviewCount={vote_count}
+            />
           </div>
         </div>
       </div>

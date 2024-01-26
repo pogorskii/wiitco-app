@@ -15,6 +15,10 @@ import { ActingCreditsCarousel } from "@/components/ui/tmdb/acting-credits-carou
 import { ProducingCreditsCarousel } from "@/components/ui/tmdb/producing-credits-carousel";
 import { CinemaStillsGallery } from "@/components/ui/tmdb/cinema-stills-gallery";
 import { CinemaLinksList } from "@/components/ui/tmdb/cinema-links-list";
+import { AddToAccountButton } from "@/components/ui/add-to-account-button";
+import { DetailsPageTypeBadge } from "@/components/ui/details-page-type-badge";
+import { DetailsPageH1 } from "@/components/ui/details-page-h1";
+import { DisplayFullDate } from "@/components/ui/display-full-date";
 
 export async function generateMetadata({
   params,
@@ -66,10 +70,10 @@ export default async function Page({ params }: { params: { slug: string } }) {
       <Breadcrumbs
         breadcrumbs={[
           { label: "Home", href: "/" },
-          { label: "Cinema", href: "/cinema/" },
+          { label: "People", href: "/people/" },
           {
             label: name,
-            href: `/cinema/people/${params.slug}`,
+            href: `/people/person/${params.slug}`,
             active: true,
           },
         ]}
@@ -78,7 +82,7 @@ export default async function Page({ params }: { params: { slug: string } }) {
       <div className="grid grid-cols-4 gap-6">
         {/* First column */}
         {/* Shown only on MD breakpoint and above */}
-        <div className="hidden md:block col-span-1">
+        <div className="col-span-1 hidden md:block">
           <Image
             src={coverUrl}
             alt={`${name} poster`}
@@ -89,16 +93,13 @@ export default async function Page({ params }: { params: { slug: string } }) {
             }}
             priority
           />
-          {/* TODO: Change appearance if added */}
-          <Button className="mt-4 mb-6 w-full">
-            <FaPlus className="me-1" /> Set birthday reminder
-          </Button>
+          <AddToAccountButton type="person" />
         </div>
 
         {/* Second column */}
         <div className="col-span-4 md:col-span-3">
-          <div className="grid grid-cols-5 md:grid-cols-1">
-            <div className="col-span-2 block me-4 md:hidden">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-5 md:grid-cols-1">
+            <div className="col-span-1 sm:col-span-2 md:hidden">
               <Image
                 src={coverUrl}
                 alt={`${name} poster`}
@@ -111,41 +112,17 @@ export default async function Page({ params }: { params: { slug: string } }) {
               />
             </div>
 
-            <div className="col-span-3 md:col-span-1">
-              {known_for_department && (
-                <Badge variant="outline" className="mb-2">
-                  {known_for_department}
-                </Badge>
-              )}
-              <h1 className="mb-2 scroll-m-20 text-xl md:text-2xl font-semibold first:mt-0">
-                {name}
-              </h1>
-              {birthday && (
-                <span>
-                  {birthday && (
-                    <p>
-                      <span className="font-semibold">Birthday: </span>
-                      {format(birthday, "MMMM d yyyy")}
-                      {!deathday && <> ({formatDistanceToNow(birthday)})</>}
-                    </p>
-                  )}
-                  {deathday && (
-                    <p>
-                      <span className="font-semibold">Date of death:</span>{" "}
-                      {format(deathday, "MMMM d yyyy")} (
-                      {formatDistance(deathday, birthday)})
-                    </p>
-                  )}
-                </span>
-              )}
+            <div className="col-span-1 sm:col-span-3 md:col-span-1">
+              <DetailsPageTypeBadge>
+                {known_for_department}
+              </DetailsPageTypeBadge>
+              <DetailsPageH1>{name}</DetailsPageH1>
+              <DisplayFullDate startDate={birthday} endDate={deathday} />
             </div>
           </div>
 
-          <Button className="mb-2 mt-4 w-full md:hidden">
-            <FaPlus className="me-1" /> Set birthday reminder
-          </Button>
-
-          <Separator className="mt-1 mb-4" />
+          <AddToAccountButton className="md:hidden" type="person" />
+          <Separator className="mb-4 mt-2" />
 
           {/* Info First Column */}
           <div className="col-span-3">
@@ -177,32 +154,17 @@ export default async function Page({ params }: { params: { slug: string } }) {
               )}
             </ul>
 
-            {/* Truncated Summary */}
-            {biography && <TruncText text={biography} maxLength={400} />}
-
-            {/* Links table */}
-            {Object.values(external_ids).some((e) => e !== null) && (
-              <div className="mb-8">
-                <CinemaLinksList homepage={homepage} links={external_ids} />
-              </div>
-            )}
-
-            {/* Acting Credits Carousel */}
+            <TruncText text={biography} maxLength={400} />
+            <CinemaLinksList homepage={homepage} links={external_ids} />
             <ActingCreditsCarousel
               cinema={movie_credits.cast}
               television={tv_credits.cast}
             />
-
-            {/* Producing Credits Carousel */}
             <ProducingCreditsCarousel
               cinema={movie_credits.crew}
               television={tv_credits.crew}
             />
-
-            {/* Screenshots Slider */}
-            <Suspense fallback={<p>loading...</p>}>
-              <CinemaStillsGallery title={name} id={id} type="person" />
-            </Suspense>
+            <CinemaStillsGallery title={name} id={id} type="person" />
           </div>
         </div>
       </div>

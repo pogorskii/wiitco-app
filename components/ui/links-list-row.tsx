@@ -8,7 +8,7 @@ export function LinksListRow({
   linkType,
   linkCategory,
 }: {
-  links?: { name: string; slug: string }[];
+  links?: { name: string | number; slug: string | number }[];
   singularName: string;
   pluralName: string;
   linkType: string;
@@ -24,15 +24,16 @@ export function LinksListRow({
         {links.length === 1 ? `${singularName}:` : `${pluralName}:`}
       </span>
       {links.map((link, i, arr) => (
-        <Link
-          key={uuid()}
-          className=" text-blue-500 hover:text-blue-400 hover:underline hover:underline-offset-4 hover:decoration-solid"
-          href={`${linkHrefBase}${link.slug}`}
-        >
-          {" "}
-          {link.name}
-          {i < arr.length - 1 && ","}
-        </Link>
+        <span key={uuid()}>
+          <> </>
+          <Link
+            className=" text-blue-500 hover:text-blue-400 hover:underline hover:decoration-solid hover:underline-offset-4"
+            href={`${linkHrefBase}${link.slug}`}
+          >
+            {link.name}
+          </Link>
+          <>{i < arr.length - 1 && ","}</>
+        </span>
       ))}
     </li>
   );

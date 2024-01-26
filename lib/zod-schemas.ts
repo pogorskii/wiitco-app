@@ -238,14 +238,14 @@ export const TelevisionShowDetails = z.object({
     .string()
     .transform((e) => new Date(e))
     .nullable(),
-  genres: z.array(
-    z
-      .object({
+  genres: z
+    .array(
+      z.object({
         id: z.number(),
         name: z.string(),
       })
-      .optional()
-  ),
+    )
+    .optional(),
   homepage: z.string().nullable(),
   id: z.number(),
   in_production: z.boolean(),
@@ -289,45 +289,45 @@ export const TelevisionShowDetails = z.object({
       still_path: z.string().nullable(),
     })
     .nullable(),
-  networks: z.array(
-    z
-      .object({
+  networks: z
+    .array(
+      z.object({
         id: z.number(),
         logo_path: z.string().nullable(),
         name: z.string(),
         origin_country: z.string(),
       })
-      .optional()
-  ),
+    )
+    .optional(),
   number_of_episodes: z.number(),
   number_of_seasons: z.number(),
-  origin_country: z.array(z.string().optional()),
+  origin_country: z.array(z.string()).optional(),
   original_language: z.string().nullable(),
   original_name: z.string(),
   overview: z.string().nullable(),
   popularity: z.number(),
   poster_path: z.string().nullable(),
-  production_companies: z.array(
-    z
-      .object({
+  production_companies: z
+    .array(
+      z.object({
         id: z.number(),
         logo_path: z.string().nullable(),
         name: z.string(),
         origin_country: z.string(),
       })
-      .optional()
-  ),
-  production_countries: z.array(
-    z
-      .object({
+    )
+    .optional(),
+  production_countries: z
+    .array(
+      z.object({
         iso_3166_1: z.string(),
         name: z.string(),
       })
-      .optional()
-  ),
-  seasons: z.array(
-    z
-      .object({
+    )
+    .optional(),
+  seasons: z
+    .array(
+      z.object({
         air_date: z
           .string()
           .transform((e) => new Date(e))
@@ -340,17 +340,17 @@ export const TelevisionShowDetails = z.object({
         season_number: z.number(),
         vote_average: z.number(),
       })
-      .optional()
-  ),
-  spoken_languages: z.array(
-    z
-      .object({
+    )
+    .optional(),
+  spoken_languages: z
+    .array(
+      z.object({
         english_name: z.string(),
         iso_639_1: z.string(),
         name: z.string(),
       })
-      .optional()
-  ),
+    )
+    .optional(),
   status: z.string().nullable(),
   tagline: z.string(),
   type: z.string(),

@@ -2,17 +2,20 @@
 
 import clsx from "clsx";
 import { motion } from "framer-motion";
+import { DetailsPageH2 } from "./details-page-h2";
 
 export function RatingCircle({
   rating,
   reviewCount,
+  className,
 }: {
   rating: number;
   reviewCount: number;
+  className?: string;
 }) {
   return (
-    <>
-      <h2 className="mb-2 font-semibold text-lg text-start">Rating</h2>
+    <div className={clsx("mb-8 flex flex-col items-center", className)}>
+      <DetailsPageH2>Rating</DetailsPageH2>
       <figure className="relative max-w-[100px]">
         <svg
           width="100%"
@@ -31,7 +34,7 @@ export function RatingCircle({
               },
               { "stroke-yellow-100": rating >= 40 && rating < 70 },
               { "stroke-red-100": rating < 40 && rating > 0 },
-              { "stroke-gray-100": rating === 0 }
+              { "stroke-gray-100": rating === 0 },
             )}
             style={{ strokeDashoffset: 0 }}
           />
@@ -47,7 +50,7 @@ export function RatingCircle({
               },
               { "stroke-yellow-500": rating >= 40 && rating < 70 },
               { "stroke-red-500": rating < 40 && rating > 0 },
-              { "stroke-gray-500": rating === 0 }
+              { "stroke-gray-500": rating === 0 },
             )}
             style={{
               strokeDasharray: "100 100",
@@ -60,7 +63,7 @@ export function RatingCircle({
             }}
           />
         </svg>
-        <div className="absolute font-semibold top-[50%] start-[50%] translate-y-[-50%] translate-x-[-50%] text-2xl sm:text-4xl flex flex-col items-center">
+        <div className="absolute start-[50%] top-[50%] flex translate-x-[-50%] translate-y-[-50%] flex-col items-center text-2xl font-semibold sm:text-4xl">
           <p>{rating > 0 ? Math.round(rating) : "??"}</p>
         </div>
       </figure>
@@ -74,6 +77,6 @@ export function RatingCircle({
           <b>{reviewCount}</b> {reviewCount === 1 ? "review" : "reviews"}
         </p>
       )}
-    </>
+    </div>
   );
 }
