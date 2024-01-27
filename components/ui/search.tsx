@@ -9,9 +9,11 @@ import { Input } from "@/components/ui/input";
 export function Search({
   placeholder,
   className,
+  searchParamName = "search",
 }: {
   placeholder: string;
   className?: string;
+  searchParamName?: string;
 }) {
   const searchParams = useSearchParams();
   const pathname = usePathname();
@@ -20,9 +22,9 @@ export function Search({
   const handleSearch = useDebouncedCallback((term: string) => {
     const params = new URLSearchParams(searchParams);
     if (term) {
-      params.set("search", term);
+      params.set(searchParamName, term);
     } else {
-      params.delete("search");
+      params.delete(searchParamName);
     }
     replace(`${pathname}?${params.toString()}`);
   }, 300);
@@ -38,7 +40,7 @@ export function Search({
         onChange={(e) => {
           handleSearch(e.target.value);
         }}
-        defaultValue={searchParams.get("search")?.toString()}
+        defaultValue={searchParams.get(searchParamName)?.toString()}
       />
       <MagnifyingGlassIcon className="absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500" />
     </div>

@@ -27,7 +27,7 @@ export const fetchMovieDetails = async (id: string) => {
   try {
     const response = await fetch(
       `https://api.themoviedb.org/3/movie/${id}?append_to_response=credits%2Cexternal_ids%2Crelease_dates%2Cvideos&language=en-US`,
-      optionsTMDB
+      optionsTMDB,
     );
     const result = await response.json();
     const parsedData = MovieDetails.parse(result);
@@ -42,7 +42,7 @@ export const fetchMovieCollection = async (id: number) => {
   try {
     const response = await fetch(
       `https://api.themoviedb.org/3/collection/${id}?language=en-US`,
-      optionsTMDB
+      optionsTMDB,
     );
     const result = await response.json();
     const parsedData = MovieCollection.parse(result);
@@ -67,16 +67,16 @@ export const fetchMoviesSearch = async ({
     const response = search
       ? await fetch(
           `https://api.themoviedb.org/3/search/movie?query=${search}%20&include_adult=false&language=en-US&page=${page}`,
-          optionsTMDB
+          optionsTMDB,
         )
       : await fetch(
           `https://api.themoviedb.org/3/movie/popular?language=en-US&page=${page}`,
-          optionsTMDB
+          optionsTMDB,
         );
     const result = await response.json();
     const parsedData = genre
       ? MoviesSearch.parse(result.results).filter((e) =>
-          e.genre_ids?.includes(Number(genre))
+          e.genre_ids?.includes(Number(genre)),
         )
       : MoviesSearch.parse(result.results);
 
@@ -182,7 +182,7 @@ export const fetchTelevisionShowDetails = async (id: string) => {
   try {
     const response = await fetch(
       `https://api.themoviedb.org/3/tv/${id}?append_to_response=credits%2Cexternal_ids%2Crelease_dates%2Cvideos&language=en-US`,
-      optionsTMDB
+      optionsTMDB,
     );
     const result = await response.json();
     const parsedData = TelevisionShowDetails.parse(result);
@@ -205,11 +205,11 @@ export const fetchCinemaPeopleSearch = async ({
     const response = search
       ? await fetch(
           `https://api.themoviedb.org/3/search/person?query=${search}%20&include_adult=false&language=en-US&page=${page}`,
-          optionsTMDB
+          optionsTMDB,
         )
       : await fetch(
           `https://api.themoviedb.org/3/person/popular?language=en-US&page=${page}`,
-          optionsTMDB
+          optionsTMDB,
         );
     const result = await response.json();
     const parsedData = CinemaPeopleSearch.parse(result.results);
@@ -224,7 +224,7 @@ export const fetchCinemaPersonDetails = async (id: string) => {
   try {
     const response = await fetch(
       `https://api.themoviedb.org/3/person/${id}?append_to_response=external_ids%2Cmovie_credits%2Ctv_credits&language=en-US`,
-      optionsTMDB
+      optionsTMDB,
     );
     const result = await response.json();
     const parsedData = CinemaPersonDetails.parse(result);
@@ -245,7 +245,7 @@ export const fetchJustWatchInfo = async ({
   try {
     const response = await fetch(
       `https://api.themoviedb.org/3/${type}/${id}/watch/providers`,
-      optionsTMDB
+      optionsTMDB,
     );
     const result = await response.json();
     const parsedData = JustWatch.parse(result.results);
@@ -266,7 +266,7 @@ export const fetchTMDBImages = async ({
   try {
     const response = await fetch(
       `https://api.themoviedb.org/3/${type}/${id}/images`,
-      optionsTMDB
+      optionsTMDB,
     );
     const result = await response.json();
     const parsedData = TMDBImages.parse(result);
@@ -291,15 +291,15 @@ export const fetchAnimeShowsSearch = async ({
     const response = search
       ? await fetch(
           `https://api.themoviedb.org/3/search/tv?query=${search}%20&include_adult=false&language=en-US&page=${page}`,
-          optionsTMDB
+          optionsTMDB,
         )
       : await fetch(
           `https://api.themoviedb.org/3/tv/popular?language=en-US&page=${page}`,
-          optionsTMDB
+          optionsTMDB,
         );
     const result = await response.json();
     const parsedData = TelevisionShowsSearch.parse(result.results).filter(
-      (e) => e.genre_ids?.includes(16) && e.origin_country.includes("JP")
+      (e) => e.genre_ids?.includes(16) && e.origin_country.includes("JP"),
     );
     const filteredData = genre
       ? parsedData.filter((e) => e.genre_ids?.includes(Number(genre)))
@@ -325,16 +325,16 @@ export const fetchTelevisionShowsSearch = async ({
     const response = search
       ? await fetch(
           `https://api.themoviedb.org/3/search/tv?query=${search}%20&include_adult=false&language=en-US&page=${page}`,
-          optionsTMDB
+          optionsTMDB,
         )
       : await fetch(
           `https://api.themoviedb.org/3/tv/popular?language=en-US&page=${page}`,
-          optionsTMDB
+          optionsTMDB,
         );
     const result = await response.json();
     const parsedData = genre
       ? TelevisionShowsSearch.parse(result.results).filter((e) =>
-          e.genre_ids?.includes(Number(genre))
+          e.genre_ids?.includes(Number(genre)),
         )
       : TelevisionShowsSearch.parse(result.results);
 

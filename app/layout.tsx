@@ -34,10 +34,10 @@ export default function RootLayout({
             enableSystem
             disableTransitionOnChange
           >
-            <div className="relative px-6 sm:px-10 lg:px-20">
+            <div className="relative min-h-screen px-6 sm:px-10 lg:px-20">
               <BackToTop />
               <Header />
-              <main className="flex-grow pt-4 pb-8">{children}</main>
+              <main className="flex-grow pb-8 pt-4">{children}</main>
             </div>
             <Footer />
           </ThemeProvider>

@@ -3,7 +3,7 @@ import { NavLinks } from "@/components/ui/nav-links";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "./theme-toggle";
 import { MobileMenu } from "./mobile-menu";
-import { GlobalSearch } from "./global-search";
+import { GlobalSearch } from "./search-module/global-search";
 
 export default function Header() {
   return (
@@ -13,17 +13,17 @@ export default function Header() {
         <div className="hidden sm:flex">
           <NavLinks />
         </div>
-        <div className="hidden sm:flex gap-4">
+        <div className="hidden gap-4 sm:flex">
           <GlobalSearch placeholder="Search..." />
           <ThemeToggle />
           <form>
-            <Button className="ms-2 sm:m-0 p-4 sm:px-4 sm:py-2  text-xl sm:text-sm rounded-none sm:rounded-full">
+            <Button className="ms-2 rounded-none p-4 text-xl sm:m-0  sm:rounded-full sm:px-4 sm:py-2 sm:text-sm">
               {" "}
               <div>Log In</div>{" "}
             </Button>
           </form>
         </div>
-        <div className="sm:hidden flex gap-4">
+        <div className="flex gap-4 sm:hidden">
           <ThemeToggle />
           <MobileMenu />
         </div>

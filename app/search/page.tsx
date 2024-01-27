@@ -12,6 +12,7 @@ import { Spinner } from "../../components/ui/spinner";
 
 import type { Metadata } from "next";
 import { GlobalH1 } from "@/components/ui/global-h1";
+import PeopleSearchTable from "@/components/ui/people/people-search-table";
 
 export async function generateMetadata(): Promise<Metadata> {
   return {
@@ -34,8 +35,11 @@ export default async function Page({
     movies: <MoviesSearchTable search={currentSearch} />,
     tv: <TelevisionShowsSearchTable search={currentSearch} />,
     anime: <AnimeShowsSearchTable search={currentSearch} />,
+    people: <PeopleSearchTable search={currentSearch} />,
     games: <GamesSearchPageTable search={currentSearch} />,
   };
+
+  console.log(currentCategory);
 
   return (
     <div>
@@ -47,11 +51,9 @@ export default async function Page({
       <div className="mb-4 flex flex-wrap gap-4">
         <SearchCategories />
       </div>
-      {currentCategory && (
-        <Suspense fallback={<Spinner />}>
-          {currentCategory ? searchTabs[currentCategory] : searchTabs["movies"]}
-        </Suspense>
-      )}
+      <Suspense fallback={<Spinner />}>
+        {currentCategory ? searchTabs[currentCategory] : searchTabs["movies"]}
+      </Suspense>
     </div>
   );
 }

@@ -30,8 +30,8 @@ export function CastCarousel({
       <ScrollArea className="w-full whitespace-nowrap rounded-md border">
         <div className="flex w-max space-x-4 p-4">
           {sortedTopActors.map((actor, i) => (
-            <figure key={i} className="shrink-0 w-[156px]">
-              <Link href={`/cinema/people/${actor.id}`}>
+            <figure key={i} className="w-[156px] shrink-0">
+              <Link href={`/people/person/${actor.id}`}>
                 <div className="h-[200px] overflow-hidden rounded-md">
                   <img
                     className="object-fill"
@@ -44,10 +44,10 @@ export function CastCarousel({
                   />
                 </div>
                 <figcaption className="pt-2 text-xs">
-                  <p className="mb-1 text-sm font-semibold text-ellipsis overflow-hidden">
+                  <p className="mb-1 overflow-hidden text-ellipsis text-sm font-semibold">
                     {actor.name}
                   </p>
-                  <div className="text-xs text-muted-foreground text-ellipsis overflow-hidden">
+                  <div className="overflow-hidden text-ellipsis text-xs text-muted-foreground">
                     {actor.character}
                   </div>
                 </figcaption>
@@ -61,16 +61,16 @@ export function CastCarousel({
                   <DialogTrigger asChild>
                     <Button variant="outline">All Actors</Button>
                   </DialogTrigger>
-                  <DialogContent className="w-[800px] max-w-[90vw] max-h-[90vh]">
+                  <DialogContent className="max-h-[90vh] w-[800px] max-w-[90vw]">
                     <DialogHeader>
                       <DialogTitle>Full Cast</DialogTitle>
                     </DialogHeader>
                     <ScrollArea className="h-full max-h-[70vh] w-auto rounded-md border">
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 p-4">
+                      <div className="grid grid-cols-1 gap-4 p-4 sm:grid-cols-2">
                         {actors.map((actor, i) => (
                           <div key={i}>
                             {i > 1 && <Separator className="mb-4" />}
-                            <Link href={`/cinema/people/${actor.id}`}>
+                            <Link href={`/people/person/${actor.id}`}>
                               <div className="grid grid-cols-4 gap-4">
                                 <div className="col-span-1 aspect-square overflow-hidden rounded-md">
                                   <img
@@ -82,7 +82,7 @@ export function CastCarousel({
                                     alt={`${actor.name} photo`}
                                   />
                                 </div>
-                                <div className="col-span-3 shrink-0 flex flex-col items-start">
+                                <div className="col-span-3 flex shrink-0 flex-col items-start">
                                   <h3 className="scroll-m-20 text-base font-medium tracking-tight">
                                     {actor.name}
                                   </h3>
