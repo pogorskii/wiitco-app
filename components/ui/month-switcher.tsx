@@ -23,14 +23,20 @@ export function MonthSwitcher({
   const nextPagePath = getNextMonthURL(pathname, year, month);
 
   return (
-    <div className="sm:absolute sm:left-1/2 sm:translate-x-[-50%] mb-4 sm:mb-0 mx-auto w-fit flex justify-center items-center rounded-full border bg-background">
-      <Link className="inline-block p-2" href={prevPagePath}>
+    <div className="mx-auto mb-4 flex w-fit items-center justify-center rounded-full border border-input bg-background sm:absolute sm:left-1/2 sm:mb-0 sm:translate-x-[-50%]">
+      <Link
+        className="inline-flex items-center justify-center rounded-bl-full rounded-tl-full border-e border-input p-2.5 pe-3 hover:bg-accent"
+        href={prevPagePath}
+      >
         <ChevronLeft />
       </Link>
       <Separator orientation="vertical" />
       <p className="px-4 text-lg">{dateString}</p>
       <Separator orientation="vertical" />
-      <Link className="inline-block p-2" href={nextPagePath}>
+      <Link
+        className="inline-flex items-center justify-center rounded-br-full rounded-tr-full border-s border-input p-2.5 ps-3 hover:bg-accent"
+        href={nextPagePath}
+      >
         <ChevronRight />
       </Link>
     </div>

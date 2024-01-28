@@ -81,12 +81,12 @@ export function MovieReleaseTypeFilter() {
       <DropdownMenuTrigger asChild>
         <Button
           variant="outline"
-          className="rounded-full px-3 sm:px-4 justify-start sm:justify-center w-full sm:w-auto bg-white font-normal dark:border-slate-800 dark:bg-slate-950 dark:ring-offset-slate-950 dark:placeholder:text-slate-400 dark:focus:ring-slate-300"
+          className="w-full justify-start rounded-full bg-white px-3 font-normal dark:border-slate-800 dark:bg-slate-950 dark:ring-offset-slate-950 dark:placeholder:text-slate-400 dark:focus:ring-slate-300 sm:w-auto sm:justify-center sm:px-4"
         >
           Release Types {categoriesQuantity > 0 && `(${categoriesQuantity})`}
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="rounded-lg w-[86vw] sm:w-56 bg-white dark:bg-slate-950">
+      <DropdownMenuContent className="w-[86vw] rounded-lg bg-white dark:bg-slate-950 sm:w-56">
         <DropdownMenuLabel>Types of releases</DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuCheckboxItem
@@ -106,7 +106,7 @@ export function MovieReleaseTypeFilter() {
                 checkboxesArr.map((checkboxValue, u) => {
                   if (u === i) return !checkboxValue;
                   return checkboxValue;
-                })
+                }),
               );
             }}
           >
@@ -283,7 +283,7 @@ export function MovieGenreFilter() {
 
   return (
     <Select onValueChange={handleSelect} defaultValue={filter}>
-      <SelectTrigger className="w-full min-w-[100px] max-w-[200px] px-4 justify-between rounded-full gap-2">
+      <SelectTrigger className="w-full min-w-[100px] max-w-[200px] justify-between gap-2 rounded-full px-4">
         <SelectValue placeholder="Select Genre" />
       </SelectTrigger>
       <SelectContent className="rounded-lg">

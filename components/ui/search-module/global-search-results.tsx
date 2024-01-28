@@ -107,7 +107,7 @@ export async function GlobalSearchResults({
   });
 
   return (
-    <div className="absolute left-0 top-14 z-50 w-full rounded-md bg-background p-8">
+    <div className="absolute left-0 top-14 z-50 w-full rounded-md border border-foreground bg-background px-8 py-4">
       <ul>
         {sortedSearchResults.map((e, i) => {
           if (i < 15) {
@@ -124,7 +124,7 @@ export async function GlobalSearchResults({
         })}
       </ul>
       <div className="w-full align-middle text-lg font-bold">
-        Show all results
+        Show all results B
       </div>
     </div>
   );

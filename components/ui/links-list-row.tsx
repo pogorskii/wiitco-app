@@ -27,7 +27,7 @@ export function LinksListRow({
         <span key={uuid()}>
           <> </>
           <Link
-            className=" text-blue-500 hover:text-blue-400 hover:underline hover:decoration-solid hover:underline-offset-4"
+            className=" text-primary hover:text-primary/90 hover:underline hover:underline-offset-4"
             href={`${linkHrefBase}${link.slug}`}
           >
             {link.name}

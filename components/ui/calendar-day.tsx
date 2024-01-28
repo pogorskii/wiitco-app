@@ -24,7 +24,7 @@ export function CalendarDay({
         <DayHeader day={day} displayDate={displayDate} />
       </div>
       <div className="col-span-4 sm:col-span-3">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 sm:gap-5">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3">
           {contentCards}
         </div>
       </div>
@@ -50,12 +50,12 @@ function DayHeader({ day, displayDate }: { day: number; displayDate: string }) {
     <div ref={ref} className="sticky top-16">
       <h2
         key={day !== 50 ? day : "TBD"}
-        className="flex flex-col self-start col-span-1 scroll-m-20 pb-2 text-xl sm:text-3xl font-semibold tracking-tight"
+        className="col-span-1 flex scroll-m-20 flex-col self-start pb-2 text-xl font-semibold tracking-tight sm:text-3xl"
       >
         {day !== 50 ? `${displayDate}` : "Without a date"}
       </h2>
       <motion.div
-        className="h-[2px] bg-blue-500"
+        className="h-[2px] bg-secondary"
         style={{ scaleX: scaleX, originX: 0 }}
       />
     </div>
@@ -85,16 +85,16 @@ function DayHeaderMobile({
   return (
     <div
       ref={ref}
-      className="sm:hidden py-2 col-span-4 sticky z-20 top-0 bg-background"
+      className="sticky top-0 z-20 col-span-4 bg-background py-2 sm:hidden"
     >
       <h2
         key={day !== 50 ? day : "TBD"}
-        className="flex flex-col self-start scroll-m-20 pb-2 text-xl sm:text-3xl font-semibold tracking-tight"
+        className="flex scroll-m-20 flex-col self-start pb-2 text-2xl font-semibold tracking-tight"
       >
         {day !== 50 ? `${displayDate}` : "Without a date"}
       </h2>
       <motion.div
-        className="h-[2px] bg-blue-500"
+        className="h-[2px]  bg-secondary"
         style={{ scaleX: scaleX, originX: 0 }}
       />
     </div>

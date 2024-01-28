@@ -18,7 +18,8 @@ export function AddToAccountButton({
 
   return (
     <Button
-      className={clsx("mt-4 md-2 md:mb-6 w-full", {
+      variant="default"
+      className={clsx("md-2 mt-4 w-full md:mb-6", {
         [className as string]: className,
       })}
     >

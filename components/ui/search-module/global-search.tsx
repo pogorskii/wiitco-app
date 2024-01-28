@@ -31,14 +31,14 @@ export function GlobalSearch({ placeholder }: { placeholder: string }) {
   return (
     <>
       <form
-        className="relative flex flex-1 flex-shrink-0"
+        className="relative hidden flex-1 flex-shrink-0 lg:flex"
         onSubmit={handleSubmit}
       >
         <label htmlFor="global_search" className="sr-only">
           Search
         </label>
         <Input
-          className="w-full rounded-full pl-10"
+          className="w-full rounded-full bg-background pl-10"
           placeholder={placeholder}
           onChange={(e) => {
             handleSearch(e.target.value);
@@ -49,7 +49,7 @@ export function GlobalSearch({ placeholder }: { placeholder: string }) {
       {searchQuery && (
         <Suspense
           fallback={
-            <div className="absolute left-0 top-14 z-50 flex w-full justify-center rounded-md bg-background p-8">
+            <div className="absolute left-0 top-14 z-50 flex w-full justify-center rounded-md border border-foreground bg-background px-8 py-4">
               <Spinner />
             </div>
           }

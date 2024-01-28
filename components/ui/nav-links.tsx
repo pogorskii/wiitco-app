@@ -85,8 +85,9 @@ export function NavLinks() {
       <NavigationMenuList>
         <NavigationMenuItem>
           <NavigationMenuTrigger
-            className={clsx("rounded-3xl", {
-              "bg-primary/10": pathname.includes(links[0].href),
+            className={clsx({
+              "bg-secondary text-secondary-foreground hover:bg-secondary dark:bg-secondary":
+                pathname.includes(links[0].href),
             })}
           >
             Movies
@@ -107,11 +108,12 @@ export function NavLinks() {
         </NavigationMenuItem>
         <NavigationMenuItem>
           <NavigationMenuTrigger
-            className={clsx("rounded-3xl", {
-              "bg-primary/10": pathname.includes(links[1].href),
+            className={clsx({
+              "bg-secondary text-secondary-foreground hover:bg-secondary dark:bg-secondary":
+                pathname.includes(links[1].href),
             })}
           >
-            TV Shows
+            TV
           </NavigationMenuTrigger>
           <NavigationMenuContent>
             <ul className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px] ">
@@ -129,8 +131,9 @@ export function NavLinks() {
         </NavigationMenuItem>
         <NavigationMenuItem>
           <NavigationMenuTrigger
-            className={clsx("rounded-3xl", {
-              "bg-primary/10": pathname.includes(links[2].href),
+            className={clsx({
+              "bg-secondary text-secondary-foreground hover:bg-secondary dark:bg-secondary":
+                pathname.includes(links[2].href),
             })}
           >
             Anime
@@ -151,8 +154,9 @@ export function NavLinks() {
         </NavigationMenuItem>
         <NavigationMenuItem>
           <NavigationMenuTrigger
-            className={clsx("rounded-3xl", {
-              "bg-primary/10": pathname.includes(links[3].href),
+            className={clsx({
+              "bg-secondary text-secondary-foreground hover:bg-secondary dark:bg-secondary":
+                pathname.includes(links[3].href),
             })}
           >
             Games
@@ -187,7 +191,7 @@ const ListItem = React.forwardRef<
           ref={ref}
           className={cn(
             "block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground",
-            className
+            className,
           )}
           {...props}
         >

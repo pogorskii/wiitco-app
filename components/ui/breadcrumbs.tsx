@@ -24,9 +24,9 @@ export function Breadcrumbs({ breadcrumbs }: { breadcrumbs: Breadcrumb[] }) {
                   "text-gray-900 dark:text-gray-100": breadcrumb.active,
                 },
                 {
-                  "text-blue-500 hover:text-blue-400 hover:underline hover:underline-offset-2":
+                  "font-medium text-primary hover:underline hover:underline-offset-4":
                     !breadcrumb.active,
-                }
+                },
               )}
               href={breadcrumb.href}
             >

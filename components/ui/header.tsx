@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "./theme-toggle";
 import { MobileMenu } from "./mobile-menu";
 import { GlobalSearch } from "./search-module/global-search";
+import { GlobalSearchLink } from "./search-module/global-search-link";
 
 export default function Header() {
   return (
@@ -15,15 +16,16 @@ export default function Header() {
         </div>
         <div className="hidden gap-4 sm:flex">
           <GlobalSearch placeholder="Search..." />
+          <GlobalSearchLink />
           <ThemeToggle />
           <form>
             <Button className="ms-2 rounded-none p-4 text-xl sm:m-0  sm:rounded-full sm:px-4 sm:py-2 sm:text-sm">
-              {" "}
-              <div>Log In</div>{" "}
+              <div>Log In</div>
             </Button>
           </form>
         </div>
         <div className="flex gap-4 sm:hidden">
+          <GlobalSearchLink />
           <ThemeToggle />
           <MobileMenu />
         </div>

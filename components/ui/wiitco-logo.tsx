@@ -3,7 +3,10 @@ import Link from "next/link";
 
 export default function WIITCOLogo() {
   return (
-    <Link href="/" className={`${GeistSans.className} flex gap-2 items-center`}>
+    <Link
+      href="/"
+      className={`${GeistSans.className} me-2 flex items-center gap-2`}
+    >
       <svg
         xmlns="http://www.w3.org/2000/svg"
         width="40px"
@@ -31,7 +34,7 @@ export default function WIITCOLogo() {
         When Is It Coming Out?
       </p> */}
       {/* <p className="lg:hidden text-xl font-medium">WIITCO</p> */}
-      <p className="text-xl font-medium">WIITCO</p>
+      <p className="text-xl font-medium sm:hidden md:block">WIITCO</p>
     </Link>
   );
 }
