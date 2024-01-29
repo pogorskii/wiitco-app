@@ -49,7 +49,7 @@ async function Content({ slug }: { slug: string }) {
               ? "dlcs"
               : childGames.expansions.length > 0
                 ? "expansions"
-                : "standalones"
+                : "standaloneDlcs"
       }
       className="mb-8 w-full"
     >
@@ -58,7 +58,11 @@ async function Content({ slug }: { slug: string }) {
           if (value.length === 0) return null;
           return (
             <TabsTrigger key={key} value={key}>
-              {key[0].toUpperCase() + key.slice(1)}
+              {key === "dlcs"
+                ? "DLCs"
+                : key === "standaloneDlcs"
+                  ? "Standalone DLCs"
+                  : key.slice(0, 1).toUpperCase() + key.slice(1)}
             </TabsTrigger>
           );
         })}
@@ -90,7 +94,9 @@ async function RelatedTab({
   const tabHeading =
     tabName === "dlcs"
       ? "DLCs"
-      : tabName.slice(0, 1).toUpperCase() + tabName.slice(1);
+      : tabName === "standaloneDlcs"
+        ? "Standalone DLCs"
+        : tabName.slice(0, 1).toUpperCase() + tabName.slice(1);
 
   return (
     <TabsContent value={tabName}>

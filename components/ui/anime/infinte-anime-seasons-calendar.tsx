@@ -7,7 +7,7 @@ import { groupTelevisionSeasonsAndSortByDay } from "@/lib/utils";
 import { Spinner } from "@/components/ui/spinner";
 import { NoResultsFound } from "../no-results-found";
 import { CalendarDay } from "../calendar-day";
-import { AnimeSeasonCardCalendar } from "./anime-cards";
+import { TelevisionSeasonCardCalendar } from "../tv/television-cards";
 
 export function InfiniteAnimeSeasonsCalendar({
   month,
@@ -22,7 +22,7 @@ export function InfiniteAnimeSeasonsCalendar({
   const [seasons, setSeasons] = useState(initialSeasons);
   const page = useRef(1);
   const [loadingActive, setLoadingActive] = useState(
-    initialSeasons.length >= itemsPerPage
+    initialSeasons.length >= itemsPerPage,
   );
   const [ref, inView] = useInView({ rootMargin: "1000px" });
 
@@ -56,7 +56,7 @@ export function InfiniteAnimeSeasonsCalendar({
   const arrayFromGroupedAndSortedByDay = Array.from(groupedAndSortedByDay);
   const calendarDays = arrayFromGroupedAndSortedByDay.map(([day, seasons]) => {
     const seasonCards = seasons.map((season, i) => (
-      <AnimeSeasonCardCalendar key={i} season={season} />
+      <TelevisionSeasonCardCalendar key={i} season={season} />
     ));
 
     return (
@@ -71,13 +71,13 @@ export function InfiniteAnimeSeasonsCalendar({
   });
 
   return (
-    <div className="py-8 flex flex-col gap-6">
+    <div className="flex flex-col gap-6 py-8">
       {calendarDays}
       {/* Loading spinner */}
       {loadingActive && (
         <div
           ref={ref}
-          className="col-span-2 mt-16 mb-16 flex items-center justify-center"
+          className="col-span-2 mb-16 mt-16 flex items-center justify-center"
         >
           <Spinner />
         </div>

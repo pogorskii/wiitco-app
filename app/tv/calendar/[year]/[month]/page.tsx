@@ -2,7 +2,7 @@
 
 import { v4 as uuid } from "uuid";
 import { fetchTelevisionSeasonsByMonth } from "@/lib/actions";
-import { InfiniteTelevisionSeasonsCalendar } from "@/components/ui/tv/infinte-television-shows-calendar";
+import { InfiniteTelevisionSeasonsCalendar } from "@/components/ui/tv/infinite-television-shows-calendar";
 import { Breadcrumbs } from "@/components/ui/breadcrumbs";
 import { CalendarNav } from "@/components/ui/calendar-nav";
 import { Suspense } from "react";

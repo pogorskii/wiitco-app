@@ -4,7 +4,7 @@ import { useEffect, useState, useCallback, useRef } from "react";
 import { useInView } from "react-intersection-observer";
 import { GamesSearch } from "../../../app/video-games/lib/actions";
 import { fetchGamesSearchDB } from "../../../app/video-games/lib/actions";
-import { GameSearchCard } from "@/components/ui/video-games/game-card";
+import { GameSearchCard } from "@/components/ui/video-games/game-cards";
 import { Spinner } from "@/components/ui/spinner";
 import { NoResultsFound } from "../no-results-found";
 
@@ -31,7 +31,7 @@ export default function InfiniteGamesSearch({
   const [games, setGames] = useState(initialGames);
   const page = useRef(1);
   const [loadingActive, setLoadingActive] = useState(
-    initialGames && initialGames.length >= itemsPerPage
+    initialGames && initialGames.length >= itemsPerPage,
   );
   const [ref, inView] = useInView({ rootMargin: "1000px" });
 
@@ -65,15 +65,13 @@ export default function InfiniteGamesSearch({
   if (!games?.length) return <NoResultsFound type="search" />;
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 sm:gap-6">
-      {games?.map((game) => (
-        <GameSearchCard key={game.slug} game={game} />
-      ))}
+    <div className="grid grid-cols-1 gap-8 py-8 sm:gap-6 md:grid-cols-2">
+      {games?.map((game) => <GameSearchCard key={game.slug} game={game} />)}
       {/* Loading spinner */}
       {games && games?.length > 0 && loadingActive && (
         <div
           ref={ref}
-          className="col-span-2 mt-16 mb-16 flex items-center justify-center"
+          className="col-span-2 mb-16 mt-16 flex items-center justify-center"
         >
           <Spinner />
         </div>

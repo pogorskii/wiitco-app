@@ -39,8 +39,6 @@ export default async function Page({
     games: <GamesSearchPageTable search={currentSearch} />,
   };
 
-  console.log(currentCategory);
-
   return (
     <div>
       <GlobalH1>Search by category</GlobalH1>

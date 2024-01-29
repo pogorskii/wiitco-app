@@ -115,13 +115,13 @@ export function GamePlatforms({ platforms }: { platforms: number[] }) {
   };
 
   return (
-    <div className="mb-4 sm:mb-0 inline-flex flex-wrap self-start gap-1.5 sm:gap-2">
+    <>
       {sortedPlatofrms.map((platform) => {
         if (!badges[platform as keyof typeof badges]) return;
         const PlatformBadge = badges[platform as keyof typeof badges];
         return <PlatformBadge key={platform} variant={platform as any} />;
       })}
-    </div>
+    </>
   );
 }
 
@@ -149,7 +149,7 @@ import {
 import { MdWebAsset } from "react-icons/md";
 
 const badgeVariants = cva(
-  "inline-flex gap-1 items-center rounded-sm sm:rounded-full px-1 py-0 sm:px-1.5 sm:py-0.5 text-xs font-normal transition duration-300 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
+  "rounded-md border border-transparent px-1 py-0.5 text-xs tracking-wider font-semibold inline-flex gap-1 items-center font-normal transition duration-300 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
   {
     variants: {
       variant: {
@@ -201,7 +201,7 @@ const badgeVariants = cva(
         471: "bg-[#0089FA] text-[#F5F5F5] hover:bg-[#48ACFF] hover:text-[#1D1F20]", // Quest 3
       },
     },
-  }
+  },
 );
 interface BadgeProps
   extends React.HTMLAttributes<HTMLDivElement>,

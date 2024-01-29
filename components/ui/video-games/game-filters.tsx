@@ -95,12 +95,12 @@ export function GameCategoryFilter() {
       <DropdownMenuTrigger asChild>
         <Button
           variant="outline"
-          className="w-full min-w-[100px] max-w-[200px] px-4 justify-between rounded-full gap-2 bg-white font-normal dark:border-slate-800 dark:bg-slate-950 dark:ring-offset-slate-950 dark:placeholder:text-slate-400 dark:focus:ring-slate-300"
+          className="w-full justify-start rounded-full font-normal tracking-normal"
         >
           Categories {categoriesQuantity > 0 && `(${categoriesQuantity})`}
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="rounded-lg w-[86vw] sm:w-56 bg-white dark:bg-slate-950">
+      <DropdownMenuContent className="w-[86vw] sm:w-56">
         <DropdownMenuLabel>Categories of games</DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuCheckboxItem
@@ -120,7 +120,7 @@ export function GameCategoryFilter() {
                 checkboxesArr.map((checkboxValue, u) => {
                   if (u === i) return !checkboxValue;
                   return checkboxValue;
-                })
+                }),
               );
             }}
           >
@@ -175,10 +175,10 @@ export function GamePlatformFilter() {
 
   return (
     <Select onValueChange={handleSelect} defaultValue={value}>
-      <SelectTrigger className="w-full min-w-[100px] max-w-[200px] px-4 justify-between rounded-full gap-2">
+      <SelectTrigger>
         <SelectValue placeholder="Select Platform" />
       </SelectTrigger>
-      <SelectContent className="rounded-lg">
+      <SelectContent>
         <SelectItem value="all">All Platforms</SelectItem>
         <SelectGroup>
           <SelectLabel>Current Generation</SelectLabel>
@@ -280,10 +280,10 @@ export function GameSortingSelector() {
 
   return (
     <Select onValueChange={handleSelect} defaultValue={filter}>
-      <SelectTrigger className="w-full min-w-[100px] max-w-[200px] px-4 justify-between rounded-full gap-2">
+      <SelectTrigger>
         <SelectValue placeholder="Sort by" />
       </SelectTrigger>
-      <SelectContent className="rounded-lg">
+      <SelectContent>
         <SelectGroup>
           <SelectLabel>Sort results by...</SelectLabel>
           {rules.map((rule) => (
@@ -329,10 +329,10 @@ export function GameFilterUnknown() {
 
   return (
     <Select onValueChange={handleSelect} defaultValue={filter}>
-      <SelectTrigger className="w-full min-w-[100px] max-w-[200px] px-4 justify-between rounded-full gap-2">
+      <SelectTrigger>
         <SelectValue placeholder="Filter Releases" />
       </SelectTrigger>
-      <SelectContent className="rounded-lg">
+      <SelectContent>
         <SelectGroup>
           <SelectLabel>Filter Releases</SelectLabel>
           {rules.map((rule) => (

@@ -5,11 +5,11 @@ import Link from "next/link";
 
 export function Footer() {
   return (
-    <footer className="bg-primary px-20 py-10 text-primary-foreground">
-      <div className="flex items-center justify-between">
+    <footer className="bg-primary px-6 py-10 text-primary-foreground sm:px-20">
+      <div className="flex flex-col items-center justify-between gap-4 sm:flex-row">
         <p className="text-3xl font-medium">WIITCO</p>
         <div className="flex gap-4">
-          <Link className="font-semibold" href="/home">
+          <Link className="font-semibold" href="/">
             Home
           </Link>
           <Link className="font-semibold" href="/about">
@@ -21,8 +21,7 @@ export function Footer() {
         </div>
       </div>
       <Separator className="mb-4 mt-8" />
-      <div className="grid gap-8 sm:grid-cols-6 "></div>
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col items-center justify-between gap-4 sm:flex-row">
         <div className="flex items-center">
           <p className="text-sm tracking-wider">
             Developed by{" "}

@@ -81,12 +81,12 @@ export function MovieReleaseTypeFilter() {
       <DropdownMenuTrigger asChild>
         <Button
           variant="outline"
-          className="w-full justify-start rounded-full bg-white px-3 font-normal dark:border-slate-800 dark:bg-slate-950 dark:ring-offset-slate-950 dark:placeholder:text-slate-400 dark:focus:ring-slate-300 sm:w-auto sm:justify-center sm:px-4"
+          className="w-full justify-start rounded-full font-normal"
         >
           Release Types {categoriesQuantity > 0 && `(${categoriesQuantity})`}
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="w-[86vw] rounded-lg bg-white dark:bg-slate-950 sm:w-56">
+      <DropdownMenuContent className="w-[86vw] sm:w-56">
         <DropdownMenuLabel>Types of releases</DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuCheckboxItem
@@ -137,11 +137,11 @@ export function MovieLengthFilter() {
   const rules = [
     {
       value: "short",
-      label: "Only Short Films",
+      label: "Short Films",
     },
     {
       value: "feature",
-      label: "Only Feature Films",
+      label: "Feature Films",
     },
     {
       value: "all",
@@ -163,10 +163,10 @@ export function MovieLengthFilter() {
 
   return (
     <Select onValueChange={handleSelect} defaultValue={filter}>
-      <SelectTrigger className="rounded-full sm:w-fit">
+      <SelectTrigger>
         <SelectValue placeholder="Filter Releases" />
       </SelectTrigger>
-      <SelectContent className="rounded-lg">
+      <SelectContent>
         <SelectGroup>
           <SelectLabel>Filter by Length</SelectLabel>
           {rules.map((rule) => (
@@ -283,10 +283,10 @@ export function MovieGenreFilter() {
 
   return (
     <Select onValueChange={handleSelect} defaultValue={filter}>
-      <SelectTrigger className="w-full min-w-[100px] max-w-[200px] justify-between gap-2 rounded-full px-4">
+      <SelectTrigger>
         <SelectValue placeholder="Select Genre" />
       </SelectTrigger>
-      <SelectContent className="rounded-lg">
+      <SelectContent>
         <SelectGroup>
           <SelectLabel>Filter by Genre</SelectLabel>
           {genres.map((genre) => (

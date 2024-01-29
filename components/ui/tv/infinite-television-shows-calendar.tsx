@@ -27,7 +27,7 @@ export function InfiniteTelevisionSeasonsCalendar({
   const [seasons, setSeasons] = useState(initialSeasons);
   const page = useRef(1);
   const [loadingActive, setLoadingActive] = useState(
-    initialSeasons.length >= itemsPerPage
+    initialSeasons.length >= itemsPerPage,
   );
   const [ref, inView] = useInView({ rootMargin: "1000px" });
 
@@ -77,13 +77,13 @@ export function InfiniteTelevisionSeasonsCalendar({
   });
 
   return (
-    <div className="py-8 flex flex-col gap-6">
+    <div className="flex flex-col gap-6 py-8">
       {calendarDays}
       {/* Loading spinner */}
       {loadingActive && (
         <div
           ref={ref}
-          className="col-span-2 mt-16 mb-16 flex items-center justify-center"
+          className="col-span-2 mb-16 mt-16 flex items-center justify-center"
         >
           <Spinner />
         </div>

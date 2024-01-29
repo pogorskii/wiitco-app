@@ -19,11 +19,11 @@ export default function InfiniteTelevisionShowsSearch({
 }) {
   const itemsPerPage = 20;
   const [televisionShows, setTelevisionShows] = useState(
-    initialTelevisionShows
+    initialTelevisionShows,
   );
   const page = useRef(1);
   const [loadingActive, setLoadingActive] = useState(
-    initialTelevisionShows && initialTelevisionShows.length >= itemsPerPage
+    initialTelevisionShows && initialTelevisionShows.length >= itemsPerPage,
   );
   const [ref, inView] = useInView({ rootMargin: "1000px" });
 
@@ -54,7 +54,7 @@ export default function InfiniteTelevisionShowsSearch({
   if (!televisionShows?.length) return <NoResultsFound type="search" />;
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 sm:gap-6">
+    <div className="grid grid-cols-1 gap-8 py-8 sm:gap-6 md:grid-cols-2">
       {televisionShows?.map((televisionShow) => (
         <TelevisionShowSearchCard
           key={televisionShow.id}
@@ -65,7 +65,7 @@ export default function InfiniteTelevisionShowsSearch({
       {loadingActive && (
         <div
           ref={ref}
-          className="col-span-2 mt-16 mb-16 flex items-center justify-center"
+          className="col-span-2 mb-16 mt-16 flex items-center justify-center"
         >
           <Spinner />
         </div>

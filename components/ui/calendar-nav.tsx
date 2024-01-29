@@ -19,34 +19,31 @@ export function CalendarNav({
 
   if (!children)
     return (
-      <div className="sm:sticky sm:min-h-[35px] top-2 z-20 ">
+      <div className="top-2 z-20 sm:sticky sm:min-h-[35px] ">
         <MonthSwitcher year={year} month={month} />
       </div>
     );
 
   return (
-    <div className="sm:sticky sm:min-h-[35px] top-2 z-20 ">
+    <div className="top-2 z-20 sm:sticky sm:min-h-[35px] ">
       <MonthSwitcher year={year} month={month} />
       {/* Desktop filters */}
-      <div className="hidden sm:block absolute top-0 left-0">
+      <div className="absolute left-0 top-0 hidden bg-background sm:block">
         <div
-          className={clsx(
-            "overflow-hidden max-w-[180px] flex flex-col gap-2",
-            {
-              "h-0 p-0": !filtersOpen,
-            },
-            {
-              "h-auto p-2": filtersOpen,
-            }
-          )}
+          className={clsx("flex max-w-[180px] flex-col gap-2", {
+            "[&>*]:hidden": !filtersOpen,
+          })}
         >
           {children}
         </div>
         <Button
           variant="outline"
-          className={clsx("rounded-full w-[170px] flex gap-2", {
-            "mt-2": filtersOpen,
-          })}
+          className={clsx(
+            "flex w-[170px] gap-2 rounded-full font-semibold tracking-wider ",
+            {
+              "mt-2": filtersOpen,
+            },
+          )}
           onClick={() => setFiltersOpen(!filtersOpen)}
         >
           {filtersOpen ? "Hide Filters" : "Show Filters"}
@@ -55,7 +52,7 @@ export function CalendarNav({
       </div>
       {/* Mobile filters */}
       <div
-        className={`px-2 sm:hidden overflow-hidden [&>*]:mb-2 ${
+        className={`overflow-hidden px-2 sm:hidden [&>*]:mb-2 ${
           filtersOpen ? "h-auto" : "h-0"
         }`}
       >
@@ -63,7 +60,7 @@ export function CalendarNav({
       </div>
       <Button
         variant="ghost"
-        className="w-full flex gap-2 sm:hidden"
+        className="flex w-full gap-2 font-semibold tracking-wider sm:hidden"
         onClick={() => setFiltersOpen(!filtersOpen)}
       >
         {filtersOpen ? "Hide Filters" : "Show Filters"}

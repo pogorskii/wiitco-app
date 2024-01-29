@@ -46,7 +46,7 @@ export function CinemaLinksList({
           className="hover:underline hover:underline-offset-4"
           href={`${categoryEnum[link[0]][2]}${link[1]}`}
         >
-          <Icon className="inline-block me-1.5" />
+          <Icon className="me-1.5 inline-block" />
           <span>{categoryEnum[link[0]][0]}</span>
         </a>
       </li>
@@ -54,19 +54,18 @@ export function CinemaLinksList({
   });
 
   return (
-    <ul className="mb-8 grid grid-cols-2 md:grid-cols-3 gap-2">
+    <ul className="mb-8 grid grid-cols-2 gap-2 md:grid-cols-3">
       {homepage && (
         <li>
           <a
             className="hover:underline hover:underline-offset-4"
             href={homepage}
           >
-            <FaExternalLinkAlt className="inline-block me-1.5" />
+            <FaExternalLinkAlt className="me-1.5 inline-block" />
             <span>Official site</span>
           </a>
         </li>
       )}
-
       {listItems}
     </ul>
   );

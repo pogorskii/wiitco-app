@@ -8,7 +8,7 @@ import {
 } from "@/app/video-games/lib/actions";
 import { Spinner } from "@/components/ui/spinner";
 import { groupGameReleasesAndSortByDay } from "@/app/video-games/lib/utilis";
-import { GameCardCalendar } from "./game-card";
+import { GameCardCalendar } from "./game-cards";
 import { CalendarDay } from "../calendar-day";
 import { NoResultsFound } from "../no-results-found";
 
@@ -31,7 +31,7 @@ export function InfiniteGamesCalendar({
   const [games, setGames] = useState(initialGames);
   const page = useRef(1);
   const [loadingActive, setLoadingActive] = useState(
-    initialGames.length >= itemsPerPage
+    initialGames.length >= itemsPerPage,
   );
   const [ref, inView] = useInView({ rootMargin: "1000px" });
 
@@ -63,7 +63,7 @@ export function InfiniteGamesCalendar({
   if (!games.length) return <NoResultsFound type="calendar" />;
 
   const groupedAndSortedByDay = Array.from(
-    groupGameReleasesAndSortByDay(games)
+    groupGameReleasesAndSortByDay(games),
   );
   const calendarDays = groupedAndSortedByDay.map(([day, games]) => {
     const seasonCards = games.map((game, i) => (
@@ -82,13 +82,13 @@ export function InfiniteGamesCalendar({
   });
 
   return (
-    <div className="py-8 flex flex-col gap-6">
+    <div className="flex flex-col gap-6 py-8">
       {calendarDays}
       {/* Loading spinner */}
       {loadingActive && (
         <div
           ref={ref}
-          className="col-span-2 mt-16 mb-16 flex items-center justify-center"
+          className="col-span-2 mb-16 mt-16 flex items-center justify-center"
         >
           <Spinner />
         </div>

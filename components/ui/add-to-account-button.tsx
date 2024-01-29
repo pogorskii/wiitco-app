@@ -9,17 +9,17 @@ export function AddToAccountButton({
   type: "movie" | "tv" | "anime" | "person" | "game";
 }) {
   const buttonTextEnum: { [key: string]: string } = {
-    movie: "Watch this movie",
-    tv: "Watch this TV show",
-    anime: "Watch this anime show",
-    person: "Set birthday reminder",
-    game: "Watch this video game",
+    movie: "Track this movie",
+    tv: "Track this TV show",
+    anime: "Track this anime",
+    person: "Add birthday reminder",
+    game: "Track this game",
   };
 
   return (
     <Button
       variant="default"
-      className={clsx("md-2 mt-4 w-full md:mb-6", {
+      className={clsx("md-2 mt-4 w-full font-semibold tracking-wider md:mb-6", {
         [className as string]: className,
       })}
     >

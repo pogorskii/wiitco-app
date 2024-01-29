@@ -83,12 +83,12 @@ export function TelevisionShowTypeFilter() {
       <DropdownMenuTrigger asChild>
         <Button
           variant="outline"
-          className="w-full min-w-[100px] max-w-[200px] px-4 justify-start rounded-full gap-2 bg-white font-normal dark:border-slate-800 dark:bg-slate-950 dark:ring-offset-slate-950 dark:placeholder:text-slate-400 dark:focus:ring-slate-300"
+          className="w-full justify-start rounded-full font-normal"
         >
           Show Types {categoriesQuantity > 0 && `(${categoriesQuantity})`}
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="rounded-lg w-[86vw] sm:w-56 bg-white dark:bg-slate-950">
+      <DropdownMenuContent className="w-[86vw] sm:w-56">
         <DropdownMenuLabel>Types of releases</DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuCheckboxItem
@@ -108,7 +108,7 @@ export function TelevisionShowTypeFilter() {
                 checkboxesArr.map((checkboxValue, u) => {
                   if (u === i) return !checkboxValue;
                   return checkboxValue;
-                })
+                }),
               );
             }}
           >
@@ -173,10 +173,10 @@ export function TelevisionShowGenreFilter() {
 
   return (
     <Select onValueChange={handleSelect} defaultValue={filter}>
-      <SelectTrigger className="w-full min-w-[100px] max-w-[200px] px-4 justify-between rounded-full gap-2">
+      <SelectTrigger>
         <SelectValue placeholder="Select Genre" />
       </SelectTrigger>
-      <SelectContent className="rounded-lg">
+      <SelectContent>
         <SelectGroup>
           <SelectLabel>Filter by Genre</SelectLabel>
           {genres.map((genre) => (

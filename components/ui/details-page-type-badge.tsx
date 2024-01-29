@@ -8,7 +8,7 @@ export function DetailsPageTypeBadge({
   return (
     <Badge
       variant="outline"
-      className="w-full sm:w-fit justify-center sm:justify-start mb-2"
+      className="mb-2 w-full justify-center sm:w-fit sm:justify-start"
     >
       {children}
     </Badge>

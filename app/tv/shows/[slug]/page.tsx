@@ -218,7 +218,7 @@ export default async function Page({ params }: { params: { slug: string } }) {
               <SeasonsCarousel seasons={seasons} />
               <JustWatchSection title={name} id={id} type="tv" />
               <CastCarousel actors={credits.cast} />
-              <YouTubePlayer title={name} videoId={videos.results[0].key} />
+              <YouTubePlayer title={name} videoId={videos.results[0]?.key} />
               <CinemaStillsGallery title={name} id={id} type="tv" />
             </div>
 
