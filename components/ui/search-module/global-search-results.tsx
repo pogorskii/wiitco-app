@@ -107,25 +107,20 @@ export async function GlobalSearchResults({
   });
 
   return (
-    <div className="absolute left-0 top-14 z-50 w-full rounded-md border border-foreground bg-background px-8 py-4">
-      <ul>
-        {sortedSearchResults.map((e, i) => {
-          if (i < 15) {
-            return (
-              <li key={i}>
-                <Link className="flex items-center gap-2 py-1.5" href={e.link}>
-                  {iconsEnum[e.type]}
-                  <span className="font-semibold">{e.title}</span> in {e.type}
-                </Link>
-                <div className="h-[1px] w-full shrink-0 bg-slate-200 dark:bg-slate-800" />
-              </li>
-            );
-          }
-        })}
-      </ul>
-      <div className="w-full align-middle text-lg font-bold">
-        Show all results B
-      </div>
-    </div>
+    <ul>
+      {sortedSearchResults.map((e, i) => {
+        if (i < 15) {
+          return (
+            <li key={i}>
+              <Link className="flex items-center gap-2 py-1.5" href={e.link}>
+                {iconsEnum[e.type]}
+                <span className="font-semibold">{e.title}</span> in {e.type}
+              </Link>
+              <div className="h-[1px] w-full shrink-0 bg-slate-200 dark:bg-slate-800" />
+            </li>
+          );
+        }
+      })}
+    </ul>
   );
 }

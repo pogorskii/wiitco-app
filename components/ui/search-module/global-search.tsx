@@ -8,6 +8,8 @@ import { useDebouncedCallback } from "use-debounce";
 import { Input } from "@/components/ui/input";
 import { Spinner } from "../spinner";
 import { GlobalSearchResults } from "./global-search-results";
+import Link from "next/link";
+import { MoreInfoLink } from "../more-info-link";
 
 export function GlobalSearch({ placeholder }: { placeholder: string }) {
   const [searchQuery, setSearchQuery] = useState<string | null>(null);
@@ -49,12 +51,20 @@ export function GlobalSearch({ placeholder }: { placeholder: string }) {
       {searchQuery && (
         <Suspense
           fallback={
-            <div className="absolute left-0 top-14 z-50 flex w-full justify-center rounded-md border border-foreground bg-background px-8 py-4">
+            <div className="absolute left-0 top-14 z-50 flex w-full justify-center rounded-md border border-foreground bg-background px-4 py-2">
               <Spinner />
             </div>
           }
         >
-          <GlobalSearchResults search={searchQuery} />
+          <div className="absolute left-0 top-14 z-50 w-full rounded-md border border-foreground bg-background px-4 py-2">
+            <GlobalSearchResults search={searchQuery} />
+            <Link
+              className="mt-4 flex h-10 w-full items-center justify-center gap-2 whitespace-nowrap rounded-md bg-primary px-4 py-2 text-sm font-semibold tracking-wider text-primary-foreground ring-offset-background transition-all hover:gap-4 hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+              href={`/search?search=${searchQuery}`}
+            >
+              <span>More Results</span>
+            </Link>
+          </div>
         </Suspense>
       )}
     </>
