@@ -12,10 +12,12 @@ import {
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "../button";
+import { useMediaQuery, breakpoints } from "@/lib/hooks/useMediaQuery";
 
 export function MovieCardCalendar({ movie }: { movie: MovieRelease }) {
   const { id, title, posterPath, releaseTypes, actors, directors, genres } =
     movie;
+  const isDesktop = useMediaQuery(breakpoints["sm"]);
 
   const coverUrl = posterPath
     ? `https://image.tmdb.org/t/p/w600_and_h900_bestv2${posterPath}`
@@ -53,38 +55,123 @@ export function MovieCardCalendar({ movie }: { movie: MovieRelease }) {
   };
   const genreNames = genres.map((e) => genresEnum[e]);
 
-  return (
-    <>
-      {/* Desktop Card */}
-      <Card
-        key={id}
-        className="col-span-1 hidden h-auto max-w-full flex-col overflow-hidden rounded-lg border border-gray-200 shadow dark:border-gray-800 sm:flex"
-      >
-        <div className="relative overflow-hidden">
-          <div className="absolute left-2 top-2 z-10">
-            {typeNames.map((type, i) => (
-              <Badge key={i}>{type}</Badge>
-            ))}
-          </div>
+  const DesktopCard = (
+    <Card
+      key={id}
+      className="col-span-1 hidden h-auto max-w-full flex-col overflow-hidden rounded-lg border border-gray-200 shadow dark:border-gray-800 sm:flex"
+    >
+      <div className="relative overflow-hidden">
+        <div className="absolute left-2 top-2 z-10">
+          {typeNames.map((type, i) => (
+            <Badge key={i}>{type}</Badge>
+          ))}
+        </div>
+        <Link className="flex grow flex-col" href={`/cinema/movies/${id}`}>
+          <Image
+            className="duration-200 ease-in-out hover:scale-105"
+            src={coverUrl}
+            alt={title}
+            width={600}
+            height={900}
+            style={{ objectFit: "cover" }}
+          />
+        </Link>
+      </div>
+      <div className="flex grow flex-col p-6">
+        <CardTitle className="mb-4 border-b border-primary pb-2 text-xl leading-tight">
           <Link className="flex grow flex-col" href={`/cinema/movies/${id}`}>
-            <Image
-              className="duration-200 ease-in-out hover:scale-105"
-              src={coverUrl}
-              alt={title}
-              width={600}
-              height={900}
-              style={{ objectFit: "cover" }}
-            />
+            {title}
+          </Link>
+        </CardTitle>
+        {actors.length > 0 && (
+          <div className="mb-8 text-sm">
+            {actors.map((e, i, arr) => {
+              if (i < 2 && i < 1 && arr.length > 1) {
+                return <span key={i}>{e}, </span>;
+              } else if (i < 2) {
+                return <span key={i}>{e}</span>;
+              }
+            })}
+          </div>
+        )}
+        <div className="mt-auto inline-flex flex-wrap gap-1 self-start">
+          {genreNames.map(
+            (e, i) =>
+              i < 2 && (
+                <Badge variant="secondary" key={i}>
+                  {e}
+                </Badge>
+              ),
+          )}
+        </div>
+      </div>
+      <CardFooter className="p-2 pt-0">
+        <Link className="flex grow flex-col" href={`/cinema/movies/${id}`}>
+          <Button className="w-full gap-2 font-semibold tracking-wider transition-all hover:gap-4">
+            <span>More info</span>
+            <span>&rarr;</span>
+          </Button>
+        </Link>
+      </CardFooter>
+    </Card>
+  );
+
+  const MobileCard = (
+    <div className="sm:hidden">
+      <div className="flex py-4">
+        <div className="w-24 shrink-0 grow-0">
+          <Link href={`/cinema/movies/${id}`}>
+            <div className="w-full p-0 text-xs">
+              {typeNames.map((type, i) => (
+                <Badge
+                  variant="outline"
+                  className="w-full justify-center rounded-b-none"
+                  key={i}
+                >
+                  {type}
+                </Badge>
+              ))}
+            </div>
+            <div className="ms-auto w-fit overflow-hidden">
+              <Image
+                className="duration-200 ease-in-out hover:scale-105"
+                src={coverUrl}
+                width={600}
+                height={900}
+                alt={`${title} game cover`}
+                style={{
+                  width: "100%",
+                  height: "auto",
+                  objectFit: "cover",
+                }}
+              />
+            </div>
           </Link>
         </div>
-        <div className="flex grow flex-col p-6">
-          <CardTitle className="mb-4 border-b border-primary pb-2 text-xl leading-tight">
-            <Link className="flex grow flex-col" href={`/cinema/movies/${id}`}>
+        <div className="flex w-full flex-col justify-between ps-2">
+          <Link
+            className="mb-1 hover:text-primary hover:underline hover:decoration-solid hover:underline-offset-4"
+            href={`/cinema/movies/${id}`}
+          >
+            <h2 className="mb-2 border-b border-secondary pb-1 text-xl font-semibold leading-tight tracking-tight">
               {title}
-            </Link>
-          </CardTitle>
+            </h2>
+          </Link>
+          {directors.length > 0 && (
+            <div className="mb-0 text-sm">
+              <span className="font-semibold">Directed by:</span>{" "}
+              {directors.map((e, i, arr) => {
+                if (i < 2 && i < 1 && arr.length > 1) {
+                  return <span key={i}>{e}, </span>;
+                } else if (i < 2) {
+                  return <span key={i}>{e}</span>;
+                }
+              })}
+            </div>
+          )}
           {actors.length > 0 && (
-            <div className="mb-8 text-sm">
+            <div className="mb-4 text-sm">
+              <span className="font-semibold">Starring:</span>{" "}
               {actors.map((e, i, arr) => {
                 if (i < 2 && i < 1 && arr.length > 1) {
                   return <span key={i}>{e}, </span>;
@@ -94,106 +181,29 @@ export function MovieCardCalendar({ movie }: { movie: MovieRelease }) {
               })}
             </div>
           )}
-          <div className="mt-auto inline-flex flex-wrap gap-1 self-start">
-            {genreNames.map(
-              (e, i) =>
-                i < 2 && (
-                  <Badge variant="secondary" key={i}>
-                    {e}
-                  </Badge>
-                ),
-            )}
+          <div className="mt-auto inline-flex flex-wrap gap-1.5 self-start">
+            {genreNames.map((e, i) => (
+              <Badge key={i} variant="secondary">
+                {e}
+              </Badge>
+            ))}
           </div>
         </div>
-        <CardFooter className="p-2 pt-0">
-          <Link className="flex grow flex-col" href={`/cinema/movies/${id}`}>
-            <Button className="w-full gap-2 font-semibold tracking-wider transition-all hover:gap-4">
-              <span>More info</span>
-              <span>&rarr;</span>
-            </Button>
-          </Link>
-        </CardFooter>
-      </Card>
-      {/* Mobile Card */}
-      <div>
-        <div className="flex py-4 sm:hidden">
-          <div className="w-24 shrink-0 grow-0">
-            <Link href={`/cinema/movies/${id}`}>
-              <div className="w-full p-0 text-xs">
-                {typeNames.map((type, i) => (
-                  <Badge
-                    className="w-full justify-center rounded-b-none"
-                    key={i}
-                  >
-                    {type}
-                  </Badge>
-                ))}
-              </div>
-              <div className="ms-auto w-fit overflow-hidden">
-                <Image
-                  className="duration-200 ease-in-out hover:scale-105"
-                  src={coverUrl}
-                  width={600}
-                  height={900}
-                  alt={`${title} game cover`}
-                  style={{
-                    width: "100%",
-                    height: "auto",
-                    objectFit: "cover",
-                  }}
-                />
-              </div>
-            </Link>
-          </div>
-          <div className="flex w-full flex-col justify-between ps-2">
-            <Link
-              className="mb-1 hover:text-primary hover:underline hover:decoration-solid hover:underline-offset-4"
-              href={`/cinema/movies/${id}`}
-            >
-              <h2 className="mb-2 border-b border-secondary pb-1 text-xl font-semibold leading-tight tracking-tight">
-                {title}
-              </h2>
-            </Link>
-            {directors.length > 0 && (
-              <div className="mb-0 text-sm">
-                <span className="font-semibold">Directed by:</span>{" "}
-                {directors.map((e, i, arr) => {
-                  if (i < 2 && i < 1 && arr.length > 1) {
-                    return <span key={i}>{e}, </span>;
-                  } else if (i < 2) {
-                    return <span key={i}>{e}</span>;
-                  }
-                })}
-              </div>
-            )}
-            {actors.length > 0 && (
-              <div className="mb-4 text-sm">
-                <span className="font-semibold">Starring:</span>{" "}
-                {actors.map((e, i, arr) => {
-                  if (i < 2 && i < 1 && arr.length > 1) {
-                    return <span key={i}>{e}, </span>;
-                  } else if (i < 2) {
-                    return <span key={i}>{e}</span>;
-                  }
-                })}
-              </div>
-            )}
-            <div className="mt-auto inline-flex flex-wrap gap-1.5 self-start">
-              {genreNames.map((e, i) => (
-                <Badge key={i} variant="secondary">
-                  {e}
-                </Badge>
-              ))}
-            </div>
-          </div>
-        </div>
-        <Link className="flex grow flex-col" href={`/cinema/movies/${id}`}>
-          <Button className="w-full gap-2 font-semibold tracking-wider transition-all hover:gap-4">
-            <span>More info</span>
-            <span>&rarr;</span>
-          </Button>
-        </Link>
       </div>
+      <Link className="flex grow flex-col" href={`/cinema/movies/${id}`}>
+        <Button className="w-full gap-2 font-semibold tracking-wider transition-all hover:gap-4">
+          <span>More info</span>
+          <span>&rarr;</span>
+        </Button>
+      </Link>
+    </div>
+  );
+
+  return (
+    <>
+      {isDesktop ? DesktopCard : MobileCard}
+      {/* Desktop Card */}
+      {/* Mobile Card */}
     </>
   );
 }

@@ -14,16 +14,13 @@ export function CinemaStillsGallery({
   type: "movie" | "tv" | "person";
 }) {
   return (
-    <div className="mb-8">
-      <DetailsPageH2>{title}&apos;s Images</DetailsPageH2>
-      <Suspense
-        fallback={
-          <Skeleton className="rounded-lg border border-slate-200 shadow-sm dark:border-slate-800" />
-        }
-      >
-        <GalleryContent title={title} id={id} type={type} />
-      </Suspense>
-    </div>
+    <Suspense
+      fallback={
+        <Skeleton className="mb-8 rounded-lg border border-slate-200 shadow-sm dark:border-slate-800" />
+      }
+    >
+      <GalleryContent title={title} id={id} type={type} />
+    </Suspense>
   );
 }
 
@@ -55,5 +52,10 @@ async function GalleryContent({
 
   if (validImages.length === 0) return;
 
-  return <ImagesCarousel title={title} images={validImages} />;
+  return (
+    <div className="mb-8">
+      <DetailsPageH2>{title}&apos;s Images</DetailsPageH2>
+      <ImagesCarousel title={title} images={validImages} />
+    </div>
+  );
 }

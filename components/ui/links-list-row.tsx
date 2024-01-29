@@ -14,7 +14,7 @@ export function LinksListRow({
   linkType: string;
   linkCategory?: string;
 }) {
-  if (!links) return null;
+  if (!links || !links.length) return null;
 
   const linkHrefBase = `/${linkType}${linkCategory ? `/${linkCategory}` : ""}/`;
 

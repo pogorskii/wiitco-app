@@ -224,8 +224,8 @@ export default async function Page({ params }: { params: { slug: string } }) {
                       slug: e.id.toString(),
                     };
                   })}
-                  singularName="Country"
-                  pluralName="Countries"
+                  singularName="Company"
+                  pluralName="Companies"
                   linkType="cinema"
                   linkCategory="company"
                 />
@@ -235,7 +235,10 @@ export default async function Page({ params }: { params: { slug: string } }) {
               <CinemaLinksList homepage={homepage} links={external_ids} />
               <JustWatchSection title={title} id={id} type="movie" />
               <CastCarousel actors={credits.cast} />
-              <YouTubePlayer title={title} videoId={videos?.results?.[0].key} />
+              <YouTubePlayer
+                title={title}
+                videoId={videos?.results?.[0]?.key}
+              />
               <CinemaStillsGallery title={title} id={id} type="movie" />
             </div>
 
