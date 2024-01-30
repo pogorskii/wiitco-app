@@ -15,7 +15,6 @@ export default function Header() {
           <NavLinks />
         </div>
         <div className="hidden gap-4 sm:flex">
-          <GlobalSearch placeholder="Search..." />
           <GlobalSearchLink />
           <ThemeToggle />
           <form>

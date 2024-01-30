@@ -12,6 +12,7 @@ import {
   CinemaPersonDetails,
   CinemaPeopleSearch,
 } from "./zod-schemas";
+import levenshtein from "fast-levenshtein";
 import { Prisma } from "@prisma/client";
 
 const headersTMDB = new Headers();
@@ -548,4 +549,95 @@ export const fetchAnimeSeasonsByMonth = async ({
 };
 export type AnimeSeasonsByMonth = Prisma.PromiseReturnType<
   typeof fetchAnimeSeasonsByMonth
+>;
+
+import { fetchGamesSearchDB } from "@/app/video-games/lib/actions";
+
+export const fetchGlobalSearchResults = async (search: string) => {
+  if (!search) return;
+
+  try {
+    const [games, movies, televisionShows, animeShows, people] =
+      await Promise.all([
+        fetchGamesSearchDB({ search }),
+        fetchMoviesSearch({ search }),
+        fetchTelevisionShowsSearch({ search }),
+        fetchAnimeShowsSearch({ search }),
+        fetchCinemaPeopleSearch({ search }),
+      ]);
+    const searchResults: {
+      title: string;
+      link: string;
+      type: string;
+    }[] = [];
+
+    if (games) {
+      for (const game of games) {
+        searchResults.push({
+          title: game.name,
+          link: `/video-games/games/${game.slug}`,
+          type: "Games",
+        });
+      }
+    }
+
+    if (movies) {
+      for (const movie of movies) {
+        searchResults.push({
+          title: movie.title,
+          link: `/cinema/movies/${movie.id}`,
+          type: "Movies",
+        });
+      }
+    }
+
+    if (televisionShows) {
+      const televisionShowsWithoutAnime = televisionShows.filter(
+        (e) =>
+          !e.genre_ids?.some((genre) => genre === 16) &&
+          !e.origin_country?.some((country) => country === "JP"),
+      );
+
+      for (const show of televisionShowsWithoutAnime) {
+        searchResults.push({
+          title: show.name,
+          link: `/tv/shows/${show.id}`,
+          type: "TV Shows",
+        });
+      }
+    }
+
+    if (animeShows) {
+      for (const show of animeShows) {
+        searchResults.push({
+          title: show.name,
+          link: `/anime/shows/${show.id}`,
+          type: "Anime",
+        });
+      }
+    }
+
+    if (people) {
+      for (const person of people) {
+        searchResults.push({
+          title: person.name,
+          link: `/people/person/${person.id}`,
+          type: "People",
+        });
+      }
+    }
+
+    const sortedSearchResults = searchResults.sort((a, b) => {
+      return (
+        levenshtein.get(a.title, search) - levenshtein.get(b.title, search)
+      );
+    });
+
+    return searchResults;
+  } catch (err) {
+    console.error(err);
+  }
+};
+export type GlobalSearchResults = NonNullable<
+  Prisma.PromiseReturnType<typeof fetchGlobalSearchResults>
 >;
