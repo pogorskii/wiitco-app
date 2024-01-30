@@ -115,7 +115,9 @@ export function GlobalSearch() {
         </div>
       )}
       {!isLoading && results && !results.length && (
-        <div className="m-auto">No results found for "{searchQuery}"</div>
+        <div className="m-auto">
+          No results found for &quot;{searchQuery}&quot;
+        </div>
       )}
       {!isLoading && results && results.length && (
         <div className="max-h-full overflow-scroll">
