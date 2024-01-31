@@ -11,3 +11,17 @@ export type GameRelease = {
   } | null;
   platforms: number[];
 };
+
+export type FormattedUpcomingGameRelease = {
+  type: "game";
+  id: number;
+  releaseDate: Date;
+  name: string;
+  slug: string;
+  cover: {
+    imageId: string;
+    width: number | null;
+    height: number | null;
+  } | null;
+  platforms: number[];
+};

@@ -34,3 +34,25 @@ export type MovieRelease = {
   directors: string[];
   releaseTypes: number[];
 };
+
+export type FormattedUpcomingMovieRelease = {
+  type: "movie";
+  id: number;
+  title: string;
+  releaseDate: Date;
+  originaltitle: string | null;
+  posterPath: string | null;
+  popularity: number;
+  runtime: number | null;
+  budget: number | null;
+  releaseTypes: number[];
+};
+
+export type FormattedUpcomingTelevisionSeason = {
+  type: "tv";
+  id: number;
+  posterPath: string | null;
+  showName: string;
+  seasonName: string;
+  releaseDate: Date;
+};

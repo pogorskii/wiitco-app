@@ -13,6 +13,7 @@ import {
   CinemaPeopleSearch,
 } from "./zod-schemas";
 import levenshtein from "fast-levenshtein";
+import { addDays } from "date-fns";
 import { Prisma } from "@prisma/client";
 
 const headersTMDB = new Headers();
@@ -552,6 +553,11 @@ export type AnimeSeasonsByMonth = Prisma.PromiseReturnType<
 >;
 
 import { fetchGamesSearchDB } from "@/app/video-games/lib/actions";
+import {
+  formatUpcomingTelevisionSeasons,
+  groupGameReleasesByGameAndDate,
+  groupMovieReleasesByMovieAndDate,
+} from "./utils";
 
 export const fetchGlobalSearchResults = async (search: string) => {
   if (!search) return;
@@ -641,3 +647,158 @@ export const fetchGlobalSearchResults = async (search: string) => {
 export type GlobalSearchResults = NonNullable<
   Prisma.PromiseReturnType<typeof fetchGlobalSearchResults>
 >;
+
+////////////////////////////////////
+// Upcoming Releases for the week
+export const fetchUpcomingGameReleases = async ({
+  currentDate,
+  endDate,
+}: {
+  currentDate: Date;
+  endDate: Date;
+}) => {
+  const releaseDates = await prisma.gReleaseDate.findMany({
+    where: {
+      date: {
+        gt: currentDate,
+        lt: endDate,
+      },
+      game: {
+        follows: {
+          gt: 0,
+        },
+        category: 0,
+      },
+    },
+    select: {
+      category: true,
+      platformId: true,
+      date: true,
+      game: {
+        select: {
+          id: true,
+          name: true,
+          slug: true,
+          category: true,
+          follows: true,
+          cover: {
+            select: {
+              imageId: true,
+              width: true,
+              height: true,
+            },
+          },
+        },
+      },
+    },
+    orderBy: [{ category: "asc" }, { date: "asc" }],
+  });
+
+  return releaseDates;
+};
+export type UpcomingGameReleases = NonNullable<
+  Prisma.PromiseReturnType<typeof fetchUpcomingGameReleases>
+>;
+
+export const fetchUpcomingMovieReleases = async ({
+  currentDate,
+  endDate,
+}: {
+  currentDate: Date;
+  endDate: Date;
+}) => {
+  const typesQuery = [1, 3, 4];
+  const releaseDates = await prisma.mLocalRelease.findMany({
+    where: {
+      releaseDate: {
+        gte: currentDate,
+        lte: endDate,
+      },
+      releaseCountry: {
+        iso31661: "US",
+        movie: {
+          runtime: { gte: 41 },
+        },
+      },
+      type: { in: typesQuery },
+    },
+    orderBy: [{ releaseDate: "asc" }, { id: "asc" }],
+    select: {
+      id: true,
+      releaseDate: true,
+      type: true,
+      releaseCountryId: true,
+      releaseCountry: {
+        select: {
+          movie: true,
+        },
+      },
+    },
+  });
+
+  return releaseDates;
+};
+export type UpcomingMovieReleases = NonNullable<
+  Prisma.PromiseReturnType<typeof fetchUpcomingMovieReleases>
+>;
+
+export const fetchUpcomingTelevisionSeasons = async ({
+  currentDate,
+  endDate,
+}: {
+  currentDate: Date;
+  endDate: Date;
+}) => {
+  const releaseDates = await prisma.tVSeason.findMany({
+    where: {
+      airDate: {
+        gte: currentDate,
+        lte: endDate,
+      },
+    },
+    orderBy: [{ airDate: "asc" }, { id: "asc" }],
+    select: {
+      id: true,
+      name: true,
+      seasonNumber: true,
+      posterPath: true,
+      airDate: true,
+      show: {
+        select: {
+          id: true,
+          name: true,
+          posterPath: true,
+        },
+      },
+    },
+  });
+
+  return releaseDates;
+};
+export type UpcomingTelevisionSeasons = Prisma.PromiseReturnType<
+  typeof fetchUpcomingTelevisionSeasons
+>;
+
+export const fetchAllUpcomingReleases = async () => {
+  try {
+    const currentDate = new Date();
+    const endDate = addDays(currentDate, 7);
+
+    const results = await Promise.all([
+      fetchUpcomingGameReleases({ currentDate, endDate }).then((gameReleases) =>
+        groupGameReleasesByGameAndDate(gameReleases),
+      ),
+      fetchUpcomingMovieReleases({ currentDate, endDate }).then(
+        (movieReleases) => groupMovieReleasesByMovieAndDate(movieReleases),
+      ),
+      fetchUpcomingTelevisionSeasons({ currentDate, endDate }).then(
+        (televisionSeasons) =>
+          formatUpcomingTelevisionSeasons(televisionSeasons),
+      ),
+    ]);
+
+    return results.flat();
+  } catch (err) {
+    console.error(err);
+  }
+};

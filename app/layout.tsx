@@ -8,6 +8,7 @@ import Header from "../components/ui/header";
 import { Footer } from "../components/ui/footer";
 import { SearchProvider } from "@/components/ui/search-module/search-context";
 import { GlobalSearch } from "@/components/ui/search-module/global-search";
+import { UserProvider } from "@auth0/nextjs-auth0/client";
 
 export const metadata: Metadata = {
   title: {
@@ -25,26 +26,28 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${firaSans.className} `}>
-        <ReduxProvider>
-          <ThemeProvider
-            attribute="class"
-            defaultTheme="system"
-            enableSystem
-            disableTransitionOnChange
-          >
-            <div className="relative min-h-screen px-6 sm:px-10 lg:px-20">
-              <BackToTop />
-              <SearchProvider>
-                <Header />
-                <GlobalSearch />
-              </SearchProvider>
-              <main className="flex-grow pb-8 pt-4">{children}</main>
-            </div>
-            <Footer />
-          </ThemeProvider>
-        </ReduxProvider>
-      </body>
+      <UserProvider>
+        <body className={`${firaSans.className} `}>
+          <ReduxProvider>
+            <ThemeProvider
+              attribute="class"
+              defaultTheme="system"
+              enableSystem
+              disableTransitionOnChange
+            >
+              <div className="relative min-h-screen px-6 sm:px-10 lg:px-20">
+                <BackToTop />
+                <SearchProvider>
+                  <Header />
+                  <GlobalSearch />
+                </SearchProvider>
+                <main className="flex-grow pb-8">{children}</main>
+              </div>
+              <Footer />
+            </ThemeProvider>
+          </ReduxProvider>
+        </body>
+      </UserProvider>
     </html>
   );
 }

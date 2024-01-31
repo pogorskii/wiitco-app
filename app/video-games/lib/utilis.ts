@@ -2,7 +2,7 @@ import { GameRelease } from "./definitions";
 import { GameReleaseDatesByMonth } from "./actions";
 
 export const groupGameReleasesAndSortByDay = (
-  releasesByMonth: GameReleaseDatesByMonth
+  releasesByMonth: GameReleaseDatesByMonth,
 ) => {
   const groupedByDay = new Map<number, GameRelease[]>();
   for (const gameRelease of releasesByMonth) {
@@ -12,7 +12,7 @@ export const groupGameReleasesAndSortByDay = (
         : 50;
     const bucket = groupedByDay.get(day) || ([] as GameRelease[]);
     const existingReleaseIndex = bucket.findIndex(
-      (release) => release.id === gameRelease.game.id
+      (release) => release.id === gameRelease.game.id,
     );
     if (existingReleaseIndex !== -1) {
       bucket[existingReleaseIndex].platforms.push(gameRelease.platformId);

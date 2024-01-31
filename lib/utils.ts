@@ -1,25 +1,34 @@
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
-import { MovieRelease, TelevisionSeasonFormatted } from "./definitions";
+import {
+  FormattedUpcomingMovieRelease,
+  FormattedUpcomingTelevisionSeason,
+  MovieRelease,
+  TelevisionSeasonFormatted,
+} from "./definitions";
 import {
   MovieReleaseDatesByMonth,
   TeleveisionSeasonsByMonth,
   AnimeSeasonsByMonth,
+  UpcomingGameReleases,
+  UpcomingMovieReleases,
+  UpcomingTelevisionSeasons,
 } from "./actions";
+import { FormattedUpcomingGameRelease } from "@/app/video-games/lib/definitions";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
 export const groupMovieReleasesAndSortByDay = (
-  releasesByMonth: MovieReleaseDatesByMonth
+  releasesByMonth: MovieReleaseDatesByMonth,
 ) => {
   const groupedByDay = new Map<number, MovieRelease[]>();
   for (const movieRelease of releasesByMonth) {
     const day = movieRelease.releaseDate.getDate();
     const bucket = groupedByDay.get(day) || ([] as MovieRelease[]);
     const existingReleaseIndex = bucket.findIndex(
-      (release) => release.id === movieRelease.releaseCountry.movie.id
+      (release) => release.id === movieRelease.releaseCountry.movie.id,
     );
     if (existingReleaseIndex !== -1) {
       bucket[existingReleaseIndex].releaseTypes.push(movieRelease.type);
@@ -70,7 +79,7 @@ export const groupMovieReleasesAndSortByDay = (
 };
 
 export const groupTelevisionSeasonsAndSortByDay = (
-  releasesByMonth: TeleveisionSeasonsByMonth | AnimeSeasonsByMonth
+  releasesByMonth: TeleveisionSeasonsByMonth | AnimeSeasonsByMonth,
 ) => {
   const groupedByDay = new Map<number, TelevisionSeasonFormatted[]>();
   for (const season of releasesByMonth) {
@@ -79,7 +88,7 @@ export const groupTelevisionSeasonsAndSortByDay = (
     const day = season.airDate.getDate();
     const bucket = groupedByDay.get(day) || ([] as TelevisionSeasonFormatted[]);
     const existingSeasonIndex = bucket.findIndex(
-      (existingSeason) => existingSeason.showId === season.show.id
+      (existingSeason) => existingSeason.showId === season.show.id,
     );
     if (existingSeasonIndex === -1) {
       bucket.push({
@@ -237,7 +246,7 @@ export const createFuzzySearchQuery = (query?: string) => {
           if (/.{2,}s$/.test(word)) {
             const wordWithApostrophe = word.replace(
               /s$/,
-              (match) => "'" + match
+              (match) => "'" + match,
             );
             result = `( ${word} | ${wordWithApostrophe})`;
           } else {
@@ -259,7 +268,7 @@ export const createFuzzySearchQuery = (query?: string) => {
 export const getPrevMonthURL = (
   currentURL: string,
   year: string,
-  month: string
+  month: string,
 ): string => {
   const categoryPath = currentURL.slice(0, currentURL.search(/\d/));
   const prevYear = (Number(year) - 1).toString();
@@ -274,7 +283,7 @@ export const getPrevMonthURL = (
 export const getNextMonthURL = (
   currentURL: string,
   year: string,
-  month: string
+  month: string,
 ): string => {
   const categoryPath = currentURL.slice(0, currentURL.search(/\d/));
   const nextYear = (Number(year) + 1).toString();
@@ -291,7 +300,7 @@ export const getShortDayMonthName = (
   day: number,
   month: string,
   year: string,
-  locale: string = "en-US"
+  locale: string = "en-US",
 ): string => {
   const date = new Date();
   date.setFullYear(Number(year), Number(month) - 1, day);
@@ -305,7 +314,7 @@ export const getShortDayMonthName = (
 export const getMonthYearName = (
   month: string,
   year: string,
-  locale: string = "en-US"
+  locale: string = "en-US",
 ): string => {
   const date = new Date();
   date.setFullYear(Number(year), Number(month) - 1);
@@ -314,6 +323,160 @@ export const getMonthYearName = (
     month: "long",
     year: "numeric",
   });
+};
+
+// Home Page Carousel
+export const groupGameReleasesByGameAndDate = (
+  releases: UpcomingGameReleases,
+) => {
+  const groupedByGameAndDate = new Map<
+    string,
+    FormattedUpcomingGameRelease[]
+  >();
+  for (const gameRelease of releases) {
+    if (!gameRelease.date) return;
+    const dateString = gameRelease.date.toDateString();
+    const bucket =
+      groupedByGameAndDate.get(dateString) ||
+      ([] as FormattedUpcomingGameRelease[]);
+    const existingReleaseIndex = bucket.findIndex(
+      (release) => release.id === gameRelease.game.id,
+    );
+    if (existingReleaseIndex !== -1) {
+      bucket[existingReleaseIndex].platforms.push(gameRelease.platformId);
+    } else {
+      bucket.push({
+        type: "game",
+        id: gameRelease.game.id,
+        name: gameRelease.game.name,
+        releaseDate: gameRelease.date,
+        slug: gameRelease.game.slug,
+        cover: gameRelease.game.cover,
+        platforms: [gameRelease.platformId],
+      });
+    }
+    groupedByGameAndDate.set(dateString, bucket);
+  }
+
+  const groupedReleases: FormattedUpcomingGameRelease[] = [];
+
+  for (const gameReleases of Array.from(groupedByGameAndDate.values())) {
+    groupedReleases.push(...gameReleases);
+  }
+  return groupedReleases;
+};
+
+export const groupMovieReleasesByMovieAndDate = (
+  releases: UpcomingMovieReleases,
+) => {
+  const groupedByMovieAndDate = new Map<
+    string,
+    FormattedUpcomingMovieRelease[]
+  >();
+  for (const movieRelease of releases) {
+    const dateString = movieRelease.releaseDate.toDateString();
+    const bucket =
+      groupedByMovieAndDate.get(dateString) ||
+      ([] as FormattedUpcomingMovieRelease[]);
+    const existingReleaseIndex = bucket.findIndex(
+      (release) => release.id === movieRelease.releaseCountry.movie.id,
+    );
+    if (existingReleaseIndex !== -1) {
+      bucket[existingReleaseIndex].releaseTypes.push(movieRelease.type);
+    } else {
+      const {
+        id,
+        title,
+        originaltitle,
+        posterPath,
+        popularity,
+        runtime,
+        budget,
+      } = movieRelease.releaseCountry.movie;
+
+      bucket.push({
+        type: "movie",
+        id,
+        title,
+        releaseDate: movieRelease.releaseDate,
+        originaltitle,
+        posterPath,
+        popularity,
+        runtime,
+        budget,
+        releaseTypes: [movieRelease.type],
+      });
+    }
+
+    groupedByMovieAndDate.set(dateString, bucket);
+  }
+
+  const groupedReleases: FormattedUpcomingMovieRelease[] = [];
+
+  for (const movieReleases of Array.from(groupedByMovieAndDate.values())) {
+    groupedReleases.push(...movieReleases);
+  }
+  return groupedReleases;
+};
+
+// export const formatUpcomingTelevisionSeasons = (
+//   televisionSeasons: UpcomingTelevisionSeasons,
+// ) => {
+//   const formattedSeasons: FormattedUpcomingTelevisionSeason[] =
+//     televisionSeasons.map(
+//       ({ airDate, posterPath, show, id, name, seasonNumber }) => {
+//         return {
+//           type: "tv",
+//           showName: show.name,
+//           seasonName: name,
+//           id,
+//           posterPath: posterPath ? posterPath : show.posterPath,
+//           releaseDate: airDate as Date,
+//         };
+//       },
+//     );
+
+//   return formattedSeasons;
+// };
+
+export const formatUpcomingTelevisionSeasons = (
+  televisionSeasons: UpcomingTelevisionSeasons,
+) => {
+  const groupedByShowAndDate = new Map<
+    string,
+    FormattedUpcomingTelevisionSeason[]
+  >();
+  for (const televisionSeason of televisionSeasons) {
+    if (!televisionSeason.airDate) return;
+    const dateString = televisionSeason.airDate.toDateString();
+    const bucket =
+      groupedByShowAndDate.get(dateString) ||
+      ([] as FormattedUpcomingTelevisionSeason[]);
+    const existingReleaseIndex = bucket.findIndex(
+      (release) => release.id === televisionSeason.show.id,
+    );
+    if (existingReleaseIndex === -1) {
+      const { name, posterPath, show, airDate } = televisionSeason;
+
+      bucket.push({
+        type: "tv",
+        showName: show.name,
+        seasonName: name,
+        id: show.id,
+        posterPath: posterPath ? posterPath : show.posterPath,
+        releaseDate: airDate as Date,
+      });
+    }
+
+    groupedByShowAndDate.set(dateString, bucket);
+  }
+
+  const groupedReleases: FormattedUpcomingTelevisionSeason[] = [];
+
+  for (const seasons of Array.from(groupedByShowAndDate.values())) {
+    groupedReleases.push(...seasons);
+  }
+  return groupedReleases;
 };
 
 export const convertCountryCodeToName = (input: string) => {
