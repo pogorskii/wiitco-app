@@ -14,7 +14,7 @@ import {
   UpcomingMovieReleases,
   UpcomingTelevisionSeasons,
 } from "./actions";
-import { FormattedUpcomingGameRelease } from "@/app/video-games/lib/definitions";
+import { FormattedUpcomingGameRelease } from "./definitions";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));

@@ -1,7 +1,7 @@
 import { fetchAllUpcomingReleases } from "@/lib/actions";
 import { ScrollArea, ScrollBar } from "./scroll-area";
 import Link from "next/link";
-import { FormattedUpcomingGameRelease } from "@/app/video-games/lib/definitions";
+import { FormattedUpcomingGameRelease } from "@/lib/definitions";
 import {
   FormattedUpcomingMovieRelease,
   FormattedUpcomingTelevisionSeason,
