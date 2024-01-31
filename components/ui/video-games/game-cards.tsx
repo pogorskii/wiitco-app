@@ -3,15 +3,9 @@ import Link from "next/link";
 import { format } from "date-fns";
 import { useMediaQuery, breakpoints } from "@/lib/hooks/useMediaQuery";
 import { GamePlatforms } from "./game-platforms";
-import { GameRelease } from "@/app/video-games/lib/definitions";
+import { GameRelease } from "@/lib/definitions";
 import { GamesSearch } from "@/app/video-games/lib/actions";
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardFooter, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { MoreInfoLink } from "../more-info-link";
 
