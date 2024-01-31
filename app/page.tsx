@@ -40,7 +40,7 @@ export default function Page() {
       </section>
       <section>
         <h2 className="mb-8 scroll-m-20 border-b pb-2 text-3xl font-semibold tracking-tight first:mt-0">
-          What's coming up this week?
+          What&apos;s coming up this week?
         </h2>
         <Suspense fallback={<Spinner />}>
           <UpcomingReleasesCarousel />
@@ -56,15 +56,15 @@ export default function Page() {
             There are no subscribtions, ads or other gotchas.
           </p>
           <p className="text-xs text-muted-foreground">
-            However, if you're looking for a talented developer, let's get in
-            touch!
+            However, if you&apos;re looking for a talented developer, let&apos;s
+            get in touch!
           </p>
         </div>
         <div></div>
       </section>
       <section className="flex flex-col items-center rounded-3xl bg-accent px-20 py-10 text-accent-foreground">
         <h2 className="mb-4 scroll-m-20 text-center text-3xl font-semibold tracking-tight first:mt-0">
-          What's stopping you? Join now
+          What&apos;s stopping you? Join now
         </h2>
         <p className="mb-8">And never miss a release date again!</p>
         <a
