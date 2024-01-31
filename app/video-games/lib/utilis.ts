@@ -1,4 +1,4 @@
-import { GameRelease } from "./definitions";
+import { GameRelease } from "@/lib/definitions";
 import { GameReleaseDatesByMonth } from "./actions";
 
 export const groupGameReleasesAndSortByDay = (
