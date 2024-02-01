@@ -50,7 +50,6 @@ export function GameCardCalendar({ game }: { game: GameRelease }) {
             width={600}
             height={900}
             style={{ objectFit: "cover" }}
-            loading="eager"
           />
         </Link>
       </div>
@@ -98,7 +97,6 @@ export function GameCardCalendar({ game }: { game: GameRelease }) {
                 height: "auto",
                 objectFit: "cover",
               }}
-              loading="eager"
             />
           </div>
         </Link>
@@ -183,7 +181,7 @@ export function GameSearchCard({ game }: { game: SingleGameSearch }) {
         className="col-span-1 block overflow-hidden"
         href={`/video-games/games/${slug}`}
       >
-        <Image
+        <img
           className="h-full duration-200 ease-in-out hover:scale-105"
           src={coverUrl}
           width={600}
@@ -204,7 +202,7 @@ export function GameSearchCard({ game }: { game: SingleGameSearch }) {
           className="block w-24 shrink-0 grow-0 overflow-hidden"
           href={`/video-games/games/${slug}`}
         >
-          <Image
+          <img
             className="duration-200 ease-in-out hover:scale-105"
             src={coverUrl}
             width={600}
