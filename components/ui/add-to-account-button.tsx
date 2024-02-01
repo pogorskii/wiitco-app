@@ -1,7 +1,8 @@
 import { clsx } from "clsx";
 import { Button } from "@/components/ui/button";
 import { FaPlus } from "react-icons/fa";
-export function AddToAccountButton({
+import { getSession } from "@auth0/nextjs-auth0";
+export async function AddToAccountButton({
   className,
   type,
 }: {
@@ -15,6 +16,24 @@ export function AddToAccountButton({
     person: "Add birthday reminder",
     game: "Track this game",
   };
+
+  const session = await getSession();
+  if (session) {
+    const { sub } = session.user;
+    return (
+      <Button
+        variant="default"
+        className={clsx(
+          "md-2 mt-4 w-full font-semibold tracking-wider md:mb-6",
+          {
+            [className as string]: className,
+          },
+        )}
+      >
+        <FaPlus className="me-1" /> {sub}
+      </Button>
+    );
+  }
 
   return (
     <Button

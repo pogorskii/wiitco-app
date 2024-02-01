@@ -9,6 +9,41 @@ datasource db {
   directUrl = env("POSTGRES_URL_NON_POOLING") // uses a direct connection
 }
 
+// Account Models
+model User {
+  sub             String              @id
+  games           UserFollowsGame[]
+  movies          UserFollowsMovie[]
+  televisionShows UserFollowsTVShow[]
+}
+
+model UserFollowsGame {
+  user    User   @relation(fields: [userSub], references: [sub])
+  userSub String
+  game    Game   @relation(fields: [gameId], references: [id])
+  gameId  Int
+
+  @@id([userSub, gameId])
+}
+
+model UserFollowsMovie {
+  user    User   @relation(fields: [userSub], references: [sub])
+  userSub String
+  movie   Movie  @relation(fields: [movieId], references: [id])
+  movieId Int
+
+  @@id([userSub, movieId])
+}
+
+model UserFollowsTVShow {
+  user    User   @relation(fields: [userSub], references: [sub])
+  userSub String
+  show    TVShow @relation(fields: [showId], references: [id])
+  showId  Int
+
+  @@id([userSub, showId])
+}
+
 // Game Models
 // Reference tables that have only parent relations
 model GCollectionType {
@@ -183,6 +218,7 @@ model Game {
   websites           GWebsite[]
   updatedAt          DateTime
   checksum           String
+  followedByUsers    UserFollowsGame[]
 
   // Similar games
   similarOf GameSimilarGame[] @relation("Similar Game")
@@ -611,7 +647,7 @@ model TVNetwork {
 
 // Movies tables
 model Movie {
-  id                  Int               @id
+  id                  Int                @id
   originalLanguage    String?
   originaltitle       String?
   title               String
@@ -625,6 +661,7 @@ model Movie {
   productionCountries MovieCountry[]
   actors              MovieActor[]
   directors           MovieDirector[]
+  followedByUsers     UserFollowsMovie[]
 }
 
 // Child tables
@@ -704,6 +741,7 @@ model TVShow {
   status              String
   type                String
   voteAverage         Float
+  followedByUsers     UserFollowsTVShow[]
 }
 
 // Child tables
