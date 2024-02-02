@@ -42,7 +42,7 @@ export default function Page() {
         <div className="relative flex min-h-[22rem] items-end justify-start rounded-2xl bg-gradient-to-tr from-fuchsia-500 to-cyan-500 p-4 py-4 sm:px-10 sm:py-10 ">
           <HeroSectionLottie className="absolute right-1/2 top-[-4rem] translate-x-1/2 sm:right-10 sm:translate-x-0" />
           <a
-            className="flex h-16 w-full items-center justify-center gap-2 whitespace-nowrap rounded-2xl bg-white px-4 py-2 text-2xl font-semibold tracking-wider text-black text-primary-foreground ring-offset-background transition-all hover:gap-4 hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 sm:max-w-xs"
+            className="flex h-16 w-full items-center justify-center gap-2 whitespace-nowrap rounded-2xl bg-white px-4 py-2 text-2xl font-semibold tracking-wider text-black ring-offset-background transition-all hover:gap-4 hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 sm:max-w-xs"
             href="/api/auth/login"
           >
             <span>Sign Up</span>
