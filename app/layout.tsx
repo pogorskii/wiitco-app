@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { firaSans } from "../components/ui/fonts";
 import "./globals.css";
 import { ThemeProvider } from "@/components/ui/theme-provider";
-import { ReduxProvider } from "@/redux/provider";
 import { BackToTop } from "../components/ui/back-to-top";
 import Header from "../components/ui/header";
 import { Footer } from "../components/ui/footer";
@@ -28,24 +27,22 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <UserProvider>
         <body className={`${firaSans.className} `}>
-          <ReduxProvider>
-            <ThemeProvider
-              attribute="class"
-              defaultTheme="system"
-              enableSystem
-              disableTransitionOnChange
-            >
-              <div className="relative min-h-screen px-6 sm:px-10 lg:px-20">
-                <BackToTop />
-                <SearchProvider>
-                  <Header />
-                  <GlobalSearch />
-                </SearchProvider>
-                <main className="flex-grow pb-8">{children}</main>
-              </div>
-              <Footer />
-            </ThemeProvider>
-          </ReduxProvider>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
+            <div className="relative min-h-screen px-6 sm:px-10 lg:px-20">
+              <BackToTop />
+              <SearchProvider>
+                <Header />
+                <GlobalSearch />
+              </SearchProvider>
+              <main className="flex-grow pb-8">{children}</main>
+            </div>
+            <Footer />
+          </ThemeProvider>
         </body>
       </UserProvider>
     </html>

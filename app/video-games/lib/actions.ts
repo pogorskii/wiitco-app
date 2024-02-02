@@ -937,3 +937,50 @@ export const unfollowGame = async ({
     console.error(err);
   }
 };
+
+///////////////////////
+// Personal Calendar //
+///////////////////////
+
+export const fetchGameReleasesPersonalCalendar = async (
+  games: {
+    gameId: number;
+  }[],
+) => {
+  const gameIds = games.map((g) => g.gameId);
+
+  const releaseDates = await prisma.gReleaseDate.findMany({
+    where: {
+      gameId: {
+        in: gameIds,
+      },
+    },
+    select: {
+      category: true,
+      date: true,
+      platformId: true,
+      game: {
+        select: {
+          id: true,
+          name: true,
+          slug: true,
+          category: true,
+          follows: true,
+          cover: {
+            select: {
+              imageId: true,
+              width: true,
+              height: true,
+            },
+          },
+        },
+      },
+    },
+    orderBy: [{ date: "asc" }, { id: "asc" }],
+  });
+
+  return releaseDates;
+};
+export type GameReleasesPersonalCalendar = Prisma.PromiseReturnType<
+  typeof fetchGameReleasesPersonalCalendar
+>;

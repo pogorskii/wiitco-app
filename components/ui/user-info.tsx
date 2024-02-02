@@ -48,12 +48,10 @@ export function UserDropdownMenu({ user }: { user: Claims }) {
             </Link>
           </DropdownMenuItem>
           <DropdownMenuItem>
-            <Calendar className="mr-2 h-4 w-4" />
-            <span>My calendar</span>
-          </DropdownMenuItem>
-          <DropdownMenuItem>
-            <Settings className="mr-2 h-4 w-4" />
-            <span>Settings</span>
+            <Link href="/my-calendar" className="flex w-full">
+              <Calendar className="mr-2 h-4 w-4" />
+              <span>My calendar</span>
+            </Link>
           </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
