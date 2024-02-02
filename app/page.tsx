@@ -65,8 +65,8 @@ export default function Page() {
             More than a &quot;movie database&quot;
           </h2>
           <p className="leading-7 [&:not(:first-child)]:mt-6">
-            DB is included, but WIITCO's main focus are calendars for all the
-            releases relevant to your interests.
+            DB is included, but WIITCO&apos;s main focus are calendars for all
+            the releases relevant to your interests.
           </p>
         </div>
       </section>
