@@ -395,7 +395,7 @@ export const TelevisionShowDetails = z.object({
   external_ids: z.object({
     imdb_id: z.string().nullable(),
     tvdb_id: z.number().nullable(),
-    tvrage_id: z.string().nullable(),
+    tvrage_id: z.number().nullable(),
     wikidata_id: z.string().nullable(),
     facebook_id: z.string().nullable(),
     instagram_id: z.string().nullable(),

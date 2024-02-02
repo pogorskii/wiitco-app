@@ -48,7 +48,16 @@ export function InfiniteAnimeSeasonsCalendar({
       loadMoreSeasons();
     }
   }, [inView, loadMoreSeasons]);
-  if (!seasons.length) return <NoResultsFound type="calendar" />;
+  if (!seasons.length)
+    return (
+      <div>
+        <NoResultsFound type="calendar" />
+        <p className="text-center">
+          Did you know? Anime shows are highly seasonal – the majority of them
+          start airing <strong>in the same month</strong>.
+        </p>
+      </div>
+    );
 
   const groupedAndSortedByDay = groupTelevisionSeasonsAndSortByDay(seasons);
   if (!groupedAndSortedByDay) return <NoResultsFound type="calendar" />;

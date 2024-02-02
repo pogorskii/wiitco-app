@@ -1,7 +1,9 @@
-import { HeroSectionLottie } from "@/components/lottie-components/hero-section-lottie";
-import { Spinner } from "@/components/ui/spinner";
-import { UpcomingReleasesCarousel } from "@/components/ui/upcoming-releases-carousel";
 import { Suspense } from "react";
+import Image from "next/image";
+import { HeroSectionLottie } from "@/components/lottie-components/hero-section-lottie";
+import { UpcomingReleasesCarousel } from "@/components/ui/upcoming-releases-carousel";
+import { HeroSlidingText } from "@/components/ui/hero-sliding-text";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function Page() {
   return (
@@ -10,23 +12,29 @@ export default function Page() {
         className="mx-[-24px] grid rounded-b-3xl border-t border-foreground bg-gradient-to-tr from-fuchsia-500 to-cyan-500 px-6 sm:mx-[-40px] sm:h-[80dvh] sm:min-h-[400px] sm:grid-cols-2 sm:px-10 lg:mx-[-80px] lg:px-20"
         id="hero"
       >
-        <div className="flex items-center">
-          <h1 className="inline-block scroll-m-20 py-4 text-start text-xl font-bold tracking-tight text-white md:p-2 md:py-8 md:text-4xl lg:text-6xl">
+        <div className="flex items-center justify-center p-4 sm:px-8">
+          <h1 className="inline-block scroll-m-20 py-4 text-5xl font-bold tracking-tight text-foreground sm:text-start md:text-6xl">
             The best place
             <br />
             to keep up with
             <br />
-            <span className="rounded-3xl border border-white px-2 py-0">
-              movies
-            </span>
+            <HeroSlidingText />
           </h1>
         </div>
-        <div className="flex items-center px-20">
+        <div className="flex items-center justify-center py-4 sm:px-10 sm:py-10">
           <HeroSectionLottie />
         </div>
       </section>
-      <section className="grid py-16 sm:grid-cols-2">
-        <div></div>
+      <section className="grid gap-4 py-16 sm:grid-cols-2">
+        <div className="flex items-center justify-center">
+          <Image
+            src="/about-image.png"
+            alt="About WIITCO"
+            width={500}
+            height={500}
+            className="max-w-[300px]"
+          />
+        </div>
         <div className="px-8">
           <h2 className="scroll-m-20 border-b pb-2 text-3xl font-semibold tracking-tight first:mt-0">
             More than a &quot;movie database&quot;
@@ -42,29 +50,37 @@ export default function Page() {
         <h2 className="mb-8 scroll-m-20 border-b pb-2 text-3xl font-semibold tracking-tight first:mt-0">
           What&apos;s coming up this week?
         </h2>
-        <Suspense fallback={<Spinner />}>
+        <Suspense fallback={<Skeleton className="h-80 w-full" />}>
           <UpcomingReleasesCarousel />
         </Suspense>
       </section>
-      <section className="grid py-16 sm:grid-cols-2">
+      <section className="sm:grid-cols- grid gap-4 py-16">
         <div className="px-8">
           <h2 className="scroll-m-20 border-b pb-2 text-3xl font-semibold tracking-tight first:mt-0">
             No fluff, no catch
           </h2>
           <p className="mb-8 leading-7 [&:not(:first-child)]:mt-6">
-            WIITCO is designed with the best possible user experience in mind.
-            There are no subscribtions, ads or other gotchas.
+            WIITCO is built for users, not profit. There are no subscribtions,
+            ads or other gotchas.
           </p>
           <p className="text-xs text-muted-foreground">
             However, if you&apos;re looking for a talented developer, let&apos;s
             get in touch!
           </p>
         </div>
-        <div></div>
+        <div className="flex items-center justify-center">
+          <Image
+            src="/trust-image.png"
+            alt="WIITCO free"
+            width={500}
+            height={500}
+            className="max-w-[300px]"
+          />
+        </div>
       </section>
-      <section className="flex flex-col items-center rounded-3xl bg-accent px-20 py-10 text-accent-foreground">
+      <section className="flex flex-col items-center rounded-3xl bg-accent px-8 py-4 text-accent-foreground sm:mx-16 sm:px-20 sm:py-10">
         <h2 className="mb-4 scroll-m-20 text-center text-3xl font-semibold tracking-tight first:mt-0">
-          What&apos;s stopping you? Join now
+          Join now
         </h2>
         <p className="mb-8">And never miss a release date again!</p>
         <a

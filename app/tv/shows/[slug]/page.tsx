@@ -11,7 +11,7 @@ import { SeasonsCarousel } from "@/components/ui/tmdb/seasons-carousel";
 import { JustWatchSection } from "@/components/ui/tmdb/just-watch-section";
 import { CinemaLinksList } from "@/components/ui/tmdb/cinema-links-list";
 import { CinemaStillsGallery } from "@/components/ui/tmdb/cinema-stills-gallery";
-import { AddToAccountButton } from "@/components/ui/add-to-account-button";
+import { AddToAccount } from "@/components/ui/add-to-account";
 import { DetailsPageTypeBadge } from "@/components/ui/details-page-type-badge";
 import { DetailsPageH1 } from "@/components/ui/details-page-h1";
 import { DisplayFullDate } from "@/components/ui/display-full-date";
@@ -90,7 +90,7 @@ export default async function Page({ params }: { params: { slug: string } }) {
             }}
             priority
           />
-          <AddToAccountButton type="tv" />
+          <AddToAccount type="tv" entityId={id} />
           <RatingCircle
             className="col-span-1 lg:hidden"
             rating={vote_average * 10}
@@ -126,7 +126,7 @@ export default async function Page({ params }: { params: { slug: string } }) {
             </div>
           </div>
 
-          <AddToAccountButton className="md:hidden" type="tv" />
+          <AddToAccount className="md:hidden" type="tv" entityId={id} />
           <Separator className="mb-4 mt-2" />
 
           {/* Info First Column */}

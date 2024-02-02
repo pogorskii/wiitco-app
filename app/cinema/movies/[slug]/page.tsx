@@ -13,7 +13,7 @@ import { JustWatchSection } from "@/components/ui/tmdb/just-watch-section";
 import { CinemaStillsGallery } from "@/components/ui/tmdb/cinema-stills-gallery";
 import { CinemaLinksList } from "@/components/ui/tmdb/cinema-links-list";
 import { convertMinutesToHoursAndMinutes } from "@/lib/utils";
-import { AddToAccountButton } from "@/components/ui/add-to-account-button";
+import { AddToAccount } from "@/components/ui/add-to-account";
 import { DetailsPageH1 } from "@/components/ui/details-page-h1";
 import { LinksListRow } from "@/components/ui/links-list-row";
 import type { Metadata } from "next";
@@ -89,7 +89,7 @@ export default async function Page({ params }: { params: { slug: string } }) {
             }}
             priority
           />
-          <AddToAccountButton type="movie" />
+          <AddToAccount type="movie" entityId={id} />
           <RatingCircle
             className="col-span-1 lg:hidden"
             rating={vote_average * 10}
@@ -121,7 +121,7 @@ export default async function Page({ params }: { params: { slug: string } }) {
             </div>
           </div>
 
-          <AddToAccountButton type="movie" className="md:hidden" />
+          <AddToAccount type="movie" className="md:hidden" entityId={id} />
           <Separator className="mb-4 mt-2" />
 
           {/* Info First Column */}

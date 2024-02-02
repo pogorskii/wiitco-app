@@ -11,10 +11,11 @@ datasource db {
 
 // Account Models
 model User {
-  sub             String              @id
+  sub             String                    @id
   games           UserFollowsGame[]
   movies          UserFollowsMovie[]
   televisionShows UserFollowsTVShow[]
+  cinemaPeople    UserFollowsCinemaPerson[]
 }
 
 model UserFollowsGame {
@@ -42,6 +43,15 @@ model UserFollowsTVShow {
   showId  Int
 
   @@id([userSub, showId])
+}
+
+model UserFollowsCinemaPerson {
+  user     User         @relation(fields: [userSub], references: [sub])
+  userSub  String
+  person   CinemaPerson @relation(fields: [personId], references: [id])
+  personId Int
+
+  @@id([userSub, personId])
 }
 
 // Game Models
@@ -621,11 +631,12 @@ model TVGenre {
 }
 
 model CinemaPerson {
-  id             Int             @id
-  name           String
-  actedMovies    MovieActor[]
-  directedMovies MovieDirector[]
-  createdShows   TVShowCreator[]
+  id              Int                       @id
+  name            String
+  actedMovies     MovieActor[]
+  directedMovies  MovieDirector[]
+  createdShows    TVShowCreator[]
+  followedByUsers UserFollowsCinemaPerson[]
 }
 
 model CinemaCountry {

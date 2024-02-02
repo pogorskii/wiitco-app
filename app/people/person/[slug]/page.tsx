@@ -8,7 +8,7 @@ import { ActingCreditsCarousel } from "@/components/ui/tmdb/acting-credits-carou
 import { ProducingCreditsCarousel } from "@/components/ui/tmdb/producing-credits-carousel";
 import { CinemaStillsGallery } from "@/components/ui/tmdb/cinema-stills-gallery";
 import { CinemaLinksList } from "@/components/ui/tmdb/cinema-links-list";
-import { AddToAccountButton } from "@/components/ui/add-to-account-button";
+import { AddToAccount } from "@/components/ui/add-to-account";
 import { DetailsPageTypeBadge } from "@/components/ui/details-page-type-badge";
 import { DetailsPageH1 } from "@/components/ui/details-page-h1";
 import { DisplayFullDate } from "@/components/ui/display-full-date";
@@ -88,7 +88,7 @@ export default async function Page({ params }: { params: { slug: string } }) {
             }}
             priority
           />
-          <AddToAccountButton type="person" />
+          <AddToAccount type="person" entityId={id} />
         </div>
 
         {/* Second column */}
@@ -116,7 +116,7 @@ export default async function Page({ params }: { params: { slug: string } }) {
             </div>
           </div>
 
-          <AddToAccountButton className="md:hidden" type="person" />
+          <AddToAccount className="md:hidden" type="person" entityId={id} />
           <Separator className="mb-4 mt-2" />
 
           {/* Info First Column */}

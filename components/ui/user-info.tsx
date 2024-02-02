@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ChevronDown, LogOut, Settings, User, Calendar } from "lucide-react";
+import Link from "next/link";
 
 export default async function ProfileClient() {
   const session = await getSession();
@@ -37,12 +38,14 @@ export function UserDropdownMenu({ user }: { user: Claims }) {
         </div>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56">
-        <DropdownMenuLabel>Hello, {name}.</DropdownMenuLabel>
+        <DropdownMenuLabel>Hello, {name}</DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
           <DropdownMenuItem>
-            <User className="mr-2 h-4 w-4" />
-            <span>Profile</span>
+            <Link href="/account" className="flex w-full">
+              <User className="mr-2 h-4 w-4" />
+              <span>Profile</span>
+            </Link>
           </DropdownMenuItem>
           <DropdownMenuItem>
             <Calendar className="mr-2 h-4 w-4" />

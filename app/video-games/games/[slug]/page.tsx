@@ -17,7 +17,7 @@ import { GameLinksList } from "@/components/ui/video-games/game-links-list";
 import { LinksListRow } from "@/components/ui/links-list-row";
 import { DetailsPageH1 } from "@/components/ui/details-page-h1";
 import { DisplayFullDate } from "@/components/ui/display-full-date";
-import { AddToAccountButton } from "@/components/ui/add-to-account-button";
+import { AddToAccount } from "@/components/ui/add-to-account";
 import { GameCategoryBadge } from "@/components/ui/video-games/game-category-badge";
 import { HLTBTable } from "@/components/ui/video-games/hltb-table";
 import { GameAgeRatings } from "@/components/ui/video-games/game-age-ratings";
@@ -44,6 +44,7 @@ export default async function Page({ params }: { params: { slug: string } }) {
   if (!game) return <p>No game found.</p>;
 
   const {
+    id,
     name,
     slug,
     cover,
@@ -96,7 +97,7 @@ export default async function Page({ params }: { params: { slug: string } }) {
             }}
             priority
           />
-          <AddToAccountButton type="game" />
+          <AddToAccount type="game" entityId={id} />
 
           <div className="col-span-1 flex flex-col items-center lg:hidden">
             <RatingCircle rating={rating} reviewCount={reviewsCount} />
@@ -131,7 +132,7 @@ export default async function Page({ params }: { params: { slug: string } }) {
             </div>
           </div>
 
-          <AddToAccountButton className="md:hidden" type="game" />
+          <AddToAccount className="md:hidden" type="game" entityId={id} />
           <Separator className="mb-4 mt-2" />
 
           {/* Info First Column */}

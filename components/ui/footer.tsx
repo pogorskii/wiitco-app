@@ -15,7 +15,7 @@ export function Footer() {
           <Link className="font-semibold" href="/about">
             About
           </Link>
-          <Link className="font-semibold" href="/about">
+          <Link className="font-semibold" href="/account">
             Account
           </Link>
         </div>
