@@ -15,6 +15,8 @@ import {
   UpcomingTelevisionSeasons,
 } from "./actions";
 import { FormattedUpcomingGameRelease } from "./definitions";
+import { GameRelease } from "@/lib/definitions";
+import { GameReleaseDatesByMonth } from "@/app/video-games/lib/actions";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -347,6 +349,7 @@ export const groupGameReleasesByGameAndDate = (
     } else {
       bucket.push({
         type: "game",
+        status: gameRelease.status?.name || null,
         id: gameRelease.game.id,
         name: gameRelease.game.name,
         releaseDate: gameRelease.date,
@@ -459,44 +462,90 @@ export const formatUpcomingTelevisionSeasons = (
   return groupedReleases;
 };
 
-import { GameRelease } from "@/lib/definitions";
-import { GameReleaseDatesByMonth } from "@/app/video-games/lib/actions";
+///////////////////////
+// Personal Calendar //
+///////////////////////
+export const groupPersonalCalendarReleasesAndSortByDay = ({
+  movies,
+  televisionSeasons,
+  games,
+}: {
+  movies?: FormattedUpcomingMovieRelease[];
+  televisionSeasons?: FormattedUpcomingTelevisionSeason[];
+  games?: FormattedUpcomingGameRelease[];
+}) => {
+  const groupedByDay = new Map<
+    Date,
+    (
+      | FormattedUpcomingGameRelease
+      | FormattedUpcomingMovieRelease
+      | FormattedUpcomingTelevisionSeason
+    )[]
+  >();
 
-export const groupGamesForPersonalCalendar = (
-  releasesByMonth: GameReleaseDatesByMonth,
-) => {
-  const groupedByDay = new Map<number, GameRelease[]>();
-  for (const gameRelease of releasesByMonth) {
-    const day =
-      gameRelease.category === 0 && gameRelease.date
-        ? gameRelease.date.getDate()
-        : 50;
-    const bucket = groupedByDay.get(day) || ([] as GameRelease[]);
-    const existingReleaseIndex = bucket.findIndex(
-      (release) => release.id === gameRelease.game.id,
-    );
-    if (existingReleaseIndex !== -1) {
-      bucket[existingReleaseIndex].platforms.push(gameRelease.platformId);
-    } else {
-      bucket.push({
-        id: gameRelease.game.id,
-        name: gameRelease.game.name,
-        slug: gameRelease.game.slug,
-        category: gameRelease.game.category,
-        follows: gameRelease.game.follows,
-        cover: gameRelease.game.cover,
-        platforms: [gameRelease.platformId],
-      });
+  if (movies) {
+    for (const movieRelease of movies) {
+      const date = movieRelease.releaseDate;
+      const bucket =
+        groupedByDay.get(date) ||
+        ([] as (
+          | FormattedUpcomingGameRelease
+          | FormattedUpcomingMovieRelease
+          | FormattedUpcomingTelevisionSeason
+        )[]);
+
+      bucket.push(movieRelease);
+      groupedByDay.set(date, bucket);
     }
-    groupedByDay.set(day, bucket);
   }
 
-  const sortedDays = Array.from(groupedByDay.keys()).sort((a, b) => a - b);
-  const sortedMap = new Map<number, GameRelease[]>();
-  for (const day of sortedDays) {
-    const releasesForDay = groupedByDay.get(day);
+  if (televisionSeasons) {
+    for (const season of televisionSeasons) {
+      const date = season.releaseDate;
+      const bucket =
+        groupedByDay.get(date) ||
+        ([] as (
+          | FormattedUpcomingGameRelease
+          | FormattedUpcomingMovieRelease
+          | FormattedUpcomingTelevisionSeason
+        )[]);
+
+      bucket.push(season);
+      groupedByDay.set(date, bucket);
+    }
+  }
+
+  if (games) {
+    for (const game of games) {
+      const date = game.releaseDate;
+      const bucket =
+        groupedByDay.get(date) ||
+        ([] as (
+          | FormattedUpcomingGameRelease
+          | FormattedUpcomingMovieRelease
+          | FormattedUpcomingTelevisionSeason
+        )[]);
+
+      bucket.push(game);
+      groupedByDay.set(date, bucket);
+    }
+  }
+
+  const sortedDays = Array.from(groupedByDay.keys()).sort(
+    (a, b) => a.getTime() - b.getTime(),
+  );
+  const sortedMap = new Map<
+    Date,
+    (
+      | FormattedUpcomingGameRelease
+      | FormattedUpcomingMovieRelease
+      | FormattedUpcomingTelevisionSeason
+    )[]
+  >();
+  for (const date of sortedDays) {
+    const releasesForDay = groupedByDay.get(date);
     if (releasesForDay !== undefined) {
-      sortedMap.set(day, releasesForDay);
+      sortedMap.set(date, releasesForDay);
     }
   }
 

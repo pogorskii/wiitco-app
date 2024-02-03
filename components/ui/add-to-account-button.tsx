@@ -13,7 +13,7 @@ import {
   unfollowCinemaPerson,
   followGame,
   unfollowGame,
-} from "@/app/video-games/lib/actions";
+} from "@/lib/actions";
 export function AddToAccountButton({
   className,
   type,

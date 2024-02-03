@@ -38,7 +38,7 @@ export function CinemaLinksList({
   };
 
   const listItems = Object.entries(links).map((link, i) => {
-    if (!link[1]) return;
+    if (!link[1] || !categoryEnum[link[0]]) return;
     const Icon = categoryEnum[link[0]][1];
     return (
       <li key={i}>

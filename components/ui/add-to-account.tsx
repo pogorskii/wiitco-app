@@ -2,7 +2,7 @@ import { clsx } from "clsx";
 import { FaPlus } from "react-icons/fa";
 import { getSession } from "@auth0/nextjs-auth0";
 import { AddToAccountButton } from "./add-to-account-button";
-import { fetchUserFollowLists } from "@/app/video-games/lib/actions";
+import { fetchUserFollowLists } from "@/lib/actions";
 export async function AddToAccount({
   className,
   type,

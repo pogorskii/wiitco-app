@@ -73,6 +73,7 @@ export type GameRelease = {
 
 export type FormattedUpcomingGameRelease = {
   type: "game";
+  status: string | null;
   id: number;
   releaseDate: Date;
   name: string;

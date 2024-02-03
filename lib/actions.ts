@@ -671,6 +671,11 @@ export const fetchUpcomingGameReleases = async ({
       },
     },
     select: {
+      status: {
+        select: {
+          name: true,
+        },
+      },
       category: true,
       platformId: true,
       date: true,
@@ -802,3 +807,356 @@ export const fetchAllUpcomingReleases = async () => {
     console.error(err);
   }
 };
+
+/////////////////////////////
+// Follow/Unfollow Actions //
+/////////////////////////////
+
+export const fetchUserFollowLists = async (sub: string) => {
+  const userLists = await prisma.user.findUnique({
+    where: {
+      sub,
+    },
+    select: {
+      movies: {
+        select: {
+          movieId: true,
+        },
+      },
+      games: {
+        select: {
+          gameId: true,
+        },
+      },
+      televisionShows: {
+        select: {
+          showId: true,
+        },
+      },
+      cinemaPeople: {
+        select: {
+          personId: true,
+        },
+      },
+    },
+  });
+
+  return userLists;
+};
+export type UserFollowLists = Prisma.PromiseReturnType<
+  typeof fetchUserFollowLists
+>;
+
+export const followMovie = async ({
+  userSub,
+  movieId,
+}: {
+  userSub: string;
+  movieId: number;
+}) => {
+  try {
+    await prisma.user.upsert({
+      where: { sub: userSub },
+      create: { sub: userSub },
+      update: {},
+    });
+
+    const followedMovie = await prisma.userFollowsMovie.create({
+      data: {
+        userSub,
+        movieId,
+      },
+    });
+    return followedMovie.movieId;
+  } catch (err) {
+    console.error(err);
+  }
+};
+export const unfollowMovie = async ({
+  userSub,
+  movieId,
+}: {
+  userSub: string;
+  movieId: number;
+}) => {
+  try {
+    const unfollowedMovie = await prisma.userFollowsMovie.delete({
+      where: {
+        userSub_movieId: {
+          userSub,
+          movieId,
+        },
+      },
+    });
+    return unfollowedMovie.movieId;
+  } catch (err) {
+    console.error(err);
+  }
+};
+
+export const followTVShow = async ({
+  userSub,
+  showId,
+}: {
+  userSub: string;
+  showId: number;
+}) => {
+  try {
+    await prisma.user.upsert({
+      where: { sub: userSub },
+      create: { sub: userSub },
+      update: {},
+    });
+
+    const followedShow = await prisma.userFollowsTVShow.create({
+      data: {
+        userSub,
+        showId,
+      },
+    });
+    return followedShow.showId;
+  } catch (err) {
+    console.error(err);
+  }
+};
+export const unfollowTVShow = async ({
+  userSub,
+  showId,
+}: {
+  userSub: string;
+  showId: number;
+}) => {
+  try {
+    const unfollowedShow = await prisma.userFollowsTVShow.delete({
+      where: {
+        userSub_showId: {
+          userSub,
+          showId,
+        },
+      },
+    });
+    return unfollowedShow.showId;
+  } catch (err) {
+    console.error(err);
+  }
+};
+
+export const followCinemaPerson = async ({
+  userSub,
+  personId,
+}: {
+  userSub: string;
+  personId: number;
+}) => {
+  try {
+    await prisma.user.upsert({
+      where: { sub: userSub },
+      create: { sub: userSub },
+      update: {},
+    });
+
+    const followedPerson = await prisma.userFollowsCinemaPerson.create({
+      data: {
+        userSub,
+        personId,
+      },
+    });
+    return followedPerson.personId;
+  } catch (err) {
+    console.error(err);
+  }
+};
+export const unfollowCinemaPerson = async ({
+  userSub,
+  personId,
+}: {
+  userSub: string;
+  personId: number;
+}) => {
+  try {
+    const unfollowedPerson = await prisma.userFollowsCinemaPerson.delete({
+      where: {
+        userSub_personId: {
+          userSub,
+          personId,
+        },
+      },
+    });
+    return unfollowedPerson.personId;
+  } catch (err) {
+    console.error(err);
+  }
+};
+
+export const followGame = async ({
+  userSub,
+  gameId,
+}: {
+  userSub: string;
+  gameId: number;
+}) => {
+  try {
+    await prisma.user.upsert({
+      where: { sub: userSub },
+      create: { sub: userSub },
+      update: {},
+    });
+
+    const followedGame = await prisma.userFollowsGame.create({
+      data: {
+        userSub,
+        gameId,
+      },
+    });
+    return followedGame.gameId;
+  } catch (err) {
+    console.error(err);
+  }
+};
+export const unfollowGame = async ({
+  userSub,
+  gameId,
+}: {
+  userSub: string;
+  gameId: number;
+}) => {
+  try {
+    const unfollowedGame = await prisma.userFollowsGame.delete({
+      where: {
+        userSub_gameId: {
+          userSub,
+          gameId,
+        },
+      },
+    });
+    return unfollowedGame.gameId;
+  } catch (err) {
+    console.error(err);
+  }
+};
+
+///////////////////////
+// Personal Calendar //
+///////////////////////
+
+export const fetchGameReleasesPersonalCalendar = async (
+  games: {
+    gameId: number;
+  }[],
+) => {
+  const gameIds = games.map((g) => g.gameId);
+
+  const releaseDates = await prisma.gReleaseDate.findMany({
+    where: {
+      gameId: {
+        in: gameIds,
+      },
+    },
+    select: {
+      category: true,
+      date: true,
+      platformId: true,
+      status: {
+        select: {
+          name: true,
+        },
+      },
+      game: {
+        select: {
+          id: true,
+          name: true,
+          slug: true,
+          category: true,
+          follows: true,
+          cover: {
+            select: {
+              imageId: true,
+              width: true,
+              height: true,
+            },
+          },
+        },
+      },
+    },
+    orderBy: [{ date: "asc" }, { id: "asc" }],
+  });
+
+  return releaseDates;
+};
+export type GameReleasesPersonalCalendar = Prisma.PromiseReturnType<
+  typeof fetchGameReleasesPersonalCalendar
+>;
+
+export const fetchMovieReleasesPersonalCalendar = async (
+  movies: {
+    movieId: number;
+  }[],
+) => {
+  const movieIds = movies.map((m) => m.movieId);
+
+  const releaseDates = await prisma.mLocalRelease.findMany({
+    where: {
+      releaseCountry: {
+        iso31661: "US",
+        movie: {
+          id: {
+            in: movieIds,
+          },
+        },
+      },
+    },
+    orderBy: [{ releaseDate: "asc" }, { id: "asc" }],
+    select: {
+      id: true,
+      releaseDate: true,
+      type: true,
+      releaseCountryId: true,
+      releaseCountry: {
+        select: {
+          movie: true,
+        },
+      },
+    },
+  });
+
+  return releaseDates;
+};
+export type MovieReleasesPersonalCalendar = NonNullable<
+  Prisma.PromiseReturnType<typeof fetchMovieReleasesPersonalCalendar>
+>;
+
+export const fetchTelevisionSeasonsPersonalCalendar = async (
+  televisionShows: {
+    showId: number;
+  }[],
+) => {
+  const showIds = televisionShows.map((s) => s.showId);
+
+  const releaseDates = await prisma.tVSeason.findMany({
+    where: {
+      showId: {
+        in: showIds,
+      },
+    },
+    orderBy: [{ airDate: "asc" }, { id: "asc" }],
+    select: {
+      id: true,
+      name: true,
+      seasonNumber: true,
+      posterPath: true,
+      airDate: true,
+      show: {
+        select: {
+          id: true,
+          name: true,
+          posterPath: true,
+        },
+      },
+    },
+  });
+
+  return releaseDates;
+};
+export type TelevisionSeasonsPersonalCalendar = Prisma.PromiseReturnType<
+  typeof fetchTelevisionSeasonsPersonalCalendar
+>;
