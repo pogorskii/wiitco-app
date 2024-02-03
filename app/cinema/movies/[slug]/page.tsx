@@ -176,6 +176,7 @@ export default async function Page({ params }: { params: { slug: string } }) {
                   pluralName="Genres"
                   linkType="cinema"
                   linkCategory="genres"
+                  disableLinks
                 />
                 {runtime > 0 && (
                   <li>
@@ -214,6 +215,7 @@ export default async function Page({ params }: { params: { slug: string } }) {
                   pluralName="Countries"
                   linkType="cinema"
                   linkCategory="country"
+                  disableLinks
                 />
                 <LinksListRow
                   links={production_companies?.map((e) => {
@@ -226,6 +228,7 @@ export default async function Page({ params }: { params: { slug: string } }) {
                   pluralName="Companies"
                   linkType="cinema"
                   linkCategory="company"
+                  disableLinks
                 />
               </ul>
 

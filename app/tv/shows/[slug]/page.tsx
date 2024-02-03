@@ -154,6 +154,7 @@ export default async function Page({ params }: { params: { slug: string } }) {
                   pluralName="Genres"
                   linkType="tv"
                   linkCategory="genre"
+                  disableLinks
                 />
                 {episode_run_time.length > 0 && (
                   <li>
@@ -186,6 +187,7 @@ export default async function Page({ params }: { params: { slug: string } }) {
                   pluralName="Countries"
                   linkType="tv"
                   linkCategory="country"
+                  disableLinks
                 />
                 <LinksListRow
                   links={production_companies?.map((e) => {
@@ -198,6 +200,7 @@ export default async function Page({ params }: { params: { slug: string } }) {
                   pluralName="Companies"
                   linkType="tv"
                   linkCategory="company"
+                  disableLinks
                 />
                 <LinksListRow
                   links={networks?.map((e) => {
@@ -210,6 +213,7 @@ export default async function Page({ params }: { params: { slug: string } }) {
                   pluralName="Networks"
                   linkType="tv"
                   linkCategory="network"
+                  disableLinks
                 />
               </ul>
 

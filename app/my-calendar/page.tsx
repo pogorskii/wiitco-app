@@ -12,7 +12,6 @@ import {
   groupGameReleasesByGameAndDate,
   groupMovieReleasesByMovieAndDate,
   groupPersonalCalendarReleasesAndSortByDay,
-  groupTelevisionSeasonsAndSortByDay,
 } from "@/lib/utils";
 import {
   FormattedUpcomingGameRelease,
@@ -71,7 +70,7 @@ export default async function Page() {
           <h2 className="col-span-1 flex scroll-m-20 flex-col self-start pb-2 text-xl font-semibold tracking-tight sm:text-3xl">
             {day.toDateString()}
           </h2>
-          <div className="grid sm:grid-cols-2">
+          <div className="grid gap-4 sm:grid-cols-2">
             {releases.map((release, i) => {
               if (release.type === "movie") {
                 return <MovieCard key={i} movie={release} />;
