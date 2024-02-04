@@ -28,6 +28,7 @@ export function Footer() {
             <a
               className="font-semibold underline underline-offset-4"
               href="https://www.linkedin.com/in/pogorskii/"
+              target="_blank"
             >
               Stanislav Pogorskii
             </a>{" "}
@@ -38,10 +39,10 @@ export function Footer() {
           <a href="mailto:stanislav.pogorskii@gmail.com?subject=Let's work together">
             <MdAlternateEmail size={36} />
           </a>
-          <a href="https://github.com/pogorskii">
+          <a href="https://github.com/pogorskii" target="_blank">
             <FaGithubSquare size={36} />
           </a>
-          <a href="https://www.linkedin.com/in/pogorskii/">
+          <a href="https://www.linkedin.com/in/pogorskii/" target="_blank">
             <FaLinkedin size={36} />
           </a>
         </div>

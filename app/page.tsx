@@ -5,6 +5,13 @@ import { UpcomingReleasesCarousel } from "@/components/ui/upcoming-releases-caro
 import { HeroSlidingText } from "@/components/ui/hero-sliding-text";
 import { Skeleton } from "@/components/ui/skeleton";
 import { MdDateRange, MdSearch } from "react-icons/md";
+import type { Metadata } from "next";
+
+export async function generateMetadata(): Promise<Metadata> {
+  return {
+    title: `Full calendar for movies, TV shows and video games releasing in 2024`,
+  };
+}
 
 export default function Page() {
   return (
