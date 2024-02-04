@@ -190,7 +190,7 @@ export default async function Page({ params }: { params: { slug: string } }) {
               <TruncText text={summary} />
               <GameLinksList links={websites} />
               <ChildGamesTabs slug={slug} />
-              <YouTubePlayer title={name} videoId={videos[0].videoId} />
+              <YouTubePlayer title={name} videoId={videos[0]?.videoId} />
 
               {screenshots.length > 0 && (
                 <div className="mb-8">

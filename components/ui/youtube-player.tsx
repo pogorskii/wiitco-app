@@ -9,7 +9,7 @@ export function YouTubePlayer({
   title: string;
   videoId: string | undefined;
 }) {
-  if (!videoId) return;
+  if (!videoId) return null;
 
   return (
     <div className="mb-8">
