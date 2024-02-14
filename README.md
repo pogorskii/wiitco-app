@@ -23,6 +23,8 @@ WIITCO is designed to solve all of the above.
 - **Next.js** – frontend and backend.
 - **Vercel** — hosting.
 - **TypeScript** – programming language.
+- **TailwindCSS** — styling.
+- **Shadcn** — UI library.
 - **Zod** — data validation.
 - **PostgreSQL** – robust database.
 - **Prisma** — ORM that abstracts SQL code with readable and type-safe queries.
