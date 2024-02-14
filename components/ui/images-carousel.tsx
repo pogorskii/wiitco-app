@@ -38,6 +38,7 @@ export function ImagesCarousel({
       opts={{
         align: "start",
       }}
+      className="mx-auto w-[80%]"
     >
       <CarouselContent>
         {images.map((image, i) => {

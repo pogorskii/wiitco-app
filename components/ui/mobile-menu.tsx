@@ -5,6 +5,7 @@ import { SVGMotionProps } from "framer-motion";
 import clsx from "clsx";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import UserInfo from "./user-info";
 
 interface Toggle {
   toggle: () => void;
@@ -64,7 +65,17 @@ const variantsMenu = {
 };
 
 const Navigation: MenuToggle = ({ toggle }) => {
-  const colors = ["#FF008C", "#D309E1", "#9C1AFF", "#7700FF", "#4400FF"];
+  // const colors = ["#FF008C", "#D309E1", "#9C1AFF", "#7700FF", "#4400FF"];
+  const colors = [
+    "#fe01bf",
+    "#ff97b0",
+    "#e796a2",
+    "#a9a595",
+    "#88d8b4",
+    "#7c91f4",
+    "#70d1ff",
+    "#659afe",
+  ];
 
   const MenuLinks = navLinks.map((link, i) => {
     const style = {
@@ -82,7 +93,7 @@ const Navigation: MenuToggle = ({ toggle }) => {
           backgroundPositionX: "0%",
           backgroundSize: "225%",
         }}
-        className="mb-4 p-2 block w-fit text-2xl sm:text-4xl hover:text-background transition-colors duration-100"
+        className="mb-4 block w-fit p-2 text-2xl transition-colors duration-100 hover:text-background sm:text-4xl"
         variants={variantsNavLinks}
         whileHover={{
           backgroundPositionX: "100%",
@@ -102,13 +113,16 @@ const Navigation: MenuToggle = ({ toggle }) => {
 
   return (
     <motion.ul
-      className="fixed p-6 pe-16 right-0 top-0 bg-background h-screen w-screen"
+      className="fixed right-0 top-0 h-screen w-screen bg-background p-6 pe-16"
       variants={variantsMenu}
     >
       <div className="mb-6">
-        <Button className="ms-2 p-4  text-xl  rounded-none">
-          <div>Log In</div>
-        </Button>
+        <a
+          className="ms-2 inline-flex h-10 items-center justify-center gap-2 whitespace-nowrap rounded-none bg-primary p-4 text-xl font-semibold tracking-wider text-primary-foreground ring-offset-background transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 sm:m-0 sm:rounded-full sm:px-4 sm:py-2 sm:text-sm"
+          href="/api/auth/login"
+        >
+          Log In
+        </a>
       </div>
       {MenuLinks}
     </motion.ul>
@@ -118,15 +132,15 @@ const Navigation: MenuToggle = ({ toggle }) => {
 const navLinks: { title: string; href: string }[] = [
   {
     title: "Movies Calendar",
-    href: "/movies",
+    href: "/cinema/calendar",
   },
   {
     title: "All Movies",
-    href: "/movies",
+    href: "/cinema/search",
   },
   {
     title: "TV Shows Calendar",
-    href: "/tv",
+    href: "/tv/calendar",
   },
   {
     title: "All TV Shows",
@@ -134,7 +148,7 @@ const navLinks: { title: string; href: string }[] = [
   },
   {
     title: "Anime Calendar",
-    href: "/anime",
+    href: "/anime/calendar",
   },
   {
     title: "All Anime Shows",
@@ -153,7 +167,7 @@ const navLinks: { title: string; href: string }[] = [
 const Path = (
   props: React.JSX.IntrinsicAttributes &
     SVGMotionProps<SVGPathElement> &
-    React.RefAttributes<SVGPathElement>
+    React.RefAttributes<SVGPathElement>,
 ) => (
   <motion.path
     className="stroke-foreground"

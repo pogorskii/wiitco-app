@@ -120,7 +120,7 @@ export default async function Page({ params }: { params: { slug: string } }) {
           <Separator className="mb-4 mt-2" />
 
           {/* Info First Column */}
-          <div className="col-span-3">
+          <div className="col-span-3 max-w-[80ch]">
             {/* Main Info List */}
             <ul className="mb-4 [&>*+*]:mt-2">
               {place_of_birth && (

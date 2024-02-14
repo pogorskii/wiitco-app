@@ -45,7 +45,7 @@ export default function InfiniteAnimeShowsSearch({
   if (!shows?.length) return <NoResultsFound type="search" />;
 
   return (
-    <div className="grid grid-cols-1 sm:gap-6 md:grid-cols-2">
+    <div className="grid grid-cols-1 gap-8 py-8 sm:gap-6 md:grid-cols-2">
       {shows?.map((televisionShow) => (
         <TelevisionShowSearchCard
           key={televisionShow.id}
