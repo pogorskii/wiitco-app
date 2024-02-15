@@ -34,9 +34,9 @@ export function GameAgeRatings({
   };
 
   return (
-    <div className="mb-8 w-full">
+    <div className="mb-8 flex flex-col items-center md:items-start">
       <DetailsPageH2>Age ratings</DetailsPageH2>
-      <div className="flex items-center justify-start gap-2">
+      <div className="flex justify-start gap-2">
         {/* TODO: Add support for more ratings */}
         {ageRatings
           .filter((r) => r.category === 1 || r.category === 2)

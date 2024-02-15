@@ -42,12 +42,11 @@ export function LanguagesTable({
   languageSupports: LanguageSupports;
 }) {
   const [isOpen, setIsOpen] = useState(false);
+  if (!languageSupports.length) return null;
 
   function handleClick() {
     setIsOpen(!isOpen);
   }
-
-  if (!languageSupports.length) return null;
 
   const languages: {
     id: number;
@@ -68,7 +67,7 @@ export function LanguagesTable({
     if (isOpen || (!isOpen && i < 3))
       return (
         <TableRow key={i}>
-          <TableCell className="px-0 py-2 font-medium">
+          <TableCell className="px-0 py-2 text-center">
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger>
@@ -111,15 +110,15 @@ export function LanguagesTable({
   });
 
   return (
-    <div className="mb-8 w-full self-start">
+    <div className="mb-8 flex w-full flex-col items-center self-start md:items-start">
       <DetailsPageH2>Supported Languages</DetailsPageH2>
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead className="h-8 px-1 text-start"></TableHead>
-            <TableHead className="h-8 px-1 text-start">Audio</TableHead>
-            <TableHead className="h-8 px-1 text-start">Subs</TableHead>
-            <TableHead className="h-8 px-1 text-start">UI</TableHead>
+            <TableHead className="h-8 px-1"></TableHead>
+            <TableHead className="h-8 px-1 text-center">Audio</TableHead>
+            <TableHead className="h-8 px-1 text-center">Subs</TableHead>
+            <TableHead className="h-8 px-1 text-center">UI</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>{tableRows}</TableBody>

@@ -2,7 +2,7 @@
 
 import { DialogContent, DialogTitle, DialogDescription } from "../dialog";
 import { ScrollArea } from "../scroll-area";
-import { Separator } from "@radix-ui/react-separator";
+import { Separator } from "../separator";
 import Link from "next/link";
 import { Badge } from "../badge";
 import { DialogHeader } from "../dialog";
@@ -59,10 +59,10 @@ export function GameRelatedSeriesModalContent({
         </DialogDescription>
       </DialogHeader>
       <ScrollArea className="h-full max-h-[70vh] w-auto rounded-md border">
-        <div className="grid px-2 py-1 md:px-4 md:py-2">
+        <div className="grid px-4 py-2">
           {uniqueGames.map((game, i, arr) => (
             <div key={i}>
-              <div className="grid grid-cols-4 gap-2 py-2">
+              <div className="grid grid-cols-4 gap-2 py-4">
                 <div className="col-span-3 flex shrink-0 flex-col items-start justify-between">
                   <div>
                     <Link
@@ -74,9 +74,11 @@ export function GameRelatedSeriesModalContent({
                       </h3>
                     </Link>
                     {game.platforms && (
-                      <GamePlatforms
-                        platforms={game.platforms.map((e) => e.platform.id)}
-                      />
+                      <div className="mb-4 flex flex-wrap gap-1">
+                        <GamePlatforms
+                          platforms={game.platforms.map((e) => e.platform.id)}
+                        />
+                      </div>
                     )}
                   </div>
                   <Badge className="inline-block">
