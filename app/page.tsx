@@ -31,22 +31,23 @@ export default function Page() {
             </h1>
           </div>
           <div className="col-span-2 grid grid-cols-1 gap-8 lg:grid-cols-2">
-            <div className="col-span-1 flex flex-col justify-between gap-4 rounded-2xl bg-accent p-4 pe-8 text-accent-foreground">
+            <div className="col-span-1 flex flex-col justify-between gap-4 rounded-2xl bg-accent p-4 pe-8 text-accent-foreground sm:p-6">
               <MdDateRange size={36} />
               <p className="max-w-[300px] leading-7">
-                Browse calendars with upcoming movies, TV shows and video games.
+                Browse calendars with upcoming movies, TV shows,
+                and&nbsp;video&nbsp;games.
               </p>
             </div>
-            <div className="col-span-1 flex flex-col justify-between gap-4 rounded-2xl bg-accent p-4 pe-8 text-accent-foreground">
+            <div className="col-span-1 flex flex-col justify-between gap-4 rounded-2xl bg-accent p-4 pe-8 text-accent-foreground sm:p-6">
               <MdSearch size={36} />
               <p className="max-w-[300px] leading-7">
-                Search the entire database, and form your own personal
-                calendars.
+                Search the entire database and form your own
+                personal&nbsp;calendars.
               </p>
             </div>
           </div>
         </div>
-        <div className="relative flex min-h-[22rem] items-end justify-start rounded-2xl bg-gradient-to-tr from-fuchsia-500 to-cyan-500 p-4 py-4 sm:px-10 sm:py-10 ">
+        <div className="relative flex min-h-[22rem] items-end justify-start rounded-2xl bg-gradient-to-tr from-fuchsia-500 to-cyan-500 p-4 sm:p-6">
           <HeroSectionLottie className="absolute right-1/2 top-[-4rem] translate-x-1/2 sm:right-10 sm:translate-x-0" />
           <a
             className="flex h-16 w-full items-center justify-center gap-2 whitespace-nowrap rounded-2xl bg-white px-4 py-2 text-2xl font-semibold tracking-wider text-black ring-offset-background transition-all hover:gap-4 hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 sm:max-w-xs"
@@ -64,16 +65,17 @@ export default function Page() {
             alt="About WIITCO"
             width={500}
             height={500}
-            className="max-w-[300px]"
+            className="max-h-[200px] w-auto"
           />
         </div>
-        <div className="px-8">
+        <div className="flex flex-col justify-center px-8">
           <h2 className="scroll-m-20 border-b pb-2 text-3xl font-semibold tracking-tight first:mt-0">
-            More than a &quot;movie database&quot;
+            More than a &quot;movie&nbsp;database&quot;
           </h2>
           <p className="leading-7 [&:not(:first-child)]:mt-6">
-            DB is included, but WIITCO&apos;s main focus are calendars for all
-            the releases relevant to your interests.
+            The search functionality is included, but WIITCO&apos;s main focus
+            are calendars for all the releases relevant
+            to&nbsp;your&nbsp;interests.
           </p>
         </div>
       </section>
@@ -81,22 +83,24 @@ export default function Page() {
         <h2 className="mb-8 scroll-m-20 border-b pb-2 text-3xl font-semibold tracking-tight first:mt-0">
           What&apos;s coming up this week?
         </h2>
-        <Suspense fallback={<Skeleton className="h-80 w-full" />}>
+        <Suspense fallback={<Skeleton className="h-96 w-full" />}>
           <UpcomingReleasesCarousel />
         </Suspense>
       </section>
       <section className="grid gap-4 py-16 sm:grid-cols-2">
         <div className="px-8">
           <h2 className="scroll-m-20 border-b pb-2 text-3xl font-semibold tracking-tight first:mt-0">
-            No fluff, no catch
+            No fluff, no&nbsp;catch
           </h2>
-          <p className="mb-8 leading-7 [&:not(:first-child)]:mt-6">
-            WIITCO is built for users, not profit. There are no subscribtions,
-            ads or other gotchas.
+          <p className="leading-7 [&:not(:first-child)]:mt-6">
+            WIITCO is built for users, not&nbsp;profit.
+          </p>
+          <p className="mb-6 leading-7">
+            There are no subscribtions, ads or other&nbsp;gotchas.
           </p>
           <p className="text-xs text-muted-foreground">
-            However, if you&apos;re looking for a talented developer, let&apos;s
-            get in touch!
+            However, if you&apos;re looking for a talented developer,
+            let&apos;s&nbsp;get&nbsp;in&nbsp;touch!
           </p>
         </div>
         <div className="flex items-center justify-center">
@@ -105,12 +109,12 @@ export default function Page() {
             alt="WIITCO free"
             width={500}
             height={500}
-            className="max-w-[300px]"
+            className="max-h-[200px] w-auto"
           />
         </div>
       </section>
-      <section className="flex flex-col items-center rounded-3xl bg-accent px-8 py-4 text-accent-foreground sm:mx-16 sm:px-20 sm:py-10">
-        <h2 className="mb-4 scroll-m-20 text-center text-3xl font-semibold tracking-tight first:mt-0">
+      <section className="flex flex-col items-center rounded-3xl bg-accent p-6 text-accent-foreground md:mx-32">
+        <h2 className="mb-2 scroll-m-20 text-center text-4xl font-semibold tracking-tight first:mt-0">
           Join now
         </h2>
         <p className="mb-8">And never miss a release date again!</p>

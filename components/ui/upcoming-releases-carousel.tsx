@@ -22,7 +22,7 @@ export async function UpcomingReleasesCarousel() {
 
   return (
     <ScrollArea className="w-full whitespace-nowrap rounded-md border">
-      <div className="flex w-max space-x-4 p-4">
+      <div className="flex w-max space-x-4 p-6">
         {sortedReleases.map((r, i) => {
           if (!r) return;
 
@@ -51,9 +51,9 @@ function GameReleaseCard({
 }) {
   const { name, slug, cover, releaseDate } = gameRelease;
   return (
-    <Card className="w-[156px] shrink-0">
+    <Card className="w-[220px] shrink-0">
       <Link href={`/video-games/games/${slug}`} className="block h-full">
-        <div className="h-[230px] overflow-hidden rounded-t-md">
+        <div className="h-[316px] overflow-hidden rounded-t-md">
           <div className="w-full rounded-t-md border-b bg-background text-center font-semibold tracking-wider">
             Game
           </div>
@@ -67,7 +67,7 @@ function GameReleaseCard({
             alt={`${name} cover`}
           />
         </div>
-        <CardFooter className="block items-start px-4 py-2 text-xs">
+        <CardFooter className="block items-start p-4 text-xs">
           <h3 className="mb-1 overflow-hidden text-ellipsis text-sm font-semibold">
             {name}
           </h3>
@@ -85,9 +85,9 @@ function MovieReleaseCard({
 }) {
   const { title, id, posterPath, releaseDate } = movieRelease;
   return (
-    <Card className="w-[156px] shrink-0">
+    <Card className="w-[220px] shrink-0">
       <Link href={`/cinema/movies/${id}`} className="block h-full">
-        <div className="h-[230px] overflow-hidden rounded-t-md">
+        <div className="h-[316px] overflow-hidden rounded-t-md">
           <div className="w-full rounded-t-md border-b bg-background text-center font-semibold tracking-wider">
             Movie
           </div>
@@ -101,7 +101,7 @@ function MovieReleaseCard({
             alt={`${title} cover`}
           />
         </div>
-        <CardFooter className="block items-start px-4 py-2 text-xs">
+        <CardFooter className="block items-start p-4 text-xs">
           <h3 className="mb-1 overflow-hidden text-ellipsis text-sm font-semibold">
             {title}
           </h3>
@@ -120,9 +120,9 @@ function TelevisionSeasonCard({
   const { showName, seasonName, id, posterPath, releaseDate } =
     televisionSeason;
   return (
-    <Card className="w-[156px] shrink-0">
+    <Card className="w-[220px] shrink-0">
       <Link href={`/tv/shows/${id}`} className="block h-full">
-        <div className="relative h-[230px] overflow-hidden rounded-t-md">
+        <div className="relative h-[316px] overflow-hidden rounded-t-md">
           <div className="w-full rounded-t-md border-b bg-background text-center font-semibold tracking-wider">
             TV Show
           </div>
@@ -139,7 +139,7 @@ function TelevisionSeasonCard({
             {seasonName}
           </div>
         </div>
-        <CardFooter className="block items-start px-4 py-2 text-xs">
+        <CardFooter className="block items-start p-4 text-xs">
           <h3 className="mb-1 overflow-hidden text-ellipsis text-sm font-semibold">
             {showName}
           </h3>
