@@ -1,5 +1,3 @@
-/app/cinema/kinopoisk
-
 # dependencies
 /node_modules
 /.pnp
@@ -38,4 +36,7 @@ next-env.d.ts
 #reference
 ref
 
-# /app/video-games/admin
+# local debug stuff
+/app/cinema/kinopoisk/
+/app/video-games/admin/
+/app/video-games/lib/data.ts
