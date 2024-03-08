@@ -1,4 +1,6 @@
-# WIITCO (When Is It Coming Out)
+# ReleaseNexus
+
+(Formerly known as WIITCO (When Is It Coming Out))
 
 This is the ultimate Next.js web app to track release dates for movies, TV shows, and video games, built with the best possible UX in mind.
 
@@ -16,7 +18,7 @@ By analysing existing popular sites (such as various movies/games databases), I'
 - No way for users to track releases they're interested in and form their own calendars.
 - Bad search.
 
-WIITCO is designed to solve all of the above.
+ReleaseNexus is designed to solve all of the above.
 
 ## The Stack
 
@@ -34,7 +36,7 @@ WIITCO is designed to solve all of the above.
 
 ## The Challenge: engineering the ultimate database instead of solely relying on API calls
 
-This is where WIITCO differs from all those "movie database" pet projects you might've seen. It's far more than just a simple frontend that makes a couple API calls.
+This is where ReleaseNexus differs from all those "movie database" pet projects you might've seen. It's far more than just a simple frontend that makes a couple API calls.
 
 Initially, I thought that it would be enough to design and build a modern frontend to use all the available external data with comfort and ease. Then I found out, that neither TMDB (the most popular movies/TV database) nor IGDB (the most extensive video games database backed by Twitch/Amazon) provide a simple way to fetch movies/shows/games by their release month.
 
@@ -54,7 +56,7 @@ You can view the full database schema [here](https://github.com/pogorskii/wiitco
 
 Prisma is a friendly and nice ORM, Next.js is a great framework with amazing UX. However, combined, they share a big bottleneck: JavaScript.
 
-While working on WIITCO, I experienced firsthand, why JS isn't always the best choice for your _entire_ backend. In my case, it's the single-threaded nature of the engine that hurt me the most.
+While working on ReleaseNexus, I experienced firsthand, why JS isn't always the best choice for your _entire_ backend. In my case, it's the single-threaded nature of the engine that hurt me the most.
 
 Let's just say, it's technically possible to fetch hundreds of thousands records from APIs (that have very small records per request limit), validate them and write in your DB. But it will take _hours_ every single time you're doing it.
 
