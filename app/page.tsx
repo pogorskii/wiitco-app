@@ -9,7 +9,7 @@ import type { Metadata } from "next";
 
 export async function generateMetadata(): Promise<Metadata> {
   return {
-    title: `Full calendar for movies, TV shows and video games releasing in 2024`,
+    title: `Movies, TV shows and video games releases calendar | ReleaseNexus`,
   };
 }
 
@@ -61,8 +61,8 @@ export default function Page() {
       <section className="grid gap-4 py-16 sm:grid-cols-2">
         <div className="flex items-center justify-center">
           <Image
-            src="/about-image.png"
-            alt="About WIITCO"
+            src="/about-image.svg"
+            alt="About ReleaseNexus"
             width={500}
             height={500}
             className="max-h-[200px] w-auto"
@@ -73,8 +73,8 @@ export default function Page() {
             More than a &quot;movie&nbsp;database&quot;
           </h2>
           <p className="leading-7 [&:not(:first-child)]:mt-6">
-            The search functionality is included, but WIITCO&apos;s main focus
-            are calendars for all the releases relevant
+            The search functionality is included, but ReleaseNexus&apos; main
+            focus are calendars for all the releases relevant
             to&nbsp;your&nbsp;interests.
           </p>
         </div>
@@ -93,7 +93,7 @@ export default function Page() {
             No fluff, no&nbsp;catch
           </h2>
           <p className="leading-7 [&:not(:first-child)]:mt-6">
-            WIITCO is built for users, not&nbsp;profit.
+            ReleaseNexus is built for users, not&nbsp;profit.
           </p>
           <p className="mb-6 leading-7">
             There are no subscribtions, ads or other&nbsp;gotchas.
@@ -105,7 +105,7 @@ export default function Page() {
         </div>
         <div className="flex items-center justify-center">
           <Image
-            src="/trust-image.png"
+            src="/trust-image.svg"
             alt="WIITCO free"
             width={500}
             height={500}

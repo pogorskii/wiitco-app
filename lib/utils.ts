@@ -320,11 +320,12 @@ export const getMonthYearName = (
 ): string => {
   const date = new Date();
   date.setFullYear(Number(year), Number(month) - 1);
-
-  return date.toLocaleString(locale, {
+  const dateString = date.toLocaleString(locale, {
     month: "long",
     year: "numeric",
   });
+
+  return dateString;
 };
 
 // Home Page Carousel

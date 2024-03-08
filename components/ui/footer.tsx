@@ -7,7 +7,7 @@ export function Footer() {
   return (
     <footer className="bg-primary px-6 py-10 text-primary-foreground sm:px-20">
       <div className="flex flex-col items-center justify-between gap-4 sm:flex-row">
-        <p className="text-3xl font-medium">WIITCO</p>
+        <p className="text-3xl font-medium tracking-wide">ReleaseNexus</p>
         <div className="flex gap-4">
           <Link className="font-semibold" href="/">
             Home

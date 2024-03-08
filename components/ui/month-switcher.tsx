@@ -23,7 +23,7 @@ export function MonthSwitcher({
   const nextPagePath = getNextMonthURL(pathname, year, month);
 
   return (
-    <div className="mx-auto mb-4 flex w-fit items-center justify-center rounded-full border border-input bg-background sm:absolute sm:left-1/2 sm:mb-0 sm:translate-x-[-50%]">
+    <div className="order-1 flex h-fit items-center justify-center rounded-full border border-input bg-background sm:col-span-3 sm:mx-auto">
       <Link
         className="inline-flex items-center justify-center rounded-bl-full rounded-tl-full border-e border-input p-2.5 pe-3 hover:bg-accent"
         href={prevPagePath}
@@ -31,7 +31,9 @@ export function MonthSwitcher({
         <ChevronLeft />
       </Link>
       <Separator orientation="vertical" />
-      <p className="px-4 text-lg">{dateString}</p>
+      <p className="w-full whitespace-nowrap px-4 text-center text-lg sm:w-fit">
+        {dateString}
+      </p>
       <Separator orientation="vertical" />
       <Link
         className="inline-flex items-center justify-center rounded-br-full rounded-tr-full border-s border-input p-2.5 ps-3 hover:bg-accent"

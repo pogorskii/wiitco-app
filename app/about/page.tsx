@@ -11,12 +11,11 @@ export default function Page() {
       />
 
       <h1 className="mb-8 scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl">
-        About WIITCO
+        About ReleaseNexus
       </h1>
       <p className="mb-4 leading-8">
-        <strong>WIITCO (When Is It Coming Out)</strong> – a platform for
-        browsing movies, TV shows and games and tracking their release dates in
-        a convinient and user-friendly way
+        This is a platform for browsing movies, TV shows and games and tracking
+        their release dates in a convinient and user-friendly way
       </p>
       <p className="mb-4 leading-8">
         This project is designed and developed by me,{" "}

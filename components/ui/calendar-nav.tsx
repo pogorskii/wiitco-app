@@ -25,10 +25,10 @@ export function CalendarNav({
     );
 
   return (
-    <div className="top-2 z-20 sm:sticky sm:min-h-[35px] ">
-      <MonthSwitcher year={year} month={month} />
+    <div className="top-2 z-20 grid gap-4 sm:sticky sm:min-h-[35px] sm:grid-cols-4 sm:gap-5">
       {/* Desktop filters */}
-      <div className="absolute left-0 top-0 hidden bg-background sm:block">
+      {/* <div className="absolute left-0 top-0 hidden bg-background sm:block"> */}
+      <div className="hidden bg-background sm:block">
         <div
           className={clsx("flex max-w-[180px] flex-col gap-2", {
             "[&>*]:hidden": !filtersOpen,
@@ -52,7 +52,7 @@ export function CalendarNav({
       </div>
       {/* Mobile filters */}
       <div
-        className={`overflow-hidden px-2 sm:hidden [&>*]:mb-2 ${
+        className={`order-2 overflow-hidden px-2 sm:hidden [&>*]:mb-2 ${
           filtersOpen ? "h-auto" : "h-0"
         }`}
       >
@@ -60,12 +60,13 @@ export function CalendarNav({
       </div>
       <Button
         variant="ghost"
-        className="flex w-full gap-2 font-semibold tracking-wider sm:hidden"
+        className="order-3 flex w-full gap-2 font-semibold tracking-wider sm:hidden"
         onClick={() => setFiltersOpen(!filtersOpen)}
       >
         {filtersOpen ? "Hide Filters" : "Show Filters"}
         {filtersOpen ? <FaChevronUp /> : <FaChevronDown />}
       </Button>
+      <MonthSwitcher year={year} month={month} />
     </div>
   );
 }

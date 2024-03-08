@@ -27,7 +27,7 @@ export function InfiniteMoviesCalendar({
   const [movies, setMovies] = useState(initialMovies);
   const page = useRef(1);
   const [loadingActive, setLoadingActive] = useState(
-    initialMovies.length >= itemsPerPage
+    initialMovies.length >= itemsPerPage,
   );
   const [ref, inView] = useInView({ rootMargin: "1000px" });
 
@@ -47,7 +47,7 @@ export function InfiniteMoviesCalendar({
     } else {
       setLoadingActive(false);
     }
-  }, [month, year, initialMovies, types, lengthFilter]);
+  }, [month, year, types, lengthFilter]);
 
   useEffect(() => {
     if (inView) {
@@ -57,7 +57,7 @@ export function InfiniteMoviesCalendar({
   if (!movies.length) return <NoResultsFound type="calendar" />;
 
   const groupedAndSortedByDay = Array.from(
-    groupMovieReleasesAndSortByDay(movies)
+    groupMovieReleasesAndSortByDay(movies),
   );
   const caldendarDays = groupedAndSortedByDay.map(([day, movies]) => {
     const movieCards = movies.map((movie, i) => (
@@ -76,13 +76,13 @@ export function InfiniteMoviesCalendar({
   });
 
   return (
-    <div className="py-8 flex flex-col gap-6">
+    <div className="flex flex-col gap-6 py-8">
       {caldendarDays}
       {/* Loading spinner */}
       {loadingActive && (
         <div
           ref={ref}
-          className="col-span-2 mt-16 mb-16 flex items-center justify-center"
+          className="col-span-2 mb-16 mt-16 flex items-center justify-center"
         >
           <Spinner />
         </div>

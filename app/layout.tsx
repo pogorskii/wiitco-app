@@ -11,11 +11,11 @@ import { UserProvider } from "@auth0/nextjs-auth0/client";
 
 export const metadata: Metadata = {
   title: {
-    template: "%s | WIITCO",
-    default: "When Is It Coming Out?",
+    template: "%s | ReleaseNexus",
+    default: "ReleaseNexus",
   },
   description: "Your personal movies and video games release dates calendar",
-  metadataBase: new URL("https://wiitco.vercel.app/"),
+  metadataBase: new URL("https://releasenexus.vercel.app/"),
 };
 
 export default function RootLayout({
